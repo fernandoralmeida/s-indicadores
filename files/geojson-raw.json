@@ -1,0 +1,31 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": "UUID",
+            "geometry": {
+                "type": "MultiPolygon",
+                "coordinates": [
+                    [
+                        [
+                            [
+                                0.000,
+                                0.000
+                            ],
+                            [
+                                0.001,
+                                0.001
+                            ]
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "id": "UUID",
+                "nome": "Cidade",
+                "geocodigo": 1100023
+            }
+        }
+    ]
+}

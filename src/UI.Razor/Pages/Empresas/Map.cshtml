@@ -1,0 +1,45 @@
+@page "/maps/{m?}"
+@model Empresas.MapModel
+@{
+    Layout = "_LayoutMap";
+    ViewData["Title"] = "Indicadores NET";
+}
+
+<div id="map" class="map"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // Criar o mapa Leaflet
+    var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
+
+    // Adicionar uma camada base do OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Carregar dados GeoJSON de uma API
+    fetch('/api/v1/geojson/@Model.Cidade')
+        .then(response => response.json())
+        .then(data => {
+            
+            $("#loader").hide();
+            $(".blackboxload").fadeOut("slow");
+
+            // Adicionar camada GeoJSON ao mapa
+            var geojsonLayer = L.geoJSON(data, {
+                style: {
+                    color: 'green', // Cor da borda
+                    fillColor: 'lightgreen', // Cor de preenchimento
+                    weight: 2, // Largura da borda
+                    opacity: 1, // Opacidade da borda
+                    fillOpacity: 0.5 // Opacidade do preenchimento
+                }
+            }).addTo(map);
+
+            // Ajustar o mapa para abranger a área GeoJSON com zoom
+            map.fitBounds(geojsonLayer.getBounds());
+        })
+        .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
+</script>

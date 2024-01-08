@@ -1,0 +1,34 @@
+@page "/help"
+@model InfoModel
+@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Indicadores NET";
+}
+
+<header>
+    <partial name="_Navg" />
+    <partial name="_StripColors" />
+</header>
+
+<div class="container-custom text-color-grey">
+
+    <div class="margin-a-20 padding-10">
+        <div class="center">
+            <img class="margin-t-10 margin-l-10" src="~/svg/idnet-new.svg" alt="Indicadores.NET">
+        </div>
+    </div>
+
+    <div class="center margin-a-20 padding-10">
+        <h4 class="text-color-grey">Indicadores.NET</h4>
+    </div>
+    <div class="divider"></div>
+    <div class="margin-a-20">
+        <h5>Notas sobre Versões e Atualizações</h5>
+        <ul class="browser-default">
+            <li>
+                2023-12-08 - Versão de Lançamento 1.0
+            </li>
+        </ul>
+    </div>
+
+</div>

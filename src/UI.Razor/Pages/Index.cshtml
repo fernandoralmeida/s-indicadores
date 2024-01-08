@@ -1,0 +1,36 @@
+﻿@page
+@model IndexModel
+@{
+    Layout = "/Pages/Shared/_LayoutStart.cshtml";
+    ViewData["Title"] = "Indicadores NET";
+}
+
+<div class="row center">
+    <div class="vertical-end area-vertical-50">
+        <div class="div-center">
+            <img src="/svg/idnet-new.svg" style="height: 200px;" alt="Indicadores.NET">
+            <div class="vertical-center margin-b-10">
+                <h5 class="text-color-light">INDICADORES<span>.NET</span></h5>
+            </div>
+            <select id="select_city" class="browser-default margin-t-10 select-start" asp-for="@Model.Municipio"
+                asp-items="@Model.ListaMunicipios">
+                <option>Escolha uma Cidade para Iniciar</option>
+            </select>
+            <div id="loader" class="preloader-wrapper small active margin-t-10">
+                <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

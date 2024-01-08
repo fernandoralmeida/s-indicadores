@@ -1,0 +1,1211 @@
+@page "/empresas/{m?}/{z?}"
+@model Empresas.IndexModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Indicadores NET";
+}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<header>
+    <partial name="_Navs" model="Model.NavModel" />
+    <div class="bg-degrade-dark navbar-extended"></div>
+</header>
+
+<div class="row">
+    <div class="column-container flex-wrap">
+        <div class="column-p0 text-color-light font-size-16 margin-t-b-10 width-100">
+            Novas Empresas @DateTime.Now.Year
+            <i class="material-icons left margin-0">
+                stat_minus_3
+            </i>
+            <span class="new bg-color-light badge" data-badge-caption="@Model.NavModel!.Time"></span>
+        </div>
+        <div class="card column-p5 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Localização Aproximada<i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <!---->
+                <form method="post">
+                    <div class="valign-wrapper margin-b-10">
+                        <input asp-for="MunicipioAtivo" hidden />
+                        <label>Novas Empresas</label>
+                        <select id="select_zone" class="browser-default margin-l-10" asp-for="ZonaAtiva"
+                            asp-items="Model.Zonas">
+                            <option></option>
+                        </select>
+                    </div>
+                </form>
+                <div id="map" class="map"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <p class="">
+                    O quadro localização aproximada, mostra onde as novas empresas estão localizadas agrupadas por
+                    bairro.
+                <p>Ex: [Bairro, nº Empresas Novas]</p>
+                </p>
+            </div>
+            <!-- 
+            <div class="card-action center">
+                <a class="modal-trigger" href="#modal3">Lista Completa Empresas por Localidade</a>
+            </div> -->
+        </div>
+        <div class="column column-p5">
+            <div class="column-container margin-0 width-100">
+                <div class="card column-p5 hoverable">
+                    <div class="card-content">
+                        <div class="card-title activator">
+                            Novas Empresas<i class="material-icons right deep-orange-text">help</i>
+                        </div>
+                        <div id="chart9_1"></div>
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                        <p>Em @DateTime.Now.Year, foram formalizadas
+                            @Model.LReports!.MatrizFilial_Ano.Sum(s => s.Value).ToString() novas empresas, sendo elas:
+                        </p>
+                        @foreach (var item in Model.LReports.MatrizFilial_Ano)
+                        {
+                            <p>- @item.Key : @item.Value novas empresas</p>
+                        }
+                    </div>
+                </div>
+                <div class="card column-p5 hoverable">
+                    <div class="card-content">
+                        <div class="card-title activator">
+                            Regime Tributário<i class="material-icons right deep-orange-text">help</i>
+                        </div>
+                        <div id="chart9_2"></div>
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                        <p> No Brasil, existem quatro regimes tributários para empresas:</p>
+                        <br />- Microempreendedor Individual (MEI)
+                        <br />- Simples Nacional
+                        <br />- Lucro Presumido*
+                        <br />- Lucro Real*
+                        <p />* Lucro real e presumido estão agrupados como "Outros" na visualização dos dados</p>
+                    </div>
+                </div>
+            </div>
+            <div class="column-container margin-0 width-100">
+                <div class="card column-p5 hoverable">
+                    <div class="card-content">
+                        <div class="card-title activator">
+                            Porte / Fiscal<i class="material-icons right deep-orange-text">help</i>
+                        </div>
+                        <div id="chart9_3"></div>
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                        <p>A Receita Federal do Brasil classifica as empresas de acordo com o seu porte, levando em
+                            consideração o faturamento anual.</p>
+                        <br />- Microempresa (ME): receita bruta anual igual ou inferior a R$ 360 mil.
+                        <br />- Empresa de Pequeno Porte (EPP): receita bruta anual superior a R$ 360 mil e igual ou
+                        inferior a R$ 4,8 milhões.
+                        <br />- Empresa de Médio Porte (EMP): receita bruta anual superior a R$ 4,8 milhões e igual ou
+                        inferior
+                        a R$ 300 milhões.
+                        <br />- Empresa de Grande Porte (GP): receita bruta anual superior a R$ 300 milhões.
+                        <p>Na apresentação dos dados EMP e GP são agrupadas como "DEMAIS"</p>
+                    </div>
+                </div>
+                <div class="card column-p5 hoverable">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="card-title activator">
+                                Setores<i class="material-icons right deep-orange-text">help</i>
+                            </div>
+                            <div id="chart9_4"></div>
+                        </div>
+                        <div class="card-reveal">
+                            <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+
+                            @foreach (var item in Model.LReports.Top3Atividades_Ano.Take(1))
+                            {
+                                <p>Em @DateTime.Now.Year, das novas empresas formalizadas, o setor de @item.Key teve a maior
+                                    demanda das empresas formalidas.</p>
+                            }
+
+                        </div>
+                        <div class="card-action center">
+                            <a class="modal-trigger" href="#modal2">Ver Lista Detalhada</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card column-p0 hoverable width-100">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Relação de Empresas Novas/Baixas nos ultimos 12 meses<i class="material-icons left">
+                        date_range
+                    </i><i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart9"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <p>Nesse quadro, detalhamos a evolução das empresas novas formalizadas mês a mês em comparação com as
+                    empresas baixadas mês a mês dos ultimos 12 meses</p>
+            </div>
+        </div>
+        <div class="column-p0 font-size-16 margin-t-b-10">
+            Geral Totalizado do Municipio<i class="material-icons left">
+                stat_minus_3
+            </i>
+        </div>
+        <div class="card column-p3 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Empresas Ativas<i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart1"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <p>O Municipio de @Model.MunicipioAtivo @Model.Local![0], tem atualmente em sua totalidade
+                    @Model.LReports.MatrizFilial.Sum(s => s.Value).ToString(). CNPJ ativos.</p>
+                <p>
+                    @foreach (var item in Model.LReports.MatrizFilial)
+                    {
+                        <span>-
+                            @item.Value são Empresas @item.Key
+                        </span>
+                    }
+                </p>
+
+            </div>
+        </div>
+        <div class="card column-p3 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Regime Tributário<i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart2"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+
+                <p> No Brasil, existem quatro regimes tributários para empresas:</p>
+                <br />- Microempreendedor Individual (MEI)
+                <br />- Simples Nacional
+                <br />- Lucro Presumido*
+                <br />- Lucro Real*
+                <p />* Lucro real e presumido estão agrupados como "Outros" na visualização dos dados</p>
+
+            </div>
+        </div>
+        <div class="card column-p3 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Porte / Fiscal<i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart3"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <p>Nesse quadro, é realizado o cruzamento dos dados das empresas agrupadas por POrte em relação as
+                    empresas agrupadas por regime fiscal.</p>
+                <p>
+                    Dessa forma podemos entender a composição das empresa classificadas por porte x regime tributário.
+                </p>
+            </div>
+        </div>
+        <div class="card column-p5 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Empresas por idade<i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart5"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <p>Nesse quadro, é realizado o agrupamento das empresas por tempo de atividade</p>
+                @foreach (var item in Model.LReports.Idade.Take(1))
+                {
+                    <p>
+                        No município de @Model.MunicipioAtivo, a maioria das empresas "@item.Value" tem entre @item.Key de
+                        atividade.
+                    </p>
+                }
+            </div>
+        </div>
+        <div class="card column-p5 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Rotatividade Empresarial<i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart6"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <p>A rotatividade empresarial em municípios é um indicador que mede a frequência com que as empresas
+                    abrem e fecham em um determinado período de tempo. Esse indicador é importante para avaliar o
+                    dinamismo da economia local e o ambiente de negócios do município.
+                    Quanto menor o indice, melhor para desenvolver o empreendedorismo.
+                </p>
+            </div>
+        </div>
+        <div class="column-p0 font-size-16 margin-t-b-10">
+            Setores Produtivos<i class="material-icons left">
+                stat_minus_3
+            </i>
+        </div>
+        <div class="card column-p5 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Setores<i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart4"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                @foreach (var item in Model.LReports.Top3Atividades.Take(1))
+                {
+                    <p>Na totalidade de todas as empresasas do Municipio de @Model.MunicipioAtivo,o setor de @item.Key tem a
+                        maior fatia
+                        das atividadas do setor produtivo com @item.Value.Sum(s => s.Value).ToString() empresas.</p>
+                }
+            </div>
+        </div>
+        <div class="column column-p5">
+            <div class="column-container flex-wrap margin-0 width-100">
+                @{
+                    var _cont = 3;
+                }
+                @foreach (var item in Model.LReports!.Top3Atividades)
+                {
+                    _cont++;
+                    <div class="card column-p3 hoverable">
+                        <div class="card-content">
+                            <div class="card-title truncate">
+                                @item.Key
+                            </div>
+                            @foreach (var subitem in item.Value)
+                            {
+                                <p class="text-color-grey font-size-10 truncate" title="@subitem.Key : @subitem.Value"> -
+                                    @subitem.Key : <span class="text-color-blue">@subitem.Value</span></p>
+                            }
+                        </div>
+                        <div class="card-action center">
+                            <a class="modal-trigger" href="#modal@_cont">Lista Completa</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="card column-p0 hoverable width-100">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Crescimento Setorial ano/ano<i class="material-icons left">
+                        date_range
+                    </i><i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart10"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <p>
+                    Nesse quadro, indicamos o crescimento setorial das empresas, onde é mostrado o crescimento ou
+                    descressimo do setor ano a ano, de todos os setores.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal bottom-sheet modal-fixed-footer">
+    <div class="modal-content">
+        <h6>Todas Empresas Classificadas por Atividade</h6>
+        @foreach (var item in Model.LReports!.TAtividades)
+        {
+            <p>@item.Key</p>
+            @foreach (var subitem in item.Value)
+            {
+                <p class="text-color-grey">- @subitem.Key
+                    <span class="new bg-color-grey badge" data-badge-caption="@subitem.Value"></span>
+                </p>
+                <div class="divider"></div>
+            }
+        }
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close btn">Fechar</a>
+    </div>
+</div>
+<div id="modal2" class="modal bottom-sheet modal-fixed-footer">
+    <div class="modal-content">
+        <h6>Empresas Classificadas por Atividade em @Model.NavModel!.Ano (Top 3)</h6>
+        @foreach (var item in Model.LReports!.Top3Atividades_Ano)
+        {
+            <p>@item.Key</p>
+            @foreach (var subitem in item.Value)
+            {
+                <p class="text-color-grey">- @subitem.Key
+                    <span class="new bg-color-grey badge" data-badge-caption="@subitem.Value"></span>
+                </p>
+                <div class="divider"></div>
+            }
+        }
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close btn">Fechar</a>
+    </div>
+</div>
+<div id="modal3" class="modal bottom-sheet modal-fixed-footer">
+    <div class="modal-content">
+        <h6>Novas Empresas por Localidade</h6>
+        @foreach (var item in Model.LReports!.EmpresasPorLocal)
+        {
+            <p class="text-color-grey">- @item.Key
+                <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
+            </p>
+            <div class="divider"></div>
+        }
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close btn">Fechar</a>
+    </div>
+</div>
+
+@{
+    var _scont = 3;
+}
+@foreach (var setor in Model.Charts!.Setores_Controle!)
+{
+    _scont++;
+    <div id="modal@_scont" class="modal bottom-sheet modal-fixed-footer">
+    <div class="modal-content">
+        <h6>Empresas Classificadas por @setor</h6>
+        @foreach (var item in Model.LReports!.TAtividades.Where(s => s.Key == setor))
+            {
+                <p>@item.Key</p>
+                @foreach (var subitem in item.Value)
+                {
+                    <p class="text-color-grey">- @subitem.Key
+                        <span class="new bg-color-grey badge" data-badge-caption="@subitem.Value"></span>
+                    </p>
+                    <div class="divider"></div>
+                }
+            }
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close btn">Fechar</a>
+        </div>
+    </div>
+}
+
+<script>
+    // Criar o mapa Leaflet
+    var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
+
+    // Adicionar uma camada base do OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Carregar dados GeoJSON de uma API
+    fetch('/api/v1/geojson/@Model.MunicipioAtivo')
+        .then(response => response.json())
+        .then(data => {
+            
+            // Adicionar camada GeoJSON ao mapa
+            var geojsonLayer = L.geoJSON(data, {
+                style: {
+                    color: 'green', // Cor da borda
+                    fillColor: 'lightgreen', // Cor de preenchimento
+                    weight: 2, // Largura da borda
+                    opacity: 1, // Opacidade da borda
+                    fillOpacity: 0.5 // Opacidade do preenchimento
+                }
+            }).addTo(map);
+
+            // Ajustar o mapa para abranger a área GeoJSON com zoom
+            map.fitBounds(geojsonLayer.getBounds());
+        })
+        .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
+</script>
+
+<script>
+    var _width = '100%';
+    var _height = 300;
+    var _height_2 = 250;
+
+    var _novas_empresas_mensal = {
+        series: [
+            {
+                name: "Novas",
+                data: [@Model.Charts!.NovasMes![0]]
+            },
+            {
+                name: "Baixas",
+                data: [@Model.Charts!.BaixasMes![0]]
+            }
+        ],
+        chart: {
+            height: 350,
+            type: 'area',
+            height: _height,
+            width: _width,
+            background: 'transparent',
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+        colors: ['#4797FF', '#475966'],
+        dataLabels: {
+            enabled: true,
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                inverseColors: false,
+                opacityFrom: 0.45,
+                opacityTo: 0.05,
+                stops: [20, 100, 100, 100]
+            },
+        },
+        grid: {
+            xaxis: {
+                lines: {
+                    show: true
+                },
+            },
+            yaxis: {
+                lines: {
+                    show: false
+                }
+            }
+        },
+        markers: {
+            size: 1
+        },
+        xaxis: {
+            categories: [@Model.Charts!.NovasMes![1]],
+        },
+        yaxis: {
+
+            title: {
+                text: 'Empresas'
+            },
+            show: false
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'right',
+            offsetX: -10
+        }
+    };
+
+    var _ativas = {
+
+        series: [@Model.Charts!.MatrizFilial![0]],
+        labels: [@Model.Charts!.MatrizFilial![1]],
+        legend: {
+            position: 'bottom',
+        },
+        chart: {
+            type: 'donut',
+            with: _width,
+            height: _height,
+            background: 'transparent'
+        },
+
+        plotOptions: {
+            pie: {
+                startAngle: -120,
+                endAngle: 120,
+                offsetY: 10,
+                donut: {
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true
+                        }
+                    }
+                }
+            }
+        },
+        grid: {
+            padding: {
+                bottom: -10
+            }
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var _fiscal = {
+
+        series: [@Model.Charts!.Fiscal![0]],
+        labels: [@Model.Charts!.Fiscal![1]],
+        legend: {
+            position: 'bottom',
+        },
+        chart: {
+            type: 'donut',
+            with: _width,
+            height: _height,
+            background: 'transparent'
+
+        },
+        plotOptions: {
+            pie: {
+                startAngle: -120,
+                endAngle: 120,
+                offsetY: 10,
+                donut: {
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true
+                        }
+                    }
+                }
+            }
+        },
+        grid: {
+            padding: {
+                bottom: -10
+            }
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var _porte = {
+        series: [{
+            name: '@Model.Charts!.LabelPorteFiscal![0]',
+            data: [@Model.Charts!.PorteFiscal![0]]
+        }, {
+            name: '@Model.Charts!.LabelPorteFiscal![1]',
+            data: [@Model.Charts!.PorteFiscal![1]]
+        }, {
+            name: '@Model.Charts!.LabelPorteFiscal![2]',
+            data: [@Model.Charts!.PorteFiscal![2]]
+        }],
+        chart: {
+            type: 'bar',
+            height: _height,
+            stacked: true,
+            background: 'transparent',
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                legend: {
+                    position: 'bottom',
+                    offsetX: -10,
+                    offsetY: 0
+                }
+            }
+        }],
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                borderRadius: 0,
+                dataLabels: {
+                    total: {
+                        enabled: true,
+                        style: {
+                            fontSize: '13px',
+                            color: '#000',
+                            fontWeight: 900
+                        }
+                    }
+                }
+            },
+        },
+        xaxis: {
+            categories: ['ME', 'EPP', 'Demais'],
+        },
+        yaxis: {
+            show: false
+        },
+        grid: {
+            xaxis: {
+                lines: {
+                    show: true
+                },
+            },
+            yaxis: {
+                lines: {
+                    show: false
+                }
+            }
+        },
+        legend: {
+            position: 'bottom',
+            offsetY: 0
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        fill: {
+            opacity: 1
+        }
+    };
+
+    var _setores = {
+
+        series: [@Model.Charts!.Setores![1]],
+        labels: [@Model.Charts!.Setores![0]],
+        legend: {
+            position: 'bottom',
+        },
+        chart: {
+            type: 'donut',
+            with: _width,
+            height: 400,
+            background: 'transparent'
+        },
+        plotOptions: {
+            pie: {
+                startAngle: -120,
+                endAngle: 120,
+                offsetY: 10,
+                donut: {
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true
+                        }
+                    }
+                }
+            }
+        },
+        grid: {
+            padding: {
+                bottom: -10
+            }
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var _maturidade = {
+        plotOptions: {
+            bar: {
+                distributed: true
+            }
+        },
+        chart: {
+            type: 'bar',
+            with: _width,
+            height: _height,
+            background: 'transparent',
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+            },
+        },
+        series: [{
+            name: "Empresas",
+            data: [@Model.Charts!.Maturidade],
+        }],
+        dataLabels: {
+            enabled: true,
+        },
+        tooltip: {
+            shared: true,
+            intersect: false
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        xaxis: {
+            labels: {
+                show: false
+            },
+            axisBorder: {
+                show: false
+            },
+            axisTicks: {
+                show: false
+            },
+            crosshairs: {
+                show: false
+            }
+        },
+        grid: {
+            xaxis: {
+                lines: {
+                    show: false
+                },
+            },
+            yaxis: {
+                lines: {
+                    show: false
+                }
+            }
+        },
+        legend: {
+            floating: true,
+            position: 'bottom',
+            horizontalAlign: 'right',
+            offsetY: -36
+        }
+    };
+
+    var _rotatividade = {
+        plotOptions: {
+            bar: {
+                distributed: true
+            }
+        },
+        chart: {
+            type: 'area',
+            with: _width,
+            height: _height,
+            background: 'transparent',
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+            },
+        },
+        series: [{
+            name: "Rotatividade",
+            data: [@Model.Charts!.Rotatividade],
+        }],
+        dataLabels: {
+            enabled: true,
+            formatter: function (value) {
+                return value + "%";
+            }
+        },
+        tooltip: {
+            shared: true,
+            intersect: false,
+            formatter: function (value) {
+                return value + "%";
+            }
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        xaxis: {
+            labels: {
+                show: true
+            },
+            axisBorder: {
+                show: false
+            },
+            axisTicks: {
+                show: false
+            },
+            crosshairs: {
+                show: false
+            }
+        },
+        grid: {
+            xaxis: {
+                lines: {
+                    show: true
+                },
+            },
+            yaxis: {
+                lines: {
+                    show: false
+                }
+            }
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                inverseColors: false,
+                opacityFrom: 0.45,
+                opacityTo: 0.05,
+                stops: [20, 100, 100, 100]
+            },
+        },
+        legend: {
+            floating: true,
+            position: 'bottom',
+            horizontalAlign: 'right',
+            offsetY: -36
+        }
+    };
+
+    var _novas_empresas_mensal_ativas = {
+
+        series: [@Model.Charts!.MatrizFilial_Ano![0]],
+        labels: [@Model.Charts!.MatrizFilial_Ano![1]],
+        legend: {
+            position: 'bottom',
+        },
+        chart: {
+            type: 'donut',
+            with: _width,
+            height: _height_2,
+            background: 'transparent'
+        },
+        dataLabels: {
+            enabled: false
+        },
+        plotOptions: {
+            pie: {
+                startAngle: -120,
+                endAngle: 120,
+                offsetY: 10,
+                donut: {
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true
+                        }
+                    }
+                }
+            }
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var _novas_empresas_mensal_fiscal = {
+
+        series: [@Model.Charts!.Fiscal_Ano![0]],
+        labels: [@Model.Charts!.Fiscal_Ano![1]],
+        legend: {
+            position: 'bottom',
+        },
+        chart: {
+            type: 'donut',
+            with: _width,
+            height: _height_2,
+            background: 'transparent'
+        },
+        dataLabels: {
+            enabled: false
+        },
+        plotOptions: {
+            pie: {
+                startAngle: -120,
+                endAngle: 120,
+                offsetY: 10,
+                donut: {
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true
+                        }
+                    }
+                }
+            }
+        },
+        grid: {
+            padding: {
+                bottom: -10
+            }
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var _novas_empresas_mensal_porte = {
+        series: [{
+            name: '@Model.Charts!.LabelPorteFiscal![0]',
+            data: [@Model.Charts!.PorteFiscalAno![0]]
+        }, {
+            name: '@Model.Charts!.LabelPorteFiscal![1]',
+            data: [@Model.Charts!.PorteFiscalAno![1]]
+        }, {
+            name: '@Model.Charts!.LabelPorteFiscal![2]',
+            data: [@Model.Charts!.PorteFiscalAno![2]]
+        }],
+        chart: {
+            type: 'bar',
+            height: _height_2,
+            stacked: true,
+            background: 'transparent',
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+        yaxis: {
+            show: false
+        },
+        grid: {
+            xaxis: {
+                lines: {
+                    show: true
+                },
+            },
+            yaxis: {
+                lines: {
+                    show: false
+                }
+            }
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                legend: {
+                    position: 'bottom',
+                    offsetX: -10,
+                    offsetY: 0
+                }
+            }
+        }],
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                borderRadius: 0,
+                dataLabels: {
+                    total: {
+                        enabled: true,
+                        style: {
+                            fontSize: '13px',
+                            color: '#000',
+                            fontWeight: 900
+                        }
+                    }
+                }
+            },
+        },
+        xaxis: {
+            categories: ['ME', 'EPP', 'DEMAIS'],
+        },
+        legend: {
+            position: 'bottom',
+            offsetY: 0
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        fill: {
+            opacity: 1
+        }
+    };
+
+    var _novas_empresas_mensal_setor = {
+
+        series: [@Model.Charts!.SetoresAno![1]],
+        labels: [@Model.Charts!.SetoresAno![0]],
+        legend: {
+            position: 'bottom',
+        },
+        chart: {
+            type: 'donut',
+            with: _width,
+            height: _height_2,
+            background: 'transparent'
+        },
+        dataLabels: {
+            enabled: false
+        },
+        plotOptions: {
+            pie: {
+                startAngle: -120,
+                endAngle: 120,
+                offsetY: 10,
+                donut: {
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true
+                        }
+                    }
+                }
+            }
+        },
+        grid: {
+            padding: {
+                bottom: -10
+            }
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var _evolucao_setorial = {
+        series: [@Model.Charts!.CrescimentoSetorial![1]],
+        chart: {
+            type: 'area',
+            stacked: false,
+            height: _height,
+            background: 'transparent',
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        markers: {
+            size: 0,
+        },
+        grid: {
+            xaxis: {
+                lines: {
+                    show: true
+                },
+            },
+            yaxis: {
+                lines: {
+                    show: false
+                }
+            }
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                inverseColors: false,
+                opacityFrom: 0.45,
+                opacityTo: 0.05,
+                stops: [20, 100, 100, 100]
+            },
+        },
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'right',
+            offsetX: -10
+        }
+    };
+
+    window.onload = function () {
+        new ApexCharts(document.querySelector("#chart9_1"), _novas_empresas_mensal_ativas).render();
+        new ApexCharts(document.querySelector("#chart9_2"), _novas_empresas_mensal_fiscal).render();
+        new ApexCharts(document.querySelector("#chart9_3"), _novas_empresas_mensal_porte).render();
+        new ApexCharts(document.querySelector("#chart9_4"), _novas_empresas_mensal_setor).render();
+
+        new ApexCharts(document.querySelector("#chart9"), _novas_empresas_mensal).render();
+
+        new ApexCharts(document.querySelector("#chart1"), _ativas).render();
+        new ApexCharts(document.querySelector("#chart2"), _fiscal).render();
+        new ApexCharts(document.querySelector("#chart3"), _porte).render();
+        new ApexCharts(document.querySelector("#chart5"), _maturidade).render();
+        new ApexCharts(document.querySelector("#chart6"), _rotatividade).render();
+
+        new ApexCharts(document.querySelector("#chart4"), _setores).render();
+        new ApexCharts(document.querySelector("#chart10"), _evolucao_setorial).render();
+    };
+
+</script>
+
+

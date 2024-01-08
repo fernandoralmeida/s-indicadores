@@ -1,0 +1,43 @@
+@using IDN.Services.Municipio.Interfaces;
+@using IDN.Services.Municipio.View;
+@model NavbarModel;
+
+@inject IServiceMunicipio _municipios
+
+@{
+    var _list = new List<string>();
+    foreach (var item in await _municipios.DoMicroRegiaoJauAsync())
+        _list.Add(item.Descricao!);
+
+    SelectList _lista_municipios = new SelectList(_list.OrderBy(o => o));
+}
+
+<div class="navbar">
+    <nav class="nav-extended z-depth-0 bg-color-dark">
+        <div class="nav-wrapper">
+            <div class="brand-logo"><img class="margin-t-10 margin-l-10" src="~/svg/idnet-new-light-38.svg"
+                    alt="Indicadores.NET"></div>
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <div class="hide-on-med-and-down margin-l-60 font-size-18 left text-color-light">Indicadores.NET</div>
+            <ul class="right hide-on-med-and-down">
+                <li><a asp-page="/Index"><i class="material-icons">home</i></a></li>
+                <li><a asp-page="/About"><i class="material-icons">info</i></a></li>
+                <li><a asp-page="/Info"><i class="material-icons">help</i></a></li>
+            </ul>
+        </div>
+        <div class="nav-content">
+            <div class="div-float-in">
+                <select id="select_city" class="browser-default margin-auto" asp-for="@Model.Municipio"
+                    asp-items="@_lista_municipios">
+                    <option>--Cidades--</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<ul class="sidenav" id="mobile-demo">
+    <li><a asp-page="/Index"><i class="material-icons">home</i></a></li>
+    <li><a asp-page="/About"><i class="material-icons">info</i></a></li>
+    <li><a asp-page="/Info"><i class="material-icons">help</i></a></li>
+</ul>
