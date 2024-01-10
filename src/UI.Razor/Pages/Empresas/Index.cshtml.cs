@@ -7,6 +7,8 @@ using IDN.Services.Municipio.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
+using IDN.Data.Helpers;
+using MongoDB.Driver;
 
 namespace UI.Razor.Pages.Empresas;
 
@@ -60,13 +62,23 @@ public partial class IndexModel : PageModel
 
         var _list = _empresa!.DoStoredProcedure(MunicipioAtivo!.ToUpper());
 
+        var _mongoDB = Factory<REmpresas>.NewDataMongoDB();
+        /*
+
         LReports = string.IsNullOrEmpty(Local[0]) ?
                         await _empresa!.DoReportEmpresasAsync(_list, null) :
                         await _empresa!.DoReportEmpresasAsync(_list, s => s.Bairro == Local[0]);
+                        */
 
-        Charts = await _empresa.DoReportToChartAsync(LReports);
+        var filter = Builders<REmpresas>.Filter.Eq(e => e.Municipio, MunicipioAtivo.ToUpper());
 
-        Zonas = new SelectList(LReports.EmpresasNovasPorLocal);
+        foreach (var item in await _mongoDB.DoListAsync(filter))
+        {
+            LReports = item;
+            Charts = await _empresa.DoReportToChartAsync(item);
+            Zonas = new SelectList(item.EmpresasNovasPorLocal);
+        }
+
         temporizador.Stop();
         NavModel = new()
         {
@@ -75,7 +87,7 @@ public partial class IndexModel : PageModel
             Time = $"{temporizador.Elapsed:hh\\:mm\\:ss\\.fff}",
             Municipios = await _municipio.DoMicroRegiaoJauAsync()
         };
-    } 
+    }
 
     [GeneratedRegex("\\[|\\]", RegexOptions.IgnoreCase, "pt-BR")]
     private static partial Regex CRegex();

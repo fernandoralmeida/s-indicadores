@@ -6,4 +6,6 @@ public static class DataBase
                 = Environment.GetEnvironmentVariable("ds_indicadores")!;
     public static readonly string DBName = @"www_indicadores";
 
+    public static readonly string MongoDBServer = Environment.GetEnvironmentVariable("DS_MONGODB")!;
+
 }

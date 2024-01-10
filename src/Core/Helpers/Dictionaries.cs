@@ -10,7 +10,10 @@ public static class Dictionaries
         {"01","ME"},
         {"02","ME"},
         {"03","EPP"},
-        {"05","Demais"}
+        {"05","Demais"},
+        {"49", "N/I"},
+        {"16", "N/I"},
+        {"", "N/I"}
     };
     public static readonly Dictionary<string, string> MatrizOuFilial = new()
     {

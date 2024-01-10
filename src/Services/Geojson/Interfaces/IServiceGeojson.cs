@@ -8,7 +8,9 @@ namespace IDN.Services.Geojson.Interfaces;
 public interface IServiceGeojson
 {
     Task<VGeojson> ReadFileGeojson();
+    Task<IEnumerable<VFeatures>> NewReadFileGeojsonAsync();
     Task<string> ReadFileGeojsonAsync();
     Task<VGeojson> DoGeojsonAsync(string? param = null);
-    Task<MGeojson> DoGeojsonToDBAsync(VGeojson obj);    
+    Task<MGeojson> DoGeojsonToDBAsync(VGeojson obj);
+    Task<VGeojson> DoGeojson(string? municipio = null);
 }

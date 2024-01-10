@@ -12,6 +12,7 @@ public partial class MapModel : PageModel
     public string? Cidade { get; set; }
     public void OnGetAsync(string? m)
     {
-        Cidade = m;
+        var param = m?.ToLower();
+        Cidade = param;
     }
 }

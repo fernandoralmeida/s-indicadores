@@ -40,174 +40,185 @@ public class ServiceEmpresa : IServiceEmpresa
         var emps_ativas = emps.Where(s => s.SituacaoCadastral!.ToLower() == "ativa");
         var emps_baixadas = emps.Where(s => s.SituacaoCadastral!.ToLower() == "baixada");
 
-        return await Task.Run(() => new REmpresas(
-            Municipio: emps_ativas.FirstOrDefault()!.Municipio!,
+        return await Task.Run(() => new REmpresas()
+        {
+            Municipio = emps_ativas.FirstOrDefault()!.Municipio!,
 
-            Quantitativo: Quantitativo(emps),
+            Quantitativo = Quantitativo(emps),
 
-            Quantitativo_Ano: from st_a in emps.Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
+            Quantitativo_Ano = from st_a in emps.Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
                                                 .GroupBy(g => g.SituacaoCadastral)
                                                 .OrderByDescending(o => o.Count())
-                              select (new KeyValuePair<string, int>(st_a.Key, st_a.Count())),
+                               select (new KeyValuePair<string, int>(st_a.Key, st_a.Count())),
 
-            NovasEmpresas: from qtm in emps_ativas
+            NovasEmpresas = from qtm in emps_ativas
                                         .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("MM"))
                                         .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("MMM"))
-                           select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+                            select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
 
-            NovasEmpresas_Ano: from qtm in emps_ativas
+            NovasEmpresas_Ano = from qtm in emps_ativas
                                         .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= DateTime.Now.AddMonths(-12))
 
                                         .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
                                         .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("MMM"))
-                               select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+                                select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
 
-            MatrizFilial: from mf in emps_ativas
+            MatrizFilial = from mf in emps_ativas
                                         .GroupBy(s => s.IdentificadorMatrizFilial)
                                         .OrderByDescending(s => s.Count())
-                          select (new KeyValuePair<string, int>(mf.Key, mf.Count())),
+                           select (new KeyValuePair<string, int>(mf.Key, mf.Count())),
 
-            MatrizFilial_Ano: from mfa in emps_ativas
+            MatrizFilial_Ano = from mfa in emps_ativas
                                         .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
                                         .GroupBy(s => s.IdentificadorMatrizFilial)
                                         .OrderByDescending(s => s.Count())
-                              select (new KeyValuePair<string, int>(mfa.Key, mfa.Count())),
+                               select (new KeyValuePair<string, int>(mfa.Key, mfa.Count())),
 
 
-            Baixas_Ano: from qtm in emps_baixadas
+            Baixas_Ano = from qtm in emps_baixadas
                             .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= DateTime.Now.AddMonths(-12))
                             .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
                             .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("MMM"))
-                        select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+                         select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
 
-            NaturezaJuridica: from nj in emps_ativas
+            NaturezaJuridica = from nj in emps_ativas
                                             .GroupBy(g => g.NaturezaJuridica)
                                             .OrderByDescending(o => o.Count())
-                              select (new KeyValuePair<string, int>(nj.Key, nj.Count())),
+                               select (new KeyValuePair<string, int>(nj.Key, nj.Count())),
 
-            NaturezaJuridica_Ano: from nja in emps_ativas
+            NaturezaJuridica_Ano = from nja in emps_ativas
                                             .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
                                             .GroupBy(g => g.NaturezaJuridica)
                                             .OrderByDescending(o => o.Count())
-                                  select (new KeyValuePair<string, int>(nja.Key, nja.Count())),
+                                   select (new KeyValuePair<string, int>(nja.Key, nja.Count())),
 
-            Setores: from ata in emps_ativas
+            Setores = from ata in emps_ativas
                             .GroupBy(s => s.SetorProdutivo())
                             .OrderByDescending(o => o.Count())
-                     select (new KeyValuePair<string, int>(ata.Key, ata.Count())),
+                      select (new KeyValuePair<string, int>(ata.Key, ata.Count())),
 
-            Setores_Ano: from atm in emps_ativas
+            Setores_Ano = from atm in emps_ativas
                                 .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
                                 .GroupBy(s => s.SetorProdutivo())
                                 .OrderByDescending(o => o.Count())
-                         select (new KeyValuePair<string, int>(atm.Key, atm.Count())),
+                          select (new KeyValuePair<string, int>(atm.Key, atm.Count())),
 
-            TAtividades: from t3 in emps_ativas
+            TAtividades = from t3 in emps_ativas
                                 .GroupBy(s => s.SetorProdutivo())
                                 .OrderByDescending(s => s.Count())
-                         select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
-                                                                 from tp3 in t3
-                                                                     .Where(s => s.SetorProdutivo() == t3.Key)
-                                                                     .GroupBy(s => s.CnaeFiscalPrincipal![..2])
-                                                                     .OrderByDescending(s => s.Count())
-                                                                 select (new KeyValuePair<string, int>(Dictionaries.CnaesSubClasses[tp3.Key], tp3.Count())))),
+                          select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
+                                                                  from tp3 in t3
+                                                                      .Where(s => s.SetorProdutivo() == t3.Key)
+                                                                      .GroupBy(s => s.CnaeFiscalPrincipal![..2])
+                                                                      .OrderByDescending(s => s.Count())
+                                                                  select (new KeyValuePair<string, int>(Dictionaries.CnaesSubClasses[tp3.Key], tp3.Count())))),
 
-            Top3Atividades: from t3 in emps_ativas
+            TAtividadesDescritivas = from t3 in emps_ativas
+                                        .GroupBy(s => s.SetorProdutivo())
+                                        .OrderByDescending(s => s.Count())
+                                     select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
+                                                                   from tp3 in t3
+                                                                       .Where(s => s.SetorProdutivo() == t3.Key)
+                                                                       .GroupBy(s => s.CnaeFiscalPrincipal + s.CnaeDescricao)
+                                                                       .OrderByDescending(s => s.Count())
+                                                                   select (new KeyValuePair<string, int>(tp3.Key, tp3.Count())))),
+
+            Top3Atividades = from t3 in emps_ativas
                                 .GroupBy(s => s.SetorProdutivo())
                                 .OrderByDescending(s => s.Count())
-                            select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
-                                                                    from tp3 in t3
-                                                                        .Where(s => s.SetorProdutivo() == t3.Key)
-                                                                        .GroupBy(s => s.CnaeFiscalPrincipal![..2])
-                                                                        .OrderByDescending(s => s.Count())
-                                                                        .Take(3)
-                                                                    select (new KeyValuePair<string, int>(Dictionaries.CnaesSubClasses[tp3.Key], tp3.Count())))),
+                             select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
+                                                                     from tp3 in t3
+                                                                         .Where(s => s.SetorProdutivo() == t3.Key)
+                                                                         .GroupBy(s => s.CnaeFiscalPrincipal![..2])
+                                                                         .OrderByDescending(s => s.Count())
+                                                                         .Take(3)
+                                                                     select (new KeyValuePair<string, int>(Dictionaries.CnaesSubClasses[tp3.Key], tp3.Count())))),
 
-            Top3Atividades_Ano: from t3 in emps_ativas
+            Top3Atividades_Ano = from t3 in emps_ativas
                                 .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
                                 .GroupBy(s => s.SetorProdutivo())
                                 .OrderByDescending(s => s.Count())
-                                select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
-                                                                        from tp3 in t3
-                                                                            .Where(s => s.SetorProdutivo() == t3.Key)
-                                                                            .GroupBy(s => s.CnaeFiscalPrincipal![..2])
-                                                                            .OrderByDescending(s => s.Count())
-                                                                            .Take(3)
-                                                                        select (new KeyValuePair<string, int>(Dictionaries.CnaesSubClasses[tp3.Key], tp3.Count())))),
+                                 select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
+                                                                         from tp3 in t3
+                                                                             .Where(s => s.SetorProdutivo() == t3.Key)
+                                                                             .GroupBy(s => s.CnaeFiscalPrincipal![..2])
+                                                                             .OrderByDescending(s => s.Count())
+                                                                             .Take(3)
+                                                                         select (new KeyValuePair<string, int>(Dictionaries.CnaesSubClasses[tp3.Key], tp3.Count())))),
 
-            Fiscal: from fc in emps_ativas
+            Fiscal = from fc in emps_ativas
                                 .GroupBy(s => s.RegimeFiscal())
                                 .OrderByDescending(s => s.Count())
-                    select (new KeyValuePair<string, int>(fc.Key, fc.Count())),
+                     select (new KeyValuePair<string, int>(fc.Key, fc.Count())),
 
-            Fiscal_Ano: from fca in emps_ativas
+            Fiscal_Ano = from fca in emps_ativas
                             .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
                             .GroupBy(s => s.RegimeFiscal())
                             .OrderByDescending(s => s.Count())
-                        select (new KeyValuePair<String, int>(fca.Key, fca.Count())),
+                         select (new KeyValuePair<String, int>(fca.Key, fca.Count())),
 
-            Porte: from pte in emps_ativas
+            Porte = from pte in emps_ativas
                             .GroupBy(s => s.PorteEmpresa)
                             .OrderByDescending(o => o.Count())
-                   select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(pte.Key,
-                                from _fiscal in pte
-                                    .GroupBy(s => s.RegimeFiscal())
-                                    .OrderByDescending(s => s.Count())
-                                select (new KeyValuePair<string, int>(_fiscal.Key, _fiscal.Count())))),
+                    select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(pte.Key,
+                                 from _fiscal in pte
+                                     .GroupBy(s => s.RegimeFiscal())
+                                     .OrderByDescending(s => s.Count())
+                                 select (new KeyValuePair<string, int>(_fiscal.Key, _fiscal.Count())))),
 
-            PorteS: from pte in emps_ativas
+            PorteS = from pte in emps_ativas
                             .GroupBy(s => s.PorteEmpresa)
                             .OrderByDescending(o => o.Count())
-                    select (new KeyValuePair<string, int>(pte.Key, pte.Count())),
+                     select (new KeyValuePair<string, int>(pte.Key, pte.Count())),
 
-            Porte_Ano: from ptea in emps_ativas
+            Porte_Ano = from ptea in emps_ativas
                                 .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
                                 .GroupBy(s => s.PorteEmpresa)
                                 .OrderByDescending(o => o.Count())
-                       select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(ptea.Key,
-                                    from _fiscal_a in ptea
-                                        .GroupBy(s => s.RegimeFiscal())
-                                        .OrderByDescending(s => s.Count())
-                                    select (new KeyValuePair<string, int>(_fiscal_a.Key, _fiscal_a.Count())))),
+                        select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(ptea.Key,
+                                     from _fiscal_a in ptea
+                                         .GroupBy(s => s.RegimeFiscal())
+                                         .OrderByDescending(s => s.Count())
+                                     select (new KeyValuePair<string, int>(_fiscal_a.Key, _fiscal_a.Count())))),
 
-            Simples: from sn in emps_ativas
+            Simples = from sn in emps_ativas
                                 .Where(s => s.OpcaoSimples == "S")
                                 .GroupBy(s => s.PorteEmpresa)
                                 .OrderByDescending(s => s.Count())
-                     select (new KeyValuePair<string, int>(sn.Key, sn.Count())),
+                      select (new KeyValuePair<string, int>(sn.Key, sn.Count())),
 
-            Simples_Ano: from sna in emps_ativas
+            Simples_Ano = from sna in emps_ativas
                                 .Where(s => s.OpcaoSimples == "S" && s.DataInicioAtividade!.StartsWith(ano.ToString()))
                                 .GroupBy(s => s.PorteEmpresa)
                                 .OrderByDescending(s => s.Count())
-                         select (new KeyValuePair<string, int>(sna.Key, sna.Count())),
+                          select (new KeyValuePair<string, int>(sna.Key, sna.Count())),
 
-            Idade: from age in emps_ativas
+            Idade = from age in emps_ativas
                                 .GroupBy(d => DateTime.ParseExact(d.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).DateDiference())
                                 .OrderBy(s => s.Key)
-                   select (new KeyValuePair<string, int>(age.Key, age.Count())),
+                    select (new KeyValuePair<string, int>(age.Key, age.Count())),
 
-            Rotatividade: from rt in emps
+            Rotatividade = from rt in emps
                                 .GroupBy(d => DateTime.ParseExact(d.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString())
                                 .OrderByDescending(s => s.Key)
                                 .Take(10)
-                          select (new KeyValuePair<string, float>(rt.Key,
-                                  Convert.ToSingle(rt.Where(s => s.SituacaoCadastral == "Baixada" && DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) /
-                                  Convert.ToSingle(rt.Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) * 100)),
+                           select (new KeyValuePair<string, float>(rt.Key,
+                                   Convert.ToSingle(rt.Where(s => s.SituacaoCadastral == "Baixada" && DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) /
+                                   Convert.ToSingle(rt.Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) * 100)),
 
-            EmpresasPorLocal: from lc in emps_bairro
+            EmpresasPorLocal = from lc in emps_bairro
                                   .GroupBy(s => s.Bairro)
                                   .OrderByDescending(o => o.Count())
-                              select (new KeyValuePair<string, int>(lc.Key, lc.Count())),
+                               select (new KeyValuePair<string, int>(lc.Key, lc.Count())),
 
-            EmpresasNovasPorLocal: from nlc in emps_novas_bairro
+            EmpresasNovasPorLocal = from nlc in emps_novas_bairro
                                         .GroupBy(s => s.Bairro)
                                         .OrderByDescending(o => o.Count())
-                                   select (new KeyValuePair<string, int>(nlc.Key, nlc.Count())),
+                                    select (new KeyValuePair<string, int>(nlc.Key, nlc.Count())),
 
-            TaxaCrescimentoSetorial: TaxaCrescimentoSetorial(emps_ativas)
+            TaxaCrescimentoSetorial = TaxaCrescimentoSetorial(emps_ativas)
 
-            ));
+        });
     }
 
     public async IAsyncEnumerable<MEmpresa> DoStoredProcedure(string param)
@@ -304,7 +315,7 @@ public class ServiceEmpresa : IServiceEmpresa
             Rotatividade: await Task.Run(() =>
             {
                 string _rotatividade_emp = string.Empty;
-                foreach (var x in report.Rotatividade.OrderBy(s => s.Key))
+                foreach (var x in report.Rotatividade!.OrderBy(s => s.Key))
                     _rotatividade_emp += string.Format(@"{{x:`{0}`,y:{1}}},", x.Key.NormalizeText(), Math.Round(x.Value, 1).ToString().Replace(',', '.'));
 
                 return _rotatividade_emp.Length > 0 ? _rotatividade_emp[..^1] : _rotatividade_emp;
@@ -313,7 +324,7 @@ public class ServiceEmpresa : IServiceEmpresa
             NovasMes: await Task.Run(() =>
             {
                 string[] _novas_mes = new string[2];
-                foreach (var m in report.NovasEmpresas_Ano)
+                foreach (var m in report.NovasEmpresas_Ano!)
                 {
                     _novas_mes[0] += string.Format(@"{0},", m.Value);
                     _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
@@ -324,7 +335,7 @@ public class ServiceEmpresa : IServiceEmpresa
             BaixasMes: await Task.Run(() =>
             {
                 string[] _baixas_mes = new string[2];
-                foreach (var m in report.Baixas_Ano)
+                foreach (var m in report.Baixas_Ano!)
                 {
                     _baixas_mes[0] += string.Format(@"{0},", m.Value);
                     _baixas_mes[1] += string.Format(@"`{0}`,", m.Key);
@@ -335,7 +346,7 @@ public class ServiceEmpresa : IServiceEmpresa
             MatrizFilial: await Task.Run(() =>
             {
                 string[] _matriz = new string[2];
-                foreach (var item in report.MatrizFilial)
+                foreach (var item in report.MatrizFilial!)
                 {
                     _matriz[0] += string.Format(@"{0},", item.Value);
                     _matriz[1] += string.Format(@"`{0}`,", item.Key);
@@ -346,7 +357,7 @@ public class ServiceEmpresa : IServiceEmpresa
             MatrizFilial_Ano: await Task.Run(() =>
             {
                 string[] _matriz_ano = new string[2];
-                foreach (var item in report.MatrizFilial_Ano)
+                foreach (var item in report.MatrizFilial_Ano!)
                 {
                     _matriz_ano[0] += string.Format(@"{0},", item.Value);
                     _matriz_ano[1] += string.Format(@"`{0}`,", item.Key);
@@ -357,7 +368,7 @@ public class ServiceEmpresa : IServiceEmpresa
             Fiscal: await Task.Run(() =>
             {
                 string[] _fiscal = new string[2];
-                foreach (var fiscal in report.Fiscal)
+                foreach (var fiscal in report.Fiscal!)
                 {
                     _fiscal[0] += string.Format(@"{0},", fiscal.Value);
                     _fiscal[1] += string.Format(@"`{0}`,", fiscal.Key);
@@ -368,7 +379,7 @@ public class ServiceEmpresa : IServiceEmpresa
             Fiscal_Ano: await Task.Run(() =>
             {
                 string[] _fiscal_ano = new string[2];
-                foreach (var fiscal in report.Fiscal_Ano)
+                foreach (var fiscal in report.Fiscal_Ano!)
                 {
                     _fiscal_ano[0] += string.Format(@"{0},", fiscal.Value);
                     _fiscal_ano[1] += string.Format(@"`{0}`,", fiscal.Key);
@@ -385,7 +396,7 @@ public class ServiceEmpresa : IServiceEmpresa
                         portefiscal[i, j] = "0";
 
                 int a = 0;
-                foreach (var item in report.Porte.OrderBy(s => s.Key.Length))
+                foreach (var item in report.Porte!.OrderBy(s => s.Key.Length))
                 {
 
                     int b = 0;
@@ -426,7 +437,7 @@ public class ServiceEmpresa : IServiceEmpresa
                         portefiscalano[i, j] = "0";
 
                 var a = 0;
-                foreach (var item in report.Porte_Ano.OrderBy(s => s.Key.Length))
+                foreach (var item in report.Porte_Ano!.OrderBy(s => s.Key.Length))
                 {
 
                     int b = 0;
@@ -463,7 +474,7 @@ public class ServiceEmpresa : IServiceEmpresa
             Maturidade: await Task.Run(() =>
             {
                 string _emp_faixa_etaria = string.Empty;
-                foreach (var x in report.Idade)
+                foreach (var x in report.Idade!)
                     _emp_faixa_etaria += string.Format(@"{{x:`{0}`,y:{1}}},", x.Key.NormalizeText(), x.Value);
 
                 return _emp_faixa_etaria.Length > 0 ? _emp_faixa_etaria[..^1] : _emp_faixa_etaria;
@@ -472,7 +483,7 @@ public class ServiceEmpresa : IServiceEmpresa
             Setores: await Task.Run(() =>
             {
                 var _setores = new string[2];
-                foreach (var item in report.Setores)
+                foreach (var item in report.Setores!)
                 {
                     _setores![0] += string.Format(@"`{0}`,", item.Key);
                     _setores![1] += string.Format(@"{0},", item.Value);
@@ -483,7 +494,7 @@ public class ServiceEmpresa : IServiceEmpresa
             SetoresAno: await Task.Run(() =>
             {
                 var _setoresano = new string[2];
-                foreach (var item in report.Setores_Ano)
+                foreach (var item in report.Setores_Ano!)
                 {
                     _setoresano![0] += string.Format(@"`{0}`,", item.Key);
                     _setoresano![1] += string.Format(@"{0},", item.Value);
@@ -499,12 +510,12 @@ public class ServiceEmpresa : IServiceEmpresa
                 var _series_names = string.Empty;
                 var _crescimentosetorial = new string[2];
 
-                foreach (var item in report.TaxaCrescimentoSetorial)
+                foreach (var item in report.TaxaCrescimentoSetorial!)
                 {
                     _series_names += string.Format(@"`{0}`,", item.Key);
                     var _nomes = string.Format(@"{{name:`{0}`,data:[", item.Key);
                     var _datas = string.Empty;
-                    var _acumulador = report.Setores.Where(s => s.Key == item.Key).Sum(s => s.Value) - item.Value.Sum(s => s.Value);
+                    var _acumulador = report.Setores!.Where(s => s.Key == item.Key).Sum(s => s.Value) - item.Value.Sum(s => s.Value);
                     foreach (var sub in item.Value.OrderBy(s => s.Key))
                     {
                         _acumulador += sub.Value;
@@ -526,7 +537,7 @@ public class ServiceEmpresa : IServiceEmpresa
     {
         try
         {
-            var _file = @"C:\Users\ferna\source\repos\fernandoralmeida\s-indicadores\json\municipio-estado-sp.csv";
+            var _file = @"/home/dbn/sources/s-indicadores/files/municipio-estado-sp.csv";
 
             var _return = new List<string>();
 

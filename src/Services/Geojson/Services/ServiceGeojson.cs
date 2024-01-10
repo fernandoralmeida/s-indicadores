@@ -1,14 +1,30 @@
 using IDN.Services.Geojson.Interfaces;
 using IDN.Services.Geojson.View;
 using IDN.Core.Helpers;
+using IDN.Core.Geojson.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using IDN.Core.Geojson.Models;
+using IDN.Data.Helpers;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace IDN.Services.Geojson.Services;
 
 public class ServiceGeojson : IServiceGeojson
 {
+    public async Task<VGeojson> DoGeojson(string? municipio = null)
+    {
+        var _mongoDB = Factory<VFeatures>.NewDataMongoDB();
+        var _filter = municipio == null ? null : Builders<VFeatures>.Filter.Eq(e => e.Properties!.Name, municipio);
+        var _geojson = new VGeojson
+        {
+            Type = "FeatureCollection",
+            Features = await _mongoDB.DoListAsync(_filter)
+        };
+
+        return _geojson;
+    }
+
     public async Task<VGeojson> DoGeojsonAsync(string? param = null)
     {
         var _geojson = new VGeojson();
@@ -141,13 +157,86 @@ public class ServiceGeojson : IServiceGeojson
         });
     }
 
+    public async Task<IEnumerable<VFeatures>> NewReadFileGeojsonAsync()
+    {
+        var _features = new List<VFeatures>();
+
+        //var _file = @"BC250_2017_Municipio_A.json";
+        var _file = @"/home/dbn/sources/s-indicadores/files/BC250_2017_Municipio_A.json";
+
+        string jsonString = await File.ReadAllTextAsync(_file);
+
+        // Deserializa o JSON para um objeto JObject
+        JObject? jsonObject = JsonConvert.DeserializeObject<JObject>(jsonString);
+
+        // Acessando a lista de features
+        JArray features = (JArray)jsonObject!["features"]!;
+
+        // Iterando sobre cada feature
+        // Geocodigo com inicio 35 = Estado de São Paulo
+        foreach (JObject feature in features.Cast<JObject>()
+                                            .Where(s => s!["properties"]!["geocodigo"]!.ToString().StartsWith("35")))
+        {
+            var _feature = new VFeatures
+            {
+                // Acessando feature
+                Type = (string)feature!["type"]!,
+                Properties = new VProperties()
+                {
+                    Name = feature!["properties"]!["nome"]!.ToString().NormalizeText().ToLower(),
+                    Geocode = feature!["properties"]!["geocodigo"]!.ToString()
+                }
+            };
+
+            // Acessando o tipo de geometria
+            string tipoGeometria = (string)feature!["geometry"]!["type"]!;
+
+            var _geometry = new VGeometry
+            {
+                Type = tipoGeometria
+            };
+
+            var _coordinates = new List<List<List<List<double>>>>();
+
+            // Acessando as coordenadas da geometria (para MultiPolygon, precisa tratar o loop interno)
+            if (tipoGeometria == "MultiPolygon")
+            {
+                JArray coordinates = (JArray)feature!["geometry"]!["coordinates"]!;
+
+                foreach (JArray polygon in coordinates.Cast<JArray>())
+                {
+                    var _poly = new List<List<double>>();
+                    foreach (JArray point in polygon.Cast<JArray>())
+                    {
+                        foreach (var p in point)
+                        {
+                            var _point = new List<double>();
+                            foreach (var _x_y in p.Select(s => (double)s))
+                            {
+                                _point.Add(_x_y);
+                            }
+                            _poly.Add(_point);
+                        }
+                    }
+                    _coordinates.Add(new List<List<List<double>>>() { _poly });
+                }
+                _geometry.Coordinates = _coordinates;
+            }
+
+            _feature.Geometry = _geometry;
+            _features.Add(_feature);
+        }
+
+        return _features;
+    }
+
     public async Task<VGeojson> ReadFileGeojson()
     {
         var _geojson = new VGeojson();
         var _features = new List<VFeatures>();
 
         //var _file = @"BC250_2017_Municipio_A.json";
-        var _file = @"/home/dbn/sources/s-indicadores/files/geojson-estado-sp.json";
+        var _file = @"/home/dbn/sources/s-indicadores/files/BC250_2017_Municipio_A.json";
 
         string jsonString = await File.ReadAllTextAsync(_file);
 
