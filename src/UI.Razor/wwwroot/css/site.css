@@ -130,7 +130,7 @@ main {
 }
 
 .page-footer {
-  padding-top: 20px;
+  padding-top: 0px;
   color: var(--color-light);
   background-color: var(--color-grey);
 }
@@ -371,6 +371,11 @@ nav i.material-icons {
 }
 
 .map {
+  width: 100%;
+  height: calc(100vh - 60px);
+}
+
+.map-d {
   width: 100%;
   height: 575px;
 }
@@ -893,6 +898,7 @@ nav,
 .margin-l-68 {
   margin-left: 68px;
 }
+
 .margin-l-60 {
   margin-left: 60px;
 }
@@ -914,6 +920,10 @@ nav,
 }
 
 /**** Texto *****/
+
+.text-uppercase {
+  text-transform: uppercase;
+}
 
 .text-color-white {
   color: var(--color-white);
@@ -958,6 +968,62 @@ nav,
 .area-vertical-20 {
   min-height: 20vh;
 }
+
+/* Opem Street Map */
+.info {
+  padding: 6px 8px;
+  font-family: Consolas !important;
+  font-size: 14px;
+  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.info h4 {
+  margin: 0 0 5px;
+  color: #777;
+}
+
+.legend {
+  line-height: 18px;
+  color: #555;
+}
+
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+/* Painel */
+#div-flutuante {
+  position: fixed;
+  margin-top: 10vh;
+  height: 80vh;
+  width: 80vw;
+  z-index: 9999;
+  opacity: 0;
+  background-color: #fff;
+  visibility: hidden;
+  transition: all 0.5s ease-in-out;
+}
+
+#div-flutuante.ativa {
+  opacity: 1;
+  visibility: visible;
+}
+
+#div-flutuante .conteudo {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+}
+
 
 @media only screen and (max-width: 992px) {
 
@@ -1020,7 +1086,7 @@ nav,
     margin-top: 0px;
   }
 
-  .map {
+  .map-d {
     height: 250px;
   }
 }

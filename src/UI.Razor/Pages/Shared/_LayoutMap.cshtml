@@ -33,39 +33,24 @@
     <main>
         @RenderBody()
     </main>
-    
+
     <partial name="_StripColors" />
     <footer class="page-footer">
-        <div class="container">
-            <div class="row">
-                <div class="col l6 s12">
-                    <h5 class="white-text">indicadores.net</h5>
-                    <p class="grey-text text-lighten-4">O jeito fácil e simplificado para consultar indicadores
-                        empresariais dos municípios!</p>
-                </div>
-                <div class="col l4 offset-l2 s12">
-                    <h5 class="white-text"><a class="grey-text text-lighten-4 right" href="#_smooth"
-                            title="Ir para o Topo da pagina"><i class="material-icons">stat_3</i></a></h5>
-                    <ul>
-                        <li><a class="grey-text text-lighten-3"
-                                href="https://www.linkedin.com/in/fernando-roberto-almeida/" target="_blank"><img
-                                    src="~/svg/linkedin.svg" alt="linkedin" style="width: 28px;"></a></li>
-                        <li><a class="grey-text text-lighten-3" href="https://github.com/fernandoralmeida/s-indicadores"
-                                target="_blank"><img src="~/svg/github.svg" style="width: 28px;" alt="github"></a></li>
-                        <li><a class="grey-text text-lighten-3" href="#!" target="_blank"><img src="~/svg/instagram.svg"
-                                    style="width: 28px;" alt="instagram"></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
         <div class="footer-copyright">
             <div class="container">
-                &copy; 2023 - FRA
-                <a class="grey-text text-lighten-4 right" asp-page="/Privacy">Politica de Privacidade</a>
+                <a href="#" title="Copyright @DateTime.Now.Year - FRA">
+                    <img src="~/svg/copyright.svg" style="width: 22px;" alt="Copyright @DateTime.Now.Year - FRA"></a> 
+                <a href="https://www.linkedin.com/in/fernando-roberto-almeida/"
+                    target="_blank" title="www.linkedin.com/in/fernando-roberto-almeida"><img src="~/svg/linkedin.svg" alt="linkedin" style="width: 22px;"></a>
+                <a href="https://github.com/fernandoralmeida/s-indicadores"
+                    target="_blank" title="github.com/fernandoralmeida/s-indicadores"><img src="~/svg/github.svg" style="width: 22px;" alt="github"></a>
+                <a href="#!" target="_blank"><img src="~/svg/instagram.svg"
+                        style="width: 22px;" alt="instagram"></a>
+                <a class="right" asp-page="/Privacy" title="Politica de Privacidade"><img
+                        src="~/svg/privacypolicyicon.svg" style="width: 22px;" alt="Politica de Privacidade"></a>
             </div>
         </div>
     </footer>
-
     <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/materialize/js/materialize.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

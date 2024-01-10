@@ -6,7 +6,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using IDN.Data.Helpers;
 using MongoDB.Driver;
-using MongoDB.Bson;
+using IDN.Services.Empresa.Records;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IDN.Services.Geojson.Services;
 
@@ -15,12 +16,36 @@ public class ServiceGeojson : IServiceGeojson
     public async Task<VGeojson> DoGeojson(string? municipio = null)
     {
         var _mongoDB = Factory<VFeatures>.NewDataMongoDB();
+        var _mongoDBE = Factory<REmpresas>.NewDataMongoDB();
         var _filter = municipio == null ? null : Builders<VFeatures>.Filter.Eq(e => e.Properties!.Name, municipio);
+        var _m2 = municipio! == null ? null : municipio.ToUpper();
+        var _efilter = _m2 == null ? null : Builders<REmpresas>.Filter.Eq(e => e.Municipio, _m2);
+        var _feature = new VFeatures();
+        var _features = new List<VFeatures>();
         var _geojson = new VGeojson
         {
-            Type = "FeatureCollection",
-            Features = await _mongoDB.DoListAsync(_filter)
+            Type = "FeatureCollection"//,
+            //Features = await _mongoDB.DoListAsync(_filter)
         };
+
+        var _cities = await _mongoDBE.DoListAsync(_efilter);        
+
+        foreach (var r in await _mongoDB.DoListAsync(_filter))
+        {
+            foreach (var i in _cities.Where(s => s.Municipio!.ToLower() == r.Properties!.Name!.ToLower()))
+            {
+                _feature = r;
+                foreach (var q in i.Quantitativo!.Where(s => s.Key == "Ativa"))
+                {
+                    var _p = (i.Setores!.FirstOrDefault().Value * 100) / q.Value;
+                    _feature.Properties!.Empresas = q.Value;
+                    _feature.Properties!.Setor = $"{i.Setores!.FirstOrDefault().Key} ({_p}%)"; 
+                }
+                _features.Add(_feature);
+            }
+        }
+
+        _geojson.Features = _features;
 
         return _geojson;
     }

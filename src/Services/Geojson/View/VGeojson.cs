@@ -13,7 +13,7 @@ public class VGeojson
 
 public class VFeatures
 {
-    public object? _id { get; set; }
+    public Guid _id { get; set; }
     public string? Type { get; set; }
     public VGeometry? Geometry { get; set; }
     public VProperties? Properties { get; set; }
@@ -29,4 +29,6 @@ public class VProperties
 {
     public string? Name { get; set; }
     public string? Geocode { get; set; }
+    public int Empresas { get; set; }
+    public string? Setor { get; set; }
 }
