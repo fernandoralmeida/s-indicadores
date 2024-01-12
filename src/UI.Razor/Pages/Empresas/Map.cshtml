@@ -2,21 +2,56 @@
 @model Empresas.MapModel
 @{
     Layout = "_LayoutMap";
-    ViewData["Title"] = "Indicadores NET";
+    ViewData["Title"] = "Densidade Empresarial do Estado de SP";
 }
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<div id="div-flutuante">
+    <div class="conteudo">
+        <h6>Município: @Model.Cidade?.ToUpper()</h6>
+        <div class="divider"></div>
+        <br />@Model.Empresasativas
+        <ul class="browser_default">
+            <br />Composição produtiva:
+            @foreach (var item in @Model.Setores)
+            {
+                <li>@item.Key @item.Value</li>
+            }
+        </ul>
+        <div class="divider margin-b-10"></div>
+        <a class="btn" href="/maps">Limpar</a>
+        <a asp-page="/Empresas/Index" asp-route-m="@Model.Cidade" class="btn" target="_blank"
+            title="Ver detalhes da cidade @Model.Cidade">Ver Detalhes</a>
+    </div>
+</div>
+
+<div id="div-search" class="valign-wrapper">
+    <input id="input-search" name="input-search" class="browser-default" type="search" 
+        placeholder="Procurar cidade" onkeypress="handle(event)" asp-for="@Model.Cidade" autofocus>
+    <i class="material-icons margin-y-5">search</i>
+</div>
 
 <div id="map" class="map"></div>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<div id="div-flutuante" class="conteudo">
-  <h1>Título da Div</h1>
-  <p>Conteúdo da Div</p>
-</div>
-
 <script>
+
     const divFlutuante = document.getElementById('div-flutuante');
+    const _modelcidade = '@Model.Cidade';
+
+    window.onload = function () {
+        // Verificar se Model.Cidade não é nulo e é uma string
+        if (_modelcidade === '') {
+            // Faça algo se @Model.Cidade não for nulo e for uma string
+            divFlutuante.classList.toggle('off');
+        } else {
+            // Faça algo se @Model.Cidade for nulo ou não for uma string
+            divFlutuante.classList.toggle('ativa');
+        }
+    }
+
     // Criar o mapa Leaflet
     var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
 
@@ -31,10 +66,10 @@
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
         this._div.innerHTML =
-            '<div class="center margin-b-10" style="width:250px;"><img class="margin-t-10 margin-l-10" src="../../svg/idnet-new.svg" style="width:72px;" alt="Indicadores.NET"></div>'
+            '<div class="center margin-b-10"><img class="margin-t-10" src="../../svg/idnet-new.svg" style="width:48px;" alt="Indicadores.NET"><h6>Indicadores.net<h6></div>'
             + '<div class="divider"></div>'
             + (props ?
-                'Município: <span class="text-uppercase">' + props.name + '</span><br />Empresas: ' + props.empresas + '<br />Setor: ' + props.setor : 'Densidade Empresarial de SP');
+                'Município: <span class="text-uppercase">' + props.name + '</span><br />Empresas: ' + props.empresas + '<br />Setor: ' + props.setor : 'Densidade Empresarial do Estado de SP');
     };
 
     function getColor(d) {
@@ -48,7 +83,7 @@
                                     '#FFEDA0';
     }
 
-    // Função para estilizar as áreas GeoJSON com base no valor da propriedade "valor"
+    // Função para estilizar as áreas GeoJSON com base no valor da propriedade "empresas"
     function style(feature) {
         return {
             fillColor: getColor(feature.properties.empresas),
@@ -60,9 +95,13 @@
         };
     }
 
-    function zoomToFeature(e) {        
-        map.fitBounds(e.target.getBounds());
-        divFlutuante.classList.toggle('ativa');
+    function zoomToFeature(e) {
+        //map.fitBounds(e.target.getBounds());
+        var layer = e.target;
+        //divFlutuante.classList.toggle('ativa');
+        const url = '/maps/' + layer.feature.properties.name;
+        // Redireciona para a página interna
+        location.href = url;
     }
 
     function highlightFeature(e) {
@@ -144,4 +183,16 @@
             map.fitBounds(geojsonLayer.getBounds());
         })
         .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
+
+    function handle(e) {
+        if (e.keyCode === 13) {
+            var v = $("#input-search").val();
+            if (v === "")
+                return false;
+
+            const url = '/maps/' + v;
+            location.href = url;
+        }
+    }
+
 </script>

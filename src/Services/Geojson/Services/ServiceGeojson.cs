@@ -16,19 +16,19 @@ public class ServiceGeojson : IServiceGeojson
     public async Task<VGeojson> DoGeojson(string? municipio = null)
     {
         var _mongoDB = Factory<VFeatures>.NewDataMongoDB();
-        var _mongoDBE = Factory<REmpresas>.NewDataMongoDB();
+        //var _mongoDBE = Factory<REmpresas>.NewDataMongoDB();
         var _filter = municipio == null ? null : Builders<VFeatures>.Filter.Eq(e => e.Properties!.Name, municipio);
-        var _m2 = municipio! == null ? null : municipio.ToUpper();
-        var _efilter = _m2 == null ? null : Builders<REmpresas>.Filter.Eq(e => e.Municipio, _m2);
-        var _feature = new VFeatures();
-        var _features = new List<VFeatures>();
+        //var _m2 = municipio! == null ? null : municipio.ToUpper();
+        //var _efilter = _m2 == null ? null : Builders<REmpresas>.Filter.Eq(e => e.Municipio, _m2);
+        //var _feature = new VFeatures();
+        //var _features = new List<VFeatures>();
         var _geojson = new VGeojson
         {
-            Type = "FeatureCollection"//,
-            //Features = await _mongoDB.DoListAsync(_filter)
+            Type = "FeatureCollection",
+            Features = await _mongoDB.DoListAsync(_filter)
         };
-
-        var _cities = await _mongoDBE.DoListAsync(_efilter);        
+        /*
+        var _cities = await _mongoDBE.DoListAsync(_efilter);
 
         foreach (var r in await _mongoDB.DoListAsync(_filter))
         {
@@ -39,14 +39,14 @@ public class ServiceGeojson : IServiceGeojson
                 {
                     var _p = (i.Setores!.FirstOrDefault().Value * 100) / q.Value;
                     _feature.Properties!.Empresas = q.Value;
-                    _feature.Properties!.Setor = $"{i.Setores!.FirstOrDefault().Key} ({_p}%)"; 
+                    _feature.Properties!.Setor = $"{i.Setores!.FirstOrDefault().Key} ({_p}%)";
                 }
                 _features.Add(_feature);
             }
         }
 
         _geojson.Features = _features;
-
+        */
         return _geojson;
     }
 
@@ -185,6 +185,7 @@ public class ServiceGeojson : IServiceGeojson
     public async Task<IEnumerable<VFeatures>> NewReadFileGeojsonAsync()
     {
         var _features = new List<VFeatures>();
+        var _mongoDBE = Factory<REmpresas>.NewDataMongoDB();
 
         //var _file = @"BC250_2017_Municipio_A.json";
         var _file = @"/home/dbn/sources/s-indicadores/files/BC250_2017_Municipio_A.json";
@@ -197,11 +198,13 @@ public class ServiceGeojson : IServiceGeojson
         // Acessando a lista de features
         JArray features = (JArray)jsonObject!["features"]!;
 
+        var _cities = await _mongoDBE.DoListAsync(null);
         // Iterando sobre cada feature
-        // Geocodigo com inicio 35 = Estado de São Paulo
+        // Geocodigo com inicio 35 = Estado de São Paulo    
         foreach (JObject feature in features.Cast<JObject>()
                                             .Where(s => s!["properties"]!["geocodigo"]!.ToString().StartsWith("35")))
         {
+
             var _feature = new VFeatures
             {
                 // Acessando feature
@@ -212,6 +215,16 @@ public class ServiceGeojson : IServiceGeojson
                     Geocode = feature!["properties"]!["geocodigo"]!.ToString()
                 }
             };
+
+            foreach (var i in _cities.Where(s => s.Municipio!.ToLower() == _feature.Properties!.Name!.ToLower()))
+            {
+                foreach (var q in i.Quantitativo!.Where(s => s.Key == "Ativa"))
+                {
+                    var _p = (i.Setores!.FirstOrDefault().Value * 100) / q.Value;
+                    _feature.Properties!.Empresas = q.Value;
+                    _feature.Properties!.Setor = $"{i.Setores!.FirstOrDefault().Key} ({_p}%)";
+                }                
+            }
 
             // Acessando o tipo de geometria
             string tipoGeometria = (string)feature!["geometry"]!["type"]!;

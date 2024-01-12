@@ -2,6 +2,7 @@
 using IDN.Services.Municipio.Interfaces;
 using IDN.Services.Municipio.View;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc;
 
 namespace UI.Razor.Pages;
 
@@ -17,9 +18,10 @@ public class IndexModel : PageModel
         _municipio = municipio;
     }
 
-    public async Task OnGetAsync()
+    public IActionResult OnGetAsync()
     {
-        var _list = await _municipio.DoMicroRegiaoJauAsync();
-        ListaMunicipios = new SelectList(_list.OrderBy(o => o.Descricao), nameof(VMunicipio.Descricao), nameof(VMunicipio.Descricao), null);
+        //var _list = await _municipio.DoMicroRegiaoJauAsync();
+        //ListaMunicipios = new SelectList(_list.OrderBy(o => o.Descricao), nameof(VMunicipio.Descricao), nameof(VMunicipio.Descricao), null);
+        return RedirectToPage("/Empresas/Map");
     }
 }

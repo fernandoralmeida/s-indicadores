@@ -2,7 +2,7 @@
 @model Empresas.IndexModel
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Indicadores NET";
+    ViewData["Title"] = @Model.MunicipioAtivo?.ToUpper();
 }
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -10,6 +10,7 @@
 
 <header>
     <partial name="_Navs" model="Model.NavModel" />
+    <div class="bg-color-dark navbar-extended-top"></div>
     <div class="bg-degrade-dark navbar-extended"></div>
 </header>
 
@@ -38,7 +39,7 @@
                         </select>
                     </div>
                 </form>
-                <div id="map" class="map"></div>
+                <div id="map" class="map-d"></div>
             </div>
             <div class="card-reveal">
                 <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
@@ -154,7 +155,7 @@
             </div>
         </div>
         <div class="column-p0 font-size-16 margin-t-b-10">
-            Geral Totalizado do Municipio<i class="material-icons left">
+           Empresas Totalizadas<i class="material-icons left">
                 stat_minus_3
             </i>
         </div>

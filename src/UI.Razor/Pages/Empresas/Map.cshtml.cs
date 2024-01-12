@@ -1,18 +1,45 @@
+using IDN.Data.Helpers;
+using IDN.Services.Empresa.Records;
+using IDN.Services.Municipio.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MongoDB.Driver;
 
 namespace UI.Razor.Pages.Empresas;
 
 public partial class MapModel : PageModel
 {
     public MapModel()
-    { }
+    {  }
 
     [BindProperty(SupportsGet = true)]
     public string? Cidade { get; set; }
-    public void OnGetAsync(string? m)
+    public IEnumerable<REmpresas>? LReports { get; set; }
+    public string? Empresasativas { get; set; }
+    public IEnumerable<KeyValuePair<string, string>> Setores { get; set; } = new List<KeyValuePair<string, string>>();
+    public async Task OnGetAsync(string? m)
     {
         var param = m?.ToLower();
         Cidade = param;
+        var param2 = param?.ToUpper();
+        await LoadData(param2);
+    }
+
+    public async Task LoadData(string? param)
+    {
+        var _mongoE = Factory<REmpresas>.NewDataMongoDB();
+        var _filter = Builders<REmpresas>.Filter.Eq(e => e.Municipio, param);
+        LReports = await _mongoE.DoListAsync(_filter);
+
+        foreach (var report in LReports)
+        {
+            foreach (var q in report.Quantitativo!.Where(s => s.Key == "Ativa"))
+            {
+                Empresasativas = $"Empresas ativas: {q.Value}";
+
+                Setores = from s in report.Setores
+                          select (new KeyValuePair<string, string>(s.Key, $"({s.Value * 100 / q.Value}%)"));
+            }
+        }
     }
 }

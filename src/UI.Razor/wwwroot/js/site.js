@@ -5,6 +5,7 @@
 // Write your JavaScript code.
 
 //
+/**/
 window.addEventListener("scroll", function () {
     const navbar = document.querySelector(".navbar");
     const _nav = this.document.querySelector('nav');
@@ -116,6 +117,5 @@ $(document).ready(function () {
         $("#loader").show();
     });
 });
-
 
 

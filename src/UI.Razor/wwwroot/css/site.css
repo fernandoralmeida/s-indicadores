@@ -129,6 +129,13 @@ main {
   flex: 1 0 auto;
 }
 
+iframe {
+  border: 0px solid transparent;
+  width: 100%;
+  height: 100%;
+  margin-bottom: -50px;
+}
+
 .page-footer {
   padding-top: 0px;
   color: var(--color-light);
@@ -262,7 +269,7 @@ main {
   padding-bottom: 60px;
   background-color: rgba(255, 255, 255, .7);
   color: var(--color-dark);
-  z-index: 999;
+  z-index: 99990;
   overflow-y: auto;
   will-change: transform;
   -webkit-backface-visibility: hidden;
@@ -276,11 +283,16 @@ nav {
   width: 100%;
 }
 
+.nav-city {
+  margin-left: 45vw;
+}
+
 .nav-float {
   width: 90%;
   margin-left: 5%;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
+  z-index: 99999;
 }
 
 nav ul a {
@@ -302,9 +314,17 @@ nav i.material-icons {
   line-height: 64px;
 }
 
+.navbar-extended-top {
+  margin-top: -64px;
+  position: fixed;
+  z-index: -2;
+  height: 64px;
+  width: 100%;
+}
+
 .navbar-extended {
   display: flex;
-  position: absolute;
+  position: fixed;
   z-index: -2;
   height: calc(100vh / 1.5);
   width: 100%;
@@ -317,7 +337,7 @@ nav i.material-icons {
   display: flex;
   position: fixed;
   width: 100%;
-  z-index: 997;
+  z-index: 99991;
   margin-top: -10px;
   background-color: var(--color-load-dark);
   backdrop-filter: blur(5px);
@@ -330,11 +350,48 @@ nav i.material-icons {
   margin: auto;
 }
 
+#div-flutuante {
+  position: fixed;
+  margin-top: 15vh;
+  margin-left: 10vw;
+  z-index: 9999;
+  opacity: 0;
+  background-color: var(--color-light);
+  background-color: rgba(240, 245, 255, 0.8);
+  visibility: hidden;
+  transition: all 0.5s ease-in-out;
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+}
+
+#div-flutuante.ativa {
+  opacity: 1;
+  visibility: visible;
+}
+
+#div-flutuante.off {
+  opacity: 0;
+  visibility: hidden;
+}
+
+#div-flutuante .conteudo {
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.input-field {
+  position: relative;
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
 
 .blackboxload {
   display: flex;
   position: fixed;
-  z-index: 997;
+  z-index: 99999;
   height: 100vh;
   width: 100%;
   background-color: var(--color-load-dark);
@@ -427,6 +484,53 @@ nav .brand-logo.right {
 */
 
 /**** Controls ****/
+input.browser-default {
+  display: block;
+}
+
+/** search **/
+#div-search {
+  border: 0px solid var(--color-white);
+  display: flex;
+  position: fixed;
+  z-index: 9999;
+  margin-left: 55px;
+  margin-top: 10px;
+  padding: 5px;
+  background-color: rgba(240, 245, 255, 0.4);
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  backdrop-filter: blur(5px);
+}
+
+#input-search {
+  font-family: Consolas !important;
+  border: 0px solid white;
+  padding: 10px;
+  color: var(--color-grey);
+  border-radius: 4px;
+  outline: none;
+  background-color: var(--color-white);
+}
+
+#input-search:hover {
+  border: 0px solid white;
+}
+
+#input-search:focus,
+#input-search:active {
+  border: 0px solid white;
+  color: var(--color-dark);
+}
+
+#div-search:focus-within {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+
+/** end search **/
+
 .select-start {
   background-color: rgba(0, 0, 0, .1);
   padding: 10px;
@@ -679,7 +783,7 @@ nav,
   left: 0;
   top: 100%;
   height: 100%;
-  z-index: 3;
+  z-index: 501;
   display: none;
 }
 
@@ -871,6 +975,10 @@ nav,
   margin: 20px;
 }
 
+.margin-a-5 {
+  margin: 5px;
+}
+
 .margin-auto {
   margin: auto;
 }
@@ -917,6 +1025,11 @@ nav,
 
 .margin-r-20 {
   margin-right: 20px;
+}
+
+.margin-y-5 {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 /**** Texto *****/
@@ -970,24 +1083,31 @@ nav,
 }
 
 /* Opem Street Map */
+.leaflet-top,
+.leaflet-bottom {
+  position: absolute;
+  z-index: 500 !important;
+  pointer-events: none;
+}
+
 .info {
   padding: 6px 8px;
   font-family: Consolas !important;
   font-size: 14px;
-  background: white;
-  background: rgba(255, 255, 255, 0.8);
+  background-color: rgba(240, 245, 255, 0.8);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
+  backdrop-filter: blur(5px);
 }
 
 .info h4 {
   margin: 0 0 5px;
-  color: #777;
+  color: var(--color-dark);
 }
 
 .legend {
   line-height: 18px;
-  color: #555;
+  color: var(--color-dark);
 }
 
 .legend i {
@@ -996,32 +1116,6 @@ nav,
   float: left;
   margin-right: 8px;
   opacity: 0.7;
-}
-
-/* Painel */
-#div-flutuante {
-  position: fixed;
-  margin-top: 10vh;
-  height: 80vh;
-  width: 80vw;
-  z-index: 9999;
-  opacity: 0;
-  background-color: #fff;
-  visibility: hidden;
-  transition: all 0.5s ease-in-out;
-}
-
-#div-flutuante.ativa {
-  opacity: 1;
-  visibility: visible;
-}
-
-#div-flutuante .conteudo {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 10px;
 }
 
 
@@ -1088,5 +1182,11 @@ nav,
 
   .map-d {
     height: 250px;
+  }
+
+  nav .brand-logo {
+    left: 92%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
   }
 }

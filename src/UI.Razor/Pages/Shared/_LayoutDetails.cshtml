@@ -4,10 +4,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Indicadores.net - @ViewData["Title"]</title>
+    <title>@ViewData["Title"]</title>
     <link rel="shortcut icon" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/lib/google/material-symbols-sharp.css" />
-    <link rel="stylesheet" href="~/lib/materialize/css/materialize.min.css" />    
+    <link rel="stylesheet" href="~/lib/materialize/css/materialize.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/apexcharts/apexcharts.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
 </head>
 
 <body id="_smooth" class="bg-color-light">
@@ -29,29 +33,18 @@
         </div>
     </div>
 
-    <main>
+    <!--<div class="bg-image-glass"></div>-->
+    <partial name="_StripColors" />
+    <main style="margin-bottom:20px;">
         @RenderBody()
     </main>
-
     <partial name="_StripColors" />
-    <footer class="page-footer">
-        <div class="footer-copyright">
-            <div class="container">
-                <a href="#" title="Copyright @DateTime.Now.Year - FRA">
-                    <img src="~/svg/copyright.svg" style="width: 22px;" alt="Copyright @DateTime.Now.Year - FRA"></a> 
-                <a href="https://www.linkedin.com/in/fernando-roberto-almeida/"
-                    target="_blank" title="www.linkedin.com/in/fernando-roberto-almeida"><img src="~/svg/linkedin.svg" alt="linkedin" style="width: 22px;"></a>
-                <a href="https://github.com/fernandoralmeida/s-indicadores"
-                    target="_blank" title="github.com/fernandoralmeida/s-indicadores"><img src="~/svg/github.svg" style="width: 22px;" alt="github"></a>
-                <a href="#!" target="_blank"><img src="~/svg/instagram.svg"
-                        style="width: 22px;" alt="instagram"></a>
-                <a class="right" asp-page="/Privacy" title="Politica de Privacidade"><img
-                        src="~/svg/privacypolicyicon.svg" style="width: 22px;" alt="Politica de Privacidade"></a>
-            </div>
-        </div>
-    </footer>
+
     <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/materialize/js/materialize.min.js"></script>
+    <script type="text/javascript" src="~/lib/apexcharts/apexcharts.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>
