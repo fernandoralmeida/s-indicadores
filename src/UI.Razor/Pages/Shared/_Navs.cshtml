@@ -15,11 +15,11 @@
 <div class="navbar">
     <nav class="nav-extended z-depth-0 bg-color-dark">
         <div class="nav-wrapper">
-            <div class="brand-logo"><img class="margin-t-10 margin-l-10" src="~/svg/idnet-new-light-38.svg"
+            <div class="brand-logo"><img class="margin-t-10" src="~/svg/idnet-new-light-38.svg"
                     alt="Indicadores.NET"></div>
             <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-            <div class="hide-on-med-and-down margin-l-60 font-size-18 left text-color-light">Indicadores.net</div>
-            <div class="margin-l-10 font-size-18 left text-color-light">@Model.Municipio?.ToUpper()-SP</div>
+            <div class="hide-on-med-and-down margin-l-60 font-size-18 left text-color-light margin-r-10">Indicadores.net</div>
+            <div class="font-size-18 left text-color-light">@Model.Municipio?.ToUpper()-SP</div>
             <ul class="right hide-on-med-and-down">
                 <li><a asp-page="/Index"><i class="material-icons">home</i></a></li>
                 <li><a asp-page="/About"><i class="material-icons">info</i></a></li>
@@ -39,6 +39,7 @@
 </div>
 
 <ul class="sidenav" id="mobile-demo">
+    <li><a asp-page="/Index"><i class="material-icons">arrow_back</i></a></li>
     <li><a asp-page="/Index"><i class="material-icons">home</i></a></li>
     <li><a asp-page="/About"><i class="material-icons">info</i></a></li>
     <li><a asp-page="/Info"><i class="material-icons">help</i></a></li>

@@ -469,6 +469,13 @@ nav i.material-icons {
   z-index: 1;
 }
 
+
+nav .brand-logo {
+  position: absolute;
+  display: inline-block;
+  font-size: 2.1rem;
+  margin-left: 10px;
+}
 /*
 nav .brand-logo {
   vertical-align: middle;
@@ -512,6 +519,7 @@ input.browser-default {
   border-radius: 4px;
   outline: none;
   background-color: var(--color-white);
+  width: 100%;
 }
 
 #input-search:hover {
@@ -814,7 +822,8 @@ nav,
   flex-direction: row;
   justify-content: space-between;
   gap: 10px;
-  margin: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
   width: calc(100% - 20px);
 }
 
@@ -1023,6 +1032,10 @@ nav,
   margin-bottom: 50px;
 }
 
+.margin-r-10 {
+  margin-right: 10px;
+}
+
 .margin-r-20 {
   margin-right: 20px;
 }
@@ -1155,7 +1168,6 @@ nav,
   }
 
   .column,
-  .column-container,
   .flex-row {
     flex-direction: column;
   }
@@ -1167,6 +1179,16 @@ nav,
   .column-p7,
   .column-p8 {
     width: 100%;
+  }
+
+  .column-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: calc(100% - 20px);
   }
 
   .borderl-l,
@@ -1189,4 +1211,67 @@ nav,
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
   }
+
+  .info {
+    display: none;
+    padding: 6px 8px;
+    font-family: Consolas !important;
+    font-size: 14px;
+    background-color: rgba(240, 245, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    backdrop-filter: blur(5px);
+  }
+
+  .legend {
+    display: none;
+    line-height: 18px;
+    color: var(--color-dark);
+  }
+
+  #div-search {
+    border: 0px solid var(--color-white);
+    display: flex;
+    position: fixed;
+    z-index: 9998;
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-top: 15px;
+    width: calc(100vw - 30px);
+    padding: 5px;
+    background-color: rgba(240, 245, 255, 0.4);
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    backdrop-filter: blur(5px);
+  }
+
+  #div-flutuante {
+    position: fixed;
+    margin-top: 75px;
+    margin-left: 15px;
+    margin-right: 15px;
+    width: calc(100vw - 30px);
+    z-index: 9999;
+    opacity: 0;
+    background-color: var(--color-light);
+    background-color: rgba(240, 245, 255, 0.8);
+    visibility: hidden;
+    transition: all 0.5s ease-in-out;
+    border-radius: 6px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+  }
+
+  .leaflet-top {
+    display: none;
+  }
+
+  nav .brand-logo {
+    position: absolute;
+    display: inline-block;
+    font-size: 2.1rem;
+    margin-left: 0px;
+  }
+
 }

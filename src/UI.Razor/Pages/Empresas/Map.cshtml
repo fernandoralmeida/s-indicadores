@@ -9,6 +9,12 @@
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<div id="div-search" class="valign-wrapper">
+    <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
+        onkeypress="handle(event)" asp-for="@Model.Cidade" autofocus>
+    <i class="material-icons margin-y-5">search</i>
+</div>
+
 <div id="div-flutuante">
     <div class="conteudo">
         <h6>Município: @Model.Cidade?.ToUpper()</h6>
@@ -22,16 +28,10 @@
             }
         </ul>
         <div class="divider margin-b-10"></div>
-        <a class="btn" href="/maps">Limpar</a>
-        <a asp-page="/Empresas/Index" asp-route-m="@Model.Cidade" class="btn" target="_blank"
-            title="Ver detalhes da cidade @Model.Cidade">Ver Detalhes</a>
+        <a class="btn" href="/maps">Voltar</a>
+        <a asp-page="/Empresas/Index" asp-route-m="@Model.Cidade" class="btn"
+            title="Ver detalhes da cidade @Model.Cidade">Ver Mais</a>
     </div>
-</div>
-
-<div id="div-search" class="valign-wrapper">
-    <input id="input-search" name="input-search" class="browser-default" type="search" 
-        placeholder="Procurar cidade" onkeypress="handle(event)" asp-for="@Model.Cidade" autofocus>
-    <i class="material-icons margin-y-5">search</i>
 </div>
 
 <div id="map" class="map"></div>
@@ -53,7 +53,7 @@
     }
 
     // Criar o mapa Leaflet
-    var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
+    var map = L.map('map').setView([-22.902778, -48.28125], 4); // Centro inicial do mapa do estado de sp
 
     var info = L.control();
 
