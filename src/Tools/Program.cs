@@ -1,4 +1,6 @@
-﻿namespace IDN.Tools;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+
+namespace IDN.Tools;
 
 class Program
 {
@@ -9,8 +11,10 @@ class Program
         {
             Console.WriteLine("Tools V1.0");
             Console.WriteLine("------------------------");
-            Console.WriteLine("1 Update Estatistics");
-            Console.WriteLine("2 Update Geocodes");
+            Console.WriteLine("1 Create MigraData_RFB");
+            Console.WriteLine("2 Create IndicadoresNet");
+            Console.WriteLine("3 Update Estatistics");
+            Console.WriteLine("4 Update Geocodes");
             Console.WriteLine("------------------------");
             Console.WriteLine("0 Exit App");
             string input = Console.ReadLine()!;
@@ -18,10 +22,18 @@ class Program
             switch (choice)
             {
                 case 1:
-                    await Estatistics.Update();
+                    await Companies.CreateMigraData_RFB(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
                     break;
 
                 case 2:
+                    await Geojson.GoeCidades();
+                    break;
+
+                case 3:
+                    await Estatistics.Update();
+                    break;
+
+                case 4:
                     await Geojson.GoeCidades();
                     break;
 

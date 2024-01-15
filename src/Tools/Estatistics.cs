@@ -39,11 +39,11 @@ public static class Estatistics
             await _mongoDB2.InsertManyAsync(_list2);
 
             _processtimer.Stop();
-            Console.WriteLine($"{cidade} : {_list2.Count} : {_processtimer.Elapsed:hh\\:mm\\:ss}");
+            Console.WriteLine($"{cidade} : {_list2.Count} : {_processtimer.Elapsed:hh\\:mm\\:ss\\.fff}");
             GC.SuppressFinalize(_result);
         }
 
         _timer.Stop();
-        Console.WriteLine($"Time process : {_timer.Elapsed:hh\\:mm\\:ss}");
+        Console.WriteLine($"Time process : {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
     }
 }
