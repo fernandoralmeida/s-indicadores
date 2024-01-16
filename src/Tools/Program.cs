@@ -22,7 +22,23 @@ class Program
             switch (choice)
             {
                 case 1:
+                    /*
                     await Companies.CreateMigraData_RFB(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    await Companies.DoCNAE(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    await Companies.DoMotivo(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    await Companies.DoMunicipios(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    await Companies.DoNaturezaJuridica(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    await Companies.DoPaises(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    await Companies.DoQualificacaoSocios(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    
+                    await Companies.DoEstabelecimentos(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    
+                    await Companies.DoEmpresas(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    await Companies.DoSocios(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    await Companies.DoSimples(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    */
+                    await Companies.CreateIndicadoresNet(DBConfig.IndicadoresNET, DBConfig.DS_POSTGRES);
+                    await Companies.DoIndicadores(DBConfig.MigraData_RFB, DBConfig.IndicadoresNET, DBConfig.DS_POSTGRES);
                     break;
 
                 case 2:

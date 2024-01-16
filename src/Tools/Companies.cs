@@ -11,8 +11,6 @@ namespace IDN.Tools;
 
 public static class Companies
 {
-    private static readonly IServiceCoreEmpresa? _serviceEmpresa;
-    private static readonly IMemoryCache? _memoryCache;
     private static readonly NpgsqlParameterCollection ParameterCollection = new NpgsqlCommand().Parameters;
     public static void ClearParameters()
     {
@@ -125,6 +123,7 @@ public static class Companies
                 await WriteAsync(SqlScript.MigraData_RFB, database, datasource);
                 Console.WriteLine($"Tables successfully created!");
                 await WriteAsync(SqlScript.Create_view_postgres_migradata_rfb, database, datasource);
+                await WriteAsync(SqlScript.Create_vew_municipios, database, datasource);
                 Console.WriteLine($"View successfully created!");
             }
             catch (Exception ex)
@@ -727,71 +726,77 @@ public static class Companies
 
     public static async Task CreateIndicadoresNet(string database, string datasource)
     {
-        string connectionString = $"{datasource}Database={database};";
+        string connectionString = $"{datasource};Database=postgres;";
         try
         {
-            using var conn = new NpgsqlConnection(connectionString);
-            conn.Open();
-            Console.WriteLine($"{database} OK!");
-        }
-        catch
-        {
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                conn.Open();
+                using var cmd = new NpgsqlCommand($"CREATE DATABASE {database}", conn);
+                cmd.ExecuteScalar();
+                Console.WriteLine($"{database} successfully created!");
+            }
+
             try
             {
-                using (var conn = new NpgsqlConnection(connectionString))
-                {
-                    conn.Open();
-                    using (var cmd = new NpgsqlCommand($"CREATE DATABASE {database}", conn))
-                    {
-                        cmd.ExecuteScalar();
-                        Console.WriteLine($"{database} successfully created!");
-                    }
-                }
-
-                await WriteAsync(SqlScript.MigraData_RFB, database, datasource);
+                await WriteAsync(SqlScript.Create_Table_Empresas_IndicadoresNet_pstg, database, datasource);
+                Console.WriteLine($"Tables successfully created!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{ex.Message}: Database OK!");
+                Console.WriteLine($"Erro: {ex.Message}:");
             }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro: {ex.Message}");
         }
     }
 
     public static async Task DoIndicadores(string databaseOut, string databaseIn, string datasource)
     {
-        var _cidades = new ServiceEmpresa(_serviceEmpresa!, _memoryCache!);
+        var connectionString = $"{datasource}Database={databaseIn};";
         var tableName = "Empresas";
 
         var _timer = new Stopwatch();
         _timer.Start();
 
-        var _count = 0;
-        var _trows = 0;
-
-        Console.WriteLine($"Starting Migrate to Indicadores");
+        Console.WriteLine($"Populate Indicadores");
 
         try
         {
-            foreach (var cidade in await _cidades.DoListMunicipiosEstadoSP())
+            var _count = 0;
+            var _trows = 0;
+            Console.WriteLine($"Reading Database");
+            var _municipios = await ReadAsync(SqlCommands.ViewCommand("view_municipios"), databaseOut, datasource);
+
+            foreach (DataRow cidade in _municipios.Rows)
             {
                 _count++;
+                
                 var _processtimer = new Stopwatch();
+                
                 _processtimer.Start();
+                
                 ClearParameters();
-                AddParameters("@Municipio", cidade);
-                var _dtable = await ReadAsync(SqlCommands.ViewCommand("view_empresas_by_municipio"), databaseOut, datasource);
+                
+                AddParameters("@Municipio", cidade[0]);
+                
+                Console.WriteLine($"Reading {cidade[0]}");
+                
+                var _dtable = await ReadAsync(SqlCommands.ViewCommandParam("view_empresas_by_municipio"), databaseOut, datasource);
+                
                 _trows += _dtable.Rows.Count;
 
-                Console.WriteLine($"M: {cidade} | Rows: {_dtable.Rows.Count}");
+                Console.WriteLine($"M: {cidade[0]} | Rows: {_dtable.Rows.Count}");
 
-                await InsertDataBulkCopy(databaseIn, tableName, _dtable);
-
-                Console.WriteLine($"M: {cidade} | Rows Migrated: {_dtable.Rows.Count} | Time: {_processtimer.Elapsed:hh\\:mm\\:ss}");
-                _processtimer.Start();
+                await InsertDataBulkCopy(connectionString, tableName, _dtable);
+                _processtimer.Stop();
+                Console.WriteLine($"M: {cidade[0]} | Rows Migrated: {_dtable.Rows.Count} | Time: {_processtimer.Elapsed:hh\\:mm\\:ss}");
             }
 
             _timer.Stop();
-            Console.WriteLine($"Cities: {_count} | Rows: {_trows} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Console.WriteLine($"M: {_count} Rows Migrated: {_trows} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {

@@ -137,8 +137,8 @@ INNER JOIN NaturezaJuridica njd ON emp.NaturezaJuridica = njd.Codigo
 INNER JOIN Municipios mps ON est.Municipio = mps.Codigo
 LEFT JOIN Simples snl ON est.CNPJBase = snl.CNPJBase";
 
-public static string Create_view_postgres_migradata_rfb => 
-@"CREATE OR REPLACE VIEW public.view_empresas_by_municipio
+    public static string Create_view_postgres_migradata_rfb =>
+    @"CREATE OR REPLACE VIEW public.view_empresas_by_municipio
  AS
  SELECT (emp.cnpjbase::text || est.cnpjdv::text) || est.cnpjordem::text AS cnpj,
     emp.razaosocial,
@@ -175,11 +175,7 @@ ALTER TABLE public.view_empresas_by_municipio
     OWNER TO postgres;";
 
     public static string Create_Table_Empresas_IndicadoresNet =>
-    @"
-    USE [www_indicadores]
-
-IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Empresas')
-BEGIN
+    @"    
 CREATE TABLE [Empresas] (
     [Id] uniqueidentifier NOT NULL,
     [CNPJ] varchar(14) NULL,
@@ -207,7 +203,49 @@ CREATE TABLE [Empresas] (
     [DataOpcaoMEI] varchar(8) NULL,
     [DataExclusaoMEI] varchar(8) NULL,
     CONSTRAINT [PK_Empresas] PRIMARY KEY ([Id])
-);
-END;";
+);";
+
+
+    //Id UUID NOT NULL,
+    public static string Create_Table_Empresas_IndicadoresNet_pstg =>
+    @"    
+CREATE TABLE Empresas (    
+    CNPJ varchar(14) NULL,
+    RazaoSocial varchar(255) NULL,
+    NaturezaJuridica varchar(255) NULL,
+    CapitalSocial varchar(255) NULL,
+    PorteEmpresa varchar(2) NULL,
+    IdentificadorMatrizFilial varchar(1) NULL,
+    NomeFantasia varchar(255) NULL,
+    SituacaoCadastral varchar(2) NULL,
+    DataSituacaoCadastral varchar(8) NULL,
+    DataInicioAtividade varchar(8) NULL,
+    CnaeFiscalPrincipal varchar(7) NULL,
+    CnaeDescricao varchar(255) NULL,
+    Logradouro varchar(255) NULL,
+    Numero varchar(255) NULL,
+    Bairro varchar(255) NULL,
+    CEP varchar(255) NULL,
+    UF varchar(2) NULL,
+    Municipio varchar(50) NULL,
+    OpcaoSimples varchar(1) NULL,
+    DataOpcaoSimples varchar(8) NULL,
+    DataExclusaoSimples varchar(8) NULL,
+    OpcaoMEI varchar(1) NULL,
+    DataOpcaoMEI varchar(8) NULL,
+    DataExclusaoMEI varchar(8) NULL    
+);";
+
+    public static string Create_vew_municipios =>
+    @"CREATE OR REPLACE VIEW public.view_municipios
+ AS
+ SELECT mps.descricao AS municipio
+   FROM estabelecimentos est
+     JOIN municipios mps ON est.municipio::text = mps.codigo::text
+	 GROUP BY mps.descricao;
+
+ALTER TABLE public.view_municipios
+    OWNER TO postgres;";
+    //CONSTRAINT PK_Empresas PRIMARY KEY (Id)
 
 }
