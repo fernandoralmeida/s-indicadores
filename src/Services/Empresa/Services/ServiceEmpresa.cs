@@ -312,6 +312,7 @@ public class ServiceEmpresa : IServiceEmpresa
     public async Task<RCharts> DoReportToChartAsync(REmpresas report)
     {
         return new RCharts(
+            Municipio: report.Municipio!,
             Rotatividade: await Task.Run(() =>
             {
                 string _rotatividade_emp = string.Empty;
@@ -396,7 +397,7 @@ public class ServiceEmpresa : IServiceEmpresa
                         portefiscal[i, j] = "0";
 
                 int a = 0;
-                foreach (var item in report.Porte!.OrderBy(s => s.Key.Length))
+                foreach (var item in report.Porte!.Where(s => s.Key != "N/I").OrderBy(s => s.Key.Length))
                 {
 
                     int b = 0;

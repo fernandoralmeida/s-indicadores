@@ -10,6 +10,7 @@ config/va.sh
 publish/
 
 # User-specific files
+geojson.json
 *.bin
 *.rsuser
 *.suo

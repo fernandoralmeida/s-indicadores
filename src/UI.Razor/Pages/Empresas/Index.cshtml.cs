@@ -3,7 +3,6 @@ using IDN.Services.Empresa.Interfaces;
 using IDN.Services.Empresa.Records;
 using System.Diagnostics;
 using UI.Razor.Pages.Shared;
-using IDN.Services.Municipio.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
@@ -16,7 +15,6 @@ public partial class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel>? _logger;
     private readonly IServiceEmpresa? _empresa;
-    private readonly IServiceMunicipio _municipio;
 
     [BindProperty(SupportsGet = true)]
     public string? MunicipioAtivo { get; set; }
@@ -32,12 +30,10 @@ public partial class IndexModel : PageModel
 
     public IndexModel(
         ILogger<IndexModel> logger,
-        IServiceEmpresa empresa,
-        IServiceMunicipio municipio)
+        IServiceEmpresa empresa)
     {
         _logger = logger;
         _empresa = empresa;
-        _municipio = municipio;
     }
 
     public async Task OnGetAsync(string m)
@@ -60,22 +56,14 @@ public partial class IndexModel : PageModel
 
         Local = string.IsNullOrEmpty(ZonaAtiva) ? new string[2] : CRegex().Replace(ZonaAtiva!, "").Split(',');
 
-        var _list = _empresa!.DoStoredProcedure(MunicipioAtivo!.ToUpper());
-
         var _mongoDB = Factory<REmpresas>.NewDataMongoDB();
-        /*
-
-        LReports = string.IsNullOrEmpty(Local[0]) ?
-                        await _empresa!.DoReportEmpresasAsync(_list, null) :
-                        await _empresa!.DoReportEmpresasAsync(_list, s => s.Bairro == Local[0]);
-                        */
 
         var filter = Builders<REmpresas>.Filter.Eq(e => e.Municipio, MunicipioAtivo.ToUpper());
 
         foreach (var item in await _mongoDB.DoListAsync(filter))
         {
             LReports = item;
-            Charts = await _empresa.DoReportToChartAsync(item);
+            Charts = await _empresa!.DoReportToChartAsync(item);
             Zonas = new SelectList(item.EmpresasNovasPorLocal);
         }
 
@@ -84,8 +72,7 @@ public partial class IndexModel : PageModel
         {
             Municipio = MunicipioAtivo,
             Ano = a,
-            Time = $"{temporizador.Elapsed:hh\\:mm\\:ss\\.fff}",
-            Municipios = await _municipio.DoMicroRegiaoJauAsync()
+            Time = $"{temporizador.Elapsed:hh\\:mm\\:ss\\.fff}"
         };
     }
 

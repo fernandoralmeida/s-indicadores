@@ -8,6 +8,7 @@ using IDN.Data.Helpers;
 using MongoDB.Driver;
 using IDN.Services.Empresa.Records;
 using Microsoft.IdentityModel.Tokens;
+using System.Net.Http.Headers;
 
 namespace IDN.Services.Geojson.Services;
 
@@ -48,6 +49,19 @@ public class ServiceGeojson : IServiceGeojson
         _geojson.Features = _features;
         */
         return _geojson;
+    }
+
+    public async Task<IEnumerable<VFeatures>> DoListGeojson(string[]? municipios = null)
+    {
+        var _mongoDB = Factory<VFeatures>.NewDataMongoDB();
+        var _features = new List<VFeatures>();
+        foreach (var municipio in municipios!)
+        {
+            var _filter = municipio == null ? null : Builders<VFeatures>.Filter.Eq(e => e.Properties!.Name, municipio);
+            foreach (var item in await _mongoDB.DoListAsync(_filter))
+                _features.Add(item);
+        }
+        return _features;
     }
 
     public async Task<VGeojson> DoGeojsonAsync(string? param = null)
@@ -223,7 +237,7 @@ public class ServiceGeojson : IServiceGeojson
                     var _p = (i.Setores!.FirstOrDefault().Value * 100) / q.Value;
                     _feature.Properties!.Empresas = q.Value;
                     _feature.Properties!.Setor = $"{i.Setores!.FirstOrDefault().Key} ({_p}%)";
-                }                
+                }
             }
 
             // Acessando o tipo de geometria

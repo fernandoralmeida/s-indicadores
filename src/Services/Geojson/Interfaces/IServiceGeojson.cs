@@ -13,4 +13,5 @@ public interface IServiceGeojson
     Task<VGeojson> DoGeojsonAsync(string? param = null);
     Task<MGeojson> DoGeojsonToDBAsync(VGeojson obj);
     Task<VGeojson> DoGeojson(string? municipio = null);
+    Task<IEnumerable<VFeatures>> DoListGeojson(string[]? municipios = null);
 }

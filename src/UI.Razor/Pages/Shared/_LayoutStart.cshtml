@@ -7,11 +7,10 @@
     <title>Indicadores.net - @ViewData["Title"]</title>
     <link rel="shortcut icon" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/lib/google/material-symbols-sharp.css" />
-    <link rel="stylesheet" href="~/lib/materialize/css/materialize.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/materialize/css/materialize.min.css" />  
 </head>
 
-<body id="_smooth" class="bg-color-dark bg-image" onload="carregarImagem()">
+<body id="_smooth">
     <div class="bg-image-glass"></div>
     <partial name="_StripColors" />
 
@@ -20,14 +19,12 @@
     </main>
 
     <footer class="footer center glass-dark-20">
-        &copy; 2023 - FRA
+        &copy; @DateTime.Now.Year - FRA
         <partial name="_StripColors" />
     </footer>
 
     <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/materialize/js/materialize.min.js"></script>
-    <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/bgimages.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

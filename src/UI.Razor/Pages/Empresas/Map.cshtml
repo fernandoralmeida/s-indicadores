@@ -1,4 +1,4 @@
-@page "/maps/{m?}"
+@page
 @model Empresas.MapModel
 @{
     Layout = "_LayoutMap";
@@ -28,7 +28,7 @@
             }
         </ul>
         <div class="divider margin-b-10"></div>
-        <a class="btn" href="/maps">Voltar</a>
+        <a class="btn" onclick="zoomOut()">Voltar</a>
         <a asp-page="/Empresas/Index" asp-route-m="@Model.Cidade" class="btn"
             title="Ver detalhes da cidade @Model.Cidade">Ver Mais</a>
     </div>
@@ -42,18 +42,20 @@
     const _modelcidade = '@Model.Cidade';
 
     window.onload = function () {
+        /*
         // Verificar se Model.Cidade não é nulo e é uma string
         if (_modelcidade === '') {
-            // Faça algo se @Model.Cidade não for nulo e for uma string
+            // Faça algo se Model.Cidade não for nulo e for uma string
             divFlutuante.classList.toggle('off');
         } else {
-            // Faça algo se @Model.Cidade for nulo ou não for uma string
+            // Faça algo se Model.Cidade for nulo ou não for uma string
             divFlutuante.classList.toggle('ativa');
         }
+        */
     }
 
     // Criar o mapa Leaflet
-    var map = L.map('map').setView([-22.902778, -48.28125], 9); // Centro inicial do mapa do estado de sp
+    var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
 
     var info = L.control();
 
@@ -95,13 +97,20 @@
         };
     }
 
+    function zoomOut() {
+        L.map('map').setView([-22.902778, -48.28125], 6);
+        divFlutuante.classList.toggle('off');
+    }
+
     function zoomToFeature(e) {
-        //map.fitBounds(e.target.getBounds());
+        map.fitBounds(e.target.getBounds());
+
+        divFlutuante.classList.toggle('ativa');
+
         var layer = e.target;
-        //divFlutuante.classList.toggle('ativa');
-        const url = '/maps/' + layer.feature.properties.name;
+        //const url = '/maps/' + layer.feature.properties.name;
         // Redireciona para a página interna
-        location.href = url;
+        //location.href = url;
     }
 
     function highlightFeature(e) {
@@ -165,8 +174,9 @@
     legend.addTo(map);
     info.addTo(map);
 
+    /*
     // Carregar dados GeoJSON de uma API
-    fetch('/api/v1/geojson/@Model.Cidade')
+    fetch('/api/v1/geojson/Model.Cidade')
         .then(response => response.json())
         .then(data => {
 
@@ -183,6 +193,104 @@
             map.fitBounds(geojsonLayer.getBounds());
         })
         .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
+        */
+
+    // Função para carregar dados do IndexedDB
+    function loadGeoJSONFromIndexedDB() {
+        return new Promise((resolve, reject) => {
+            var request = indexedDB.open('geojsonDB', 1);
+
+            request.onupgradeneeded = function (event) {
+                var db = event.target.result;
+                db.createObjectStore('geojsonStore', { keyPath: 'id' });
+            };
+
+            request.onsuccess = function (event) {
+                var db = event.target.result;
+                var transaction = db.transaction(['geojsonStore'], 'readonly');
+                var objectStore = transaction.objectStore('geojsonStore');
+                var request = objectStore.get('cachedGeoJSON');
+
+                request.onsuccess = function (event) {
+                    var cachedData = event.target.result;
+                    if (cachedData) {
+                        resolve(cachedData.data);
+                    } else {
+                        reject('Dados GeoJSON não encontrados no IndexedDB.');
+                    }
+                };
+
+                request.onerror = function (event) {
+                    reject('Erro ao obter dados do IndexedDB.');
+                };
+            };
+
+            request.onerror = function (event) {
+                reject('Erro ao abrir o IndexedDB.');
+            };
+        });
+    }
+
+    // Carregar dados GeoJSON
+    loadGeoJSONFromIndexedDB()
+        .then(data => {
+            // Dados encontrados no IndexedDB, processar os dados
+            processData(data);
+        })
+        .catch(error => {
+            // Dados não encontrados no IndexedDB ou erro, carregar dados da API
+            fetchDataFromAPI();
+        });
+
+    // Função para carregar dados da API
+    function fetchDataFromAPI(cidade) {
+        fetch(`/api/v1/geojson/${cidade}`)
+            .then(response => response.json())
+            .then(data => {
+                // Armazenar dados no IndexedDB para uso futuro
+                storeGeoJSONInIndexedDB(data);
+
+                // Processar os dados GeoJSON
+                processData(data);
+            })
+            .catch(error => console.error('Erro ao carregar dados GeoJSON da API:', error));
+    }
+
+    // Função para armazenar dados no IndexedDB
+    function storeGeoJSONInIndexedDB(data) {
+        var request = indexedDB.open('geojsonDB', 1);
+
+        request.onupgradeneeded = function (event) {
+            var db = event.target.result;
+            db.createObjectStore('geojsonStore', { keyPath: 'id' });
+        };
+
+        request.onsuccess = function (event) {
+            var db = event.target.result;
+            var transaction = db.transaction(['geojsonStore'], 'readwrite');
+            var objectStore = transaction.objectStore('geojsonStore');
+            objectStore.put({ id: 'cachedGeoJSON', data: data });
+        };
+
+        request.onerror = function (event) {
+            console.error('Erro ao armazenar dados no IndexedDB.');
+        };
+    }
+
+    // Função para processar os dados GeoJSON
+    function processData(data) {
+        $("#loader").hide();
+        $(".blackboxload").fadeOut("slow");
+
+        // Adicionar camada GeoJSON ao mapa
+        var geojsonLayer = L.geoJSON(data, {
+            style: style,
+            onEachFeature: onEachFeature
+        }).addTo(map);
+
+        // Ajustar o mapa para abranger a área GeoJSON com zoom
+        //map.fitBounds(geojsonLayer.getBounds());
+    }
 
     function handle(e) {
         if (e.keyCode === 13) {

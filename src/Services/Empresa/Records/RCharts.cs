@@ -1,6 +1,7 @@
 namespace IDN.Services.Empresa.Records;
 
 public record RCharts(
+    string Municipio,
     string Rotatividade,
     string[] NovasMes,
     string[] BaixasMes,

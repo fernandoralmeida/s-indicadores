@@ -1,4 +1,5 @@
 using IDN.Data.Helpers;
+using IDN.Data.Interface;
 using IDN.Services.Empresa.Interfaces;
 using IDN.Services.Empresa.Records;
 using Microsoft.AspNetCore.Mvc;
@@ -11,28 +12,37 @@ namespace UI.Razor.Areas.Api;
 public class StatisticsController : ControllerBase
 {
     private readonly IServiceEmpresa _empresas;
+    private readonly IMongoDB<REmpresas> _mongodb;
 
     public StatisticsController(IServiceEmpresa empresas)
     {
         _empresas = empresas;
+        _mongodb = Factory<REmpresas>.NewDataMongoDB();
     }
 
-    [HttpGet("chart-empresas/{m?}")]
+    [HttpGet("charts/{m?}")]
     public async Task<IActionResult> DoCharts([FromRoute] string? m)
-        => Ok(await _empresas
-                        .DoReportToChartAsync(
-                            await _empresas
-                                    .DoReportEmpresasAsync(
-                                        _empresas.DoStoredProcedure(
-                                            m!.ToUpper()), null)));
+    {
+        m = m?.ToUpper();
+
+        var _filter = m == null ? null : Builders<REmpresas>.Filter.Eq(e => e.Municipio, m);
+
+        var _charts = new List<RCharts>();
+
+        foreach (var item in await _mongodb.DoListAsync(_filter))
+        {
+            _charts.Add(await _empresas.DoReportToChartAsync(item));
+        }
+
+        return Ok(_charts);
+    }
 
 
-    [HttpGet("report-empresas/{m?}")]
+    [HttpGet("reports/{m?}")]
     public async Task<IActionResult> DoReport([FromRoute] string? m)
     {
+        m = m?.ToUpper();
         var _filter = m == null ? null : Builders<REmpresas>.Filter.Eq(e => e.Municipio, m);
-        return Ok(await Factory<REmpresas>.NewDataMongoDB().DoListAsync(_filter));
+        return Ok(await _mongodb.DoListAsync(_filter));
     }
-    
-
 }

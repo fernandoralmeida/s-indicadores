@@ -4,6 +4,7 @@ using IDN.Services.Empresa.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using IDN.Data.Helpers;
 using IDN.Core.Geojson.Models;
+using IDN.Services.Geojson.View;
 
 namespace UI.Razor.Areas.Api;
 
@@ -25,7 +26,19 @@ public class GeojsonController : ControllerBase
     public async Task<IActionResult> GetGeojson([FromRoute] string? m)
     {
         var param = m ?? null;
-        return Ok(await _geocode.DoGeojson(param));
+
+        var _cities = param?.Split(',');
+
+        if (_cities?.Length > 0)
+        {
+            return Ok(new VGeojson
+            {
+                Type = "FeatureCollection",
+                Features = await _geocode.DoListGeojson(_cities)
+            });
+        }
+        else
+            return Ok(await _geocode.DoGeojson(param));
     }
 
 }

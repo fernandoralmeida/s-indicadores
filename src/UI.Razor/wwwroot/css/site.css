@@ -162,6 +162,27 @@ iframe {
   background-color: var(--color-dark);
 }
 
+.footer-map {
+  background-color: transparent;
+  z-index: 501;
+  padding: 0 10px;
+  position: fixed;
+  margin-top: calc(100vh - 68px);
+  color: var(--color-dark);
+}
+
+.socialmedia {
+  background-color: var(--color-dark);
+  z-index: 501;
+  position: fixed;
+  margin-top: calc(100vh - 50px);
+  color: var(--color-dark);
+  margin-left: calc(100vw / 2 - 46px);
+  border-radius: 10px 10px 0 0;
+  padding: 5px;
+}
+
+
 .font-size-10 {
   font-size: 10px;
 }
@@ -351,21 +372,22 @@ nav i.material-icons {
 }
 
 #div-flutuante {
+  overflow: hidden;
   position: fixed;
-  margin-top: 15vh;
-  margin-left: 10vw;
+  margin-top: 10px;
+  margin-left: calc(100vw - 310px);
+  margin-right: 10px;
+  width: 300px;
   z-index: 9999;
-  opacity: 0;
   background-color: var(--color-light);
   background-color: rgba(240, 245, 255, 0.8);
-  visibility: hidden;
   transition: all 0.5s ease-in-out;
   border-radius: 6px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(5px);
 }
 
-#div-flutuante.ativa {
+/* #div-flutuante.ativa {
   opacity: 1;
   visibility: visible;
 }
@@ -373,7 +395,7 @@ nav i.material-icons {
 #div-flutuante.off {
   opacity: 0;
   visibility: hidden;
-}
+} */
 
 #div-flutuante .conteudo {
   margin: 0 auto;
@@ -429,7 +451,7 @@ nav i.material-icons {
 
 .map {
   width: 100%;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 10px);
 }
 
 .map-d {
@@ -476,6 +498,7 @@ nav .brand-logo {
   font-size: 2.1rem;
   margin-left: 10px;
 }
+
 /*
 nav .brand-logo {
   vertical-align: middle;
@@ -501,7 +524,7 @@ input.browser-default {
   display: flex;
   position: fixed;
   z-index: 9999;
-  margin-left: 55px;
+  margin-left: 10px;
   margin-top: 10px;
   padding: 5px;
   background-color: rgba(240, 245, 255, 0.4);
@@ -530,6 +553,7 @@ input.browser-default {
 #input-search:active {
   border: 0px solid white;
   color: var(--color-dark);
+  width: 350px;
 }
 
 #div-search:focus-within {
@@ -1096,6 +1120,19 @@ nav,
 }
 
 /* Opem Street Map */
+.leaflet-container {
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.leaflet-touch .leaflet-control-zoom-in,
+.leaflet-touch .leaflet-control-zoom-out {
+  font-size: 22px;
+  display: none;
+}
+
 .leaflet-top,
 .leaflet-bottom {
   position: absolute;
@@ -1253,10 +1290,8 @@ nav,
     margin-right: 15px;
     width: calc(100vw - 30px);
     z-index: 9999;
-    opacity: 0;
     background-color: var(--color-light);
     background-color: rgba(240, 245, 255, 0.8);
-    visibility: hidden;
     transition: all 0.5s ease-in-out;
     border-radius: 6px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -1272,6 +1307,14 @@ nav,
     display: inline-block;
     font-size: 2.1rem;
     margin-left: 0px;
+  }
+
+  .socialmedia {
+    display: none;
+  }
+
+  .footer-map b {
+    display: none;
   }
 
 }

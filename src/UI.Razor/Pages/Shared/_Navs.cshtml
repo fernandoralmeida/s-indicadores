@@ -2,15 +2,6 @@
 @using IDN.Services.Municipio.View;
 @model NavbarModel;
 
-@inject IServiceMunicipio _municipios
-
-@{
-    var _list = new List<string>();
-    foreach (var item in await _municipios.DoMicroRegiaoJauAsync())
-        _list.Add(item.Descricao!);
-
-    SelectList _lista_municipios = new SelectList(_list.OrderBy(o => o));
-}
 
 <div class="navbar">
     <nav class="nav-extended z-depth-0 bg-color-dark">
@@ -26,15 +17,6 @@
                 <li><a asp-page="/Info"><i class="material-icons">help</i></a></li>
             </ul>
         </div>
-        <!-- 
-        <div class="nav-content">
-            <div class="div-float-in">
-                <select id="select_city" class="browser-default margin-auto" asp-for="Model.Municipio"
-                    asp-items="_lista_municipios">
-                    <option>--Cidades--</option>
-                </select>
-            </div>
-        </div>-->
     </nav>
 </div>
 
