@@ -177,7 +177,7 @@ iframe {
   position: fixed;
   margin-top: calc(100vh - 50px);
   color: var(--color-dark);
-  margin-left: calc(100vw / 2 - 46px);
+  margin-left: calc(100vw / 2 - 54px);
   border-radius: 10px 10px 0 0;
   padding: 5px;
 }

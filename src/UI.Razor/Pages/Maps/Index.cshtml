@@ -18,9 +18,9 @@
     <div class="conteudo">
         <h6>Município: @Model.Cidade?.ToUpper()</h6>
         <div class="divider"></div>
-        <br />@Model.Empresasativas
+        @Model.Empresasativas
         <ul class="browser_default">
-            <br />Composição produtiva:
+            Composição produtiva:
             @foreach (var item in @Model.Setores)
             {
                 <li>@item.Key @item.Value</li>
