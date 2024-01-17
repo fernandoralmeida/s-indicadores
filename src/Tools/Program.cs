@@ -34,9 +34,9 @@ class Program
                     await Companies.DoEstabelecimentos(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
                     
                     await Companies.DoEmpresas(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
-                    await Companies.DoSocios(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
-                    await Companies.DoSimples(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
-                    */
+                    await Companies.DoSocios(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);*/
+                    // await Companies.DoSimples(DBConfig.MigraData_RFB, DBConfig.DS_POSTGRES);
+                    
                     await Companies.CreateIndicadoresNet(DBConfig.IndicadoresNET, DBConfig.DS_POSTGRES);
                     await Companies.DoIndicadores(DBConfig.MigraData_RFB, DBConfig.IndicadoresNET, DBConfig.DS_POSTGRES);
                     break;

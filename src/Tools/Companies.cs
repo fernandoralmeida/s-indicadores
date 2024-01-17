@@ -167,7 +167,7 @@ public static class Companies
                     }
 
                 _timer.Stop();
-                Console.WriteLine($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+                Console.WriteLine($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
             }
             catch (Exception ex)
             {
@@ -237,7 +237,7 @@ public static class Companies
                     }
 
                 _timer.Stop();
-                Console.WriteLine($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+                Console.WriteLine($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
             }
             catch (Exception ex)
             {
@@ -271,7 +271,7 @@ public static class Companies
                     }
 
                 _timer.Stop();
-                Console.WriteLine($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+                Console.WriteLine($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
             }
             catch (Exception ex)
             {
@@ -307,7 +307,7 @@ public static class Companies
                     }
 
                 _timer.Stop();
-                Console.WriteLine($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+                Console.WriteLine($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
             }
             catch (Exception ex)
             {
@@ -343,7 +343,7 @@ public static class Companies
                     }
 
                 _timer.Stop();
-                Console.WriteLine($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+                Console.WriteLine($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
             }
             catch (Exception ex)
             {
@@ -472,7 +472,7 @@ public static class Companies
                 dataTable.Dispose();
             }
             _timer.Stop();
-            Console.WriteLine($"TLines: {tc1} | TMigrated: {tc2} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Console.WriteLine($"TLines: {tc1} | TMigrated: {tc2} | TTime: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
         }
         catch (Exception ex)
         {
@@ -541,7 +541,7 @@ public static class Companies
                 dataTable.Dispose();
             }
             _timer.Stop();
-            Console.WriteLine($"TLines: {_tcount} | TMigrated: {_tcount} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Console.WriteLine($"TLines: {_tcount} | TMigrated: {_tcount} | TTime: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
         }
         catch (Exception ex)
         {
@@ -594,6 +594,8 @@ public static class Companies
                                             .Select(s => _lista_simples_completa.Skip(s * _size_parts).Take(_size_parts))
                                             .ToList())
                     {
+                        var _processtimer = new Stopwatch();
+                        _processtimer.Start();
                         var _rows = 0;
                         Console.Write("\n|");
 
@@ -612,13 +614,13 @@ public static class Companies
                             _rows++;
                             // Adicionar a linha à DataTable                            
                             DataRow row = dataTable.NewRow();
-                            row["CNPJBase"] = item[0].ToString().Replace("\"", "").Trim();
-                            row["OpcaoSimples"] = item[1].ToString().Replace("\"", "").Trim();
-                            row["DataOpcaoSimples"] = item[2].ToString().Replace("\"", "").Trim();
-                            row["DataExclusaoSimples"] = item[3].ToString().Replace("\"", "").Trim();
-                            row["OpcaoMEI"] = item[4].ToString().Replace("\"", "").Trim();
-                            row["DataOpcaoMEI"] = item[5].ToString().Replace("\"", "").Trim();
-                            row["DataExclusaoMEI"] = item[6].ToString().Replace("\"", "").Trim();
+                            row["CNPJBase"] = fields[0].Replace("\"", "").Trim();
+                            row["OpcaoSimples"] = fields[1].Replace("\"", "").Trim();
+                            row["DataOpcaoSimples"] = fields[2].Replace("\"", "").Trim();
+                            row["DataExclusaoSimples"] = fields[3].Replace("\"", "").Trim();
+                            row["OpcaoMEI"] = fields[4].Replace("\"", "").Trim();
+                            row["DataOpcaoMEI"] = fields[5].Replace("\"", "").Trim();
+                            row["DataExclusaoMEI"] = fields[6].Replace("\"", "").Trim();
                             dataTable.Rows.Add(row);
 
                             if (_rows % 100 == 0)
@@ -628,15 +630,17 @@ public static class Companies
                             }
                         }
 
-                        // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados
+                        // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados                        
                         await InsertDataBulkCopy(connectionString, tableName, dataTable);
                         dataTable.Dispose();
+                        _processtimer.Stop();
+                        Console.WriteLine($"R: {_rows} | TMigrated: {_count} | TTime: {_processtimer.Elapsed:hh\\:mm\\:ss\\.fff}");
                     }
                 }
 
             }
             _timer.Stop();
-            Console.WriteLine($"TLines: {_count} | TMigrated: {_count} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Console.WriteLine($"TLines: {_count} | TMigrated: {_count} | TTime: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
         }
         catch (Exception ex)
         {
@@ -716,7 +720,7 @@ public static class Companies
                 dataTable.Dispose();
             }
             _timer.Stop();
-            Console.WriteLine($"TLines: {_tcount} | TMigrated: {_tcount} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Console.WriteLine($"TLines: {_tcount} | TMigrated: {_tcount} | TTime: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
         }
         catch (Exception ex)
         {
@@ -767,36 +771,35 @@ public static class Companies
         {
             var _count = 0;
             var _trows = 0;
-            Console.WriteLine($"Reading Database");
-            var _municipios = await ReadAsync(SqlCommands.ViewCommand("view_municipios"), databaseOut, datasource);
+            var _m_count = 0;
 
-            foreach (DataRow cidade in _municipios.Rows)
+            char[] alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+            foreach (var _char in alfabeto)
             {
                 _count++;
-                
+
                 var _processtimer = new Stopwatch();
-                
+
                 _processtimer.Start();
-                
+
                 ClearParameters();
-                
-                AddParameters("@Municipio", cidade[0]);
-                
-                Console.WriteLine($"Reading {cidade[0]}");
-                
-                var _dtable = await ReadAsync(SqlCommands.ViewCommandParam("view_empresas_by_municipio"), databaseOut, datasource);
-                
+                Console.WriteLine($"Reading municipios inicial: {_char}...");
+                var _municipios = await ReadAsync($"SELECT mps.descricao AS municipio FROM public.estabelecimentos est JOIN municipios mps ON est.municipio::text = mps.codigo::text WHERE mps.descricao LIKE '{_char}%' GROUP BY mps.descricao;", databaseOut, datasource);
+                _m_count += _municipios.Rows.Count;
+                var _dtable = await ReadAsync($"SELECT * FROM public.view_empresas_by_municipio WHERE municipio LIKE '{_char}%' ORDER BY municipio;", databaseOut, datasource);
+
                 _trows += _dtable.Rows.Count;
 
-                Console.WriteLine($"M: {cidade[0]} | Rows: {_dtable.Rows.Count}");
+                Console.WriteLine($"Insert rows...");
 
                 await InsertDataBulkCopy(connectionString, tableName, _dtable);
                 _processtimer.Stop();
-                Console.WriteLine($"M: {cidade[0]} | Rows Migrated: {_dtable.Rows.Count} | Time: {_processtimer.Elapsed:hh\\:mm\\:ss}");
+                Console.WriteLine($"Municipios: {_municipios.Rows.Count} | Rows: {_dtable.Rows.Count} | Time: {_processtimer.Elapsed:hh\\:mm\\:ss\\.fff}");
             }
 
             _timer.Stop();
-            Console.WriteLine($"M: {_count} Rows Migrated: {_trows} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Console.WriteLine($"Municipios: {_m_count} Rows: {_trows} | Time: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
         }
         catch (Exception ex)
         {

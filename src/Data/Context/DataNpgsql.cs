@@ -1,40 +1,35 @@
 ﻿using IDN.Data.Interface;
-using Microsoft.Data.SqlClient;
 using IDN.Core.Empresa.Models;
 using IDN.Data.Helpers;
+using Npgsql;
 using System.Data;
 
 namespace IDN.Data.Context;
 
-public class DataEmpresa : IData<MEmpresa>
+public class DataNpgsql : IData<MEmpresa>
 {
-    private readonly SqlParameterCollection ParameterCollection = new SqlCommand().Parameters;
-
-    public void AddParameters(string parameterName, object parameterValue)
-    {
-        ParameterCollection.Add(new SqlParameter(parameterName, parameterValue));
-    }
+    private readonly NpgsqlParameterCollection ParameterCollection = new NpgsqlCommand().Parameters;
 
     public void ClearParameters()
     {
         ParameterCollection.Clear();
     }
 
-    public Task<DataTable> ReadDataTableAsync(string query)
+    public void AddParameters(string parameterName, object parameterValue)
     {
-        throw new NotImplementedException();
+        ParameterCollection.Add(new NpgsqlParameter(parameterName, parameterValue));
     }
 
     public async IAsyncEnumerable<MEmpresa> ReadStoredProcedureAsync(string query)
     {
-        using (SqlConnection connection = new(DataBase.ConnectionString))
+        using (NpgsqlConnection connection = new(DataBase.ConnectionString))
         {
             await connection.OpenAsync();
 
-            var command = new SqlCommand(query, connection);
+            var command = new NpgsqlCommand(query, connection);
 
-            foreach (SqlParameter p in ParameterCollection)
-                command.Parameters.AddWithValue(p.ParameterName, p.Value);
+            foreach (NpgsqlParameter p in ParameterCollection.Cast<NpgsqlParameter>())
+                command.Parameters.AddWithValue(p.ParameterName, p.Value!);
             
             using (var reader = await command.ExecuteReaderAsync())
             {
@@ -73,5 +68,38 @@ public class DataEmpresa : IData<MEmpresa>
             }
         }
     }
+
+    public async Task<DataTable> ReadDataTableAsync(string query)
+     => await Task.Run(() =>
+        {
+            using (NpgsqlConnection connection = new(DataBase.ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    NpgsqlCommand _command = connection.CreateCommand();
+                    _command.CommandType = CommandType.Text;
+                    _command.CommandText = query;
+                    _command.CommandTimeout = 0;
+
+                    foreach (NpgsqlParameter p in ParameterCollection)
+                    {
+                        _command.Parameters.Add(new NpgsqlParameter(p.ParameterName, p.Value));
+                    }
+
+                    DataTable _table = new();
+
+                    new NpgsqlDataAdapter(_command).Fill(_table);
+
+                    return _table;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                    return new DataTable();
+                }
+            }
+        });
 }
 

@@ -15,5 +15,10 @@ public static class Factory<T> where T : class
     {
         return new MongoDB<T>();
     }
-    
+
+    public static IData<MEmpresa> NewPostgres()
+    {
+        return new DataNpgsql();
+    }
+
 }

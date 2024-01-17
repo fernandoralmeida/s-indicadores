@@ -1,3 +1,4 @@
+using System.Data;
 using System.Diagnostics;
 using System.Text;
 using IDN.Core.Empresa.Interfaces;
@@ -19,17 +20,20 @@ public static class Estatistics
         _timer.Start();
         var _mongoDB = Factory<MEmpresa>.NewDataMongoDB();
         var _dataDB = Factory<MEmpresa>.NewDataEmpresa();
+        var _dataPG = Factory<MEmpresa>.NewPostgres();
         var _report = new ServiceEmpresa(_serviceEmpresa!, _memoryCache!);
         var _count = 0;
 
-        foreach (var cidade in await _report.DoListMunicipiosEstadoSP())
+        var _municipios = await _dataPG.ReadDataTableAsync(SqlScript.Select_All_Municipio_Indicadores);
+
+        foreach (DataRow cidade in _municipios.Rows)
         {
             _count++;
             var _processtimer = new Stopwatch();
             _processtimer.Start();
 
             _dataDB.ClearParameters();
-            _dataDB.AddParameters("@municipio", cidade);
+            _dataDB.AddParameters("@municipio", cidade[0]);
 
             var _result = await _report.DoReportEmpresasAsync(_dataDB.ReadStoredProcedureAsync("SELECT * FROM Empresas WHERE Municipio = @municipio"));
 

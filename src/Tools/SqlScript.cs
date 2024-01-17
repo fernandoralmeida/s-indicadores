@@ -248,4 +248,16 @@ ALTER TABLE public.view_municipios
     OWNER TO postgres;";
     //CONSTRAINT PK_Empresas PRIMARY KEY (Id)
 
+    public static string Create_Index_MigraData_RFB => @"
+CREATE INDEX idx_empresas_cnpjbase ON empresas (CNPJBase);
+CREATE INDEX idx_estabelecimentosa_cnpjbase ON estabelecimentos (CNPJBase);
+CREATE INDEX idx_simples_cnpjbase ON simples (CNPJBase);
+CREATE INDEX idx_socios_cnpjbase ON socios (CNPJBase);";
+
+    public static string Create_Index_Municipios_Empresas_Indicadores
+    => @"CREATE INDEX idx_empresas_municipio ON empresas (municipio);";
+
+    public static string Select_All_Municipio_Indicadores 
+    => @"SELECT municipio FROM empresas GROUP BY municipio ORDER BY municipio";
+
 }
