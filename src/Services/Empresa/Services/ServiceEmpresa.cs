@@ -312,7 +312,7 @@ public class ServiceEmpresa : IServiceEmpresa
     public async Task<RCharts> DoReportToChartAsync(REmpresas report)
     {
         return new RCharts(
-            Municipio: report.Municipio!,
+            Municipio: report.Municipio! == "MOGI-GUACU" ? "MOGI GUACU" : report.Municipio!,
             Rotatividade: await Task.Run(() =>
             {
                 string _rotatividade_emp = string.Empty;

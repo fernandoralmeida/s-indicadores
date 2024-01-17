@@ -42,7 +42,7 @@ class Program
                     break;
 
                 case 2:
-                    await Geojson.GoeCidades();
+                    //await Geojson.GoeCidades();
                     break;
 
                 case 3:

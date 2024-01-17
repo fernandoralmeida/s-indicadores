@@ -19,7 +19,7 @@ public static class Estatistics
         Stopwatch _timer = new();
         _timer.Start();
         var _mongoDB = Factory<MEmpresa>.NewDataMongoDB();
-        var _dataDB = Factory<MEmpresa>.NewDataEmpresa();
+        //var _dataDB = Factory<MEmpresa>.NewDataEmpresa();
         var _dataPG = Factory<MEmpresa>.NewPostgres();
         var _report = new ServiceEmpresa(_serviceEmpresa!, _memoryCache!);
         var _count = 0;
@@ -32,10 +32,10 @@ public static class Estatistics
             var _processtimer = new Stopwatch();
             _processtimer.Start();
 
-            _dataDB.ClearParameters();
-            _dataDB.AddParameters("@municipio", cidade[0]);
+            _dataPG.ClearParameters();
+            _dataPG.AddParameters("@municipio", cidade[0]);
 
-            var _result = await _report.DoReportEmpresasAsync(_dataDB.ReadStoredProcedureAsync("SELECT * FROM Empresas WHERE Municipio = @municipio"));
+            var _result = await _report.DoReportEmpresasAsync(_dataPG.ReadStoredProcedureAsync("SELECT * FROM Empresas WHERE Municipio = @municipio"));
 
             var _mongoDB2 = Factory<REmpresas>.NewDataMongoDB();
             var _list2 = new List<REmpresas>() { _result };
@@ -43,7 +43,7 @@ public static class Estatistics
             await _mongoDB2.InsertManyAsync(_list2);
 
             _processtimer.Stop();
-            Console.WriteLine($"{cidade} : {_list2.Count} : {_processtimer.Elapsed:hh\\:mm\\:ss\\.fff}");
+            Console.WriteLine($"{cidade[0]} : {_list2.Count} : {_processtimer.Elapsed:hh\\:mm\\:ss\\.fff}");
             GC.SuppressFinalize(_result);
         }
 

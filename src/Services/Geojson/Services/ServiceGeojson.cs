@@ -201,8 +201,8 @@ public class ServiceGeojson : IServiceGeojson
         var _features = new List<VFeatures>();
         var _mongoDBE = Factory<REmpresas>.NewDataMongoDB();
 
-        //var _file = @"BC250_2017_Municipio_A.json";
-        var _file = @"/home/dbn/sources/s-indicadores/files/BC250_2017_Municipio_A.json";
+        var _file = @"C:\\Users\\User\\OneDrive\\Dev\\BC250_2017_Municipio_A.json";
+        //var _file = @"/home/dbn/sources/s-indicadores/files/BC250_2017_Municipio_A.json";
 
         string jsonString = await File.ReadAllTextAsync(_file);
 

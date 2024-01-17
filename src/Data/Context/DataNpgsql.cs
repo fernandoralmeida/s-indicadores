@@ -22,7 +22,7 @@ public class DataNpgsql : IData<MEmpresa>
 
     public async IAsyncEnumerable<MEmpresa> ReadStoredProcedureAsync(string query)
     {
-        using (NpgsqlConnection connection = new(DataBase.ConnectionString))
+        using (NpgsqlConnection connection = new(DataBase.DS_POSTGRES + $"Database={Helpers.DataBase.DBName};"))
         {
             await connection.OpenAsync();
 
@@ -40,7 +40,7 @@ public class DataNpgsql : IData<MEmpresa>
                         CNPJ = reader["CNPJ"] == null ? reader["CNPJ"].ToString() : "",
                         RazaoSocial = reader["RazaoSocial"].ToString(),
                         NaturezaJuridica = reader["NaturezaJuridica"].ToString(),
-                        CapitalSocial = Convert.ToDecimal(reader["CapitalSocial"]),
+                        CapitalSocial = reader["CapitalSocial"].ToString() == "LTDA" ? 0 : Convert.ToDecimal(reader["CapitalSocial"]),
                         PorteEmpresa = reader["PorteEmpresa"].ToString(),
                         IdentificadorMatrizFilial = reader["IdentificadorMatrizFilial"].ToString(),
                         NomeFantasia = reader["NomeFantasia"].ToString(),
@@ -72,10 +72,11 @@ public class DataNpgsql : IData<MEmpresa>
     public async Task<DataTable> ReadDataTableAsync(string query)
      => await Task.Run(() =>
         {
-            using (NpgsqlConnection connection = new(DataBase.ConnectionString))
+            using (NpgsqlConnection connection = new(DataBase.DS_POSTGRES + $"Database={Helpers.DataBase.DBName};"))
             {
                 try
                 {
+                     
                     connection.Open();
 
                     NpgsqlCommand _command = connection.CreateCommand();
