@@ -11,6 +11,10 @@
   --color-black: #000000;
   --color-load-dark: rgba(0, 0, 0, .5);
   --color-error: #ff003c;
+
+  --color-orange: #ffa500;
+  --color-pink: #d87093;
+  --color-purple: #8a2be2;
 }
 
 /* Color Theme Swatches in Hex */
@@ -496,6 +500,13 @@ nav .brand-logo {
   position: absolute;
   display: inline-block;
   font-size: 2.1rem;
+  margin-left: calc(50% - 19px);
+}
+
+nav .arrow-back {
+  position: absolute;
+  display: inline-block;
+  font-size: 2.1rem;
   margin-left: 10px;
 }
 
@@ -514,6 +525,39 @@ nav .brand-logo.right {
 */
 
 /**** Controls ****/
+#navmap {
+  cursor: pointer;
+  margin-top: 0;
+}
+
+#navmap ul {
+  margin: 0;
+  display: inline-flex;
+}
+
+#navmap ul li {
+  background-color: transparent;
+  transition: background-color .3s;
+  color: var(--color-grey);
+  float: left;
+  padding: 5px 10px;
+}
+
+#navmap ul li a {
+  background-color: transparent;
+  text-decoration: none;
+  color: var(--color-grey);
+}
+
+#navmap ul li:hover #navmap ul li a:hover {
+  color: var(--color-dark);
+}
+
+#navmap ul li.active,
+#navmap ul li a.active {
+  color: var(--color-blue);
+}
+
 input.browser-default {
   display: block;
 }

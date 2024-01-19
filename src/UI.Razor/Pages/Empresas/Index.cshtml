@@ -16,129 +16,130 @@
 
 <div class="row">
     <div class="column-container flex-wrap">
-        <div class="column-p0 text-color-light font-size-16 margin-t-b-10 width-100">
-            Novas Empresas @DateTime.Now.Year
-            <i class="material-icons left margin-0">
-                stat_minus_3
-            </i>
-            <span class="new bg-color-light badge" data-badge-caption="@Model.NavModel!.Time"></span>
-        </div>
-        <div class="card column-p5 hoverable">
-            <div class="card-content">
-                <div class="card-title activator">
-                    Localização Aproximada<i class="material-icons right deep-orange-text">help</i>
-                </div>
-                <!---->
-                <form method="post">
-                    <div class="valign-wrapper margin-b-10">
-                        <input asp-for="MunicipioAtivo" hidden />
-                        <label>Novas Empresas</label>
-                        <select id="select_zone" class="browser-default margin-l-10" asp-for="ZonaAtiva"
-                            asp-items="Model.Zonas">
-                            <option></option>
-                        </select>
-                    </div>
-                </form>
-                <div id="map" class="map-d"></div>
-            </div>
-            <div class="card-reveal">
-                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                <p class="">
-                    O quadro localização aproximada, mostra onde as novas empresas estão localizadas agrupadas por
-                    bairro.
-                <p>Ex: [Bairro, nº Empresas Novas]</p>
-                </p>
-            </div>
-            <!-- 
-            <div class="card-action center">
-                <a class="modal-trigger" href="#modal3">Lista Completa Empresas por Localidade</a>
-            </div> -->
-        </div>
-        <div class="column column-p5">
-            <div class="column-container margin-0 width-100">
-                <div class="card column-p5 hoverable">
-                    <div class="card-content">
-                        <div class="card-title activator">
-                            Novas Empresas<i class="material-icons right deep-orange-text">help</i>
-                        </div>
-                        <div id="chart9_1"></div>
-                    </div>
-                    <div class="card-reveal">
-                        <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                        <p>Em @DateTime.Now.Year, foram formalizadas
-                            @Model.LReports!.MatrizFilial_Ano!.Sum(s => s.Value).ToString() novas empresas, sendo elas:
-                        </p>
-                        @foreach (var item in Model.LReports.MatrizFilial_Ano!)
-                        {
-                            <p>- @item.Key : @item.Value novas empresas</p>
-                        }
-                    </div>
+        @{
+            if (Model.LReports!.Quantitativo_Ano?.Count() > 0)
+            {
+                <div class="column-p0 text-color-light font-size-16 margin-t-b-10 width-100">
+                    Novas Empresas @DateTime.Now.Year
+                    <i class="material-icons left margin-0">
+                        stat_minus_3
+                    </i>
+                    <span class="new bg-color-light badge" data-badge-caption="@Model.NavModel!.Time"></span>
                 </div>
                 <div class="card column-p5 hoverable">
                     <div class="card-content">
                         <div class="card-title activator">
-                            Regime Tributário<i class="material-icons right deep-orange-text">help</i>
+                            Localização Aproximada<i class="material-icons right deep-orange-text">help</i>
                         </div>
-                        <div id="chart9_2"></div>
-                    </div>
-                    <div class="card-reveal">
-                        <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                        <p> No Brasil, existem quatro regimes tributários para empresas:</p>
-                        <br />- Microempreendedor Individual (MEI)
-                        <br />- Simples Nacional
-                        <br />- Lucro Presumido*
-                        <br />- Lucro Real*
-                        <p />* Lucro real e presumido estão agrupados como "Outros" na visualização dos dados</p>
-                    </div>
-                </div>
-            </div>
-            <div class="column-container margin-0 width-100">
-                <div class="card column-p5 hoverable">
-                    <div class="card-content">
-                        <div class="card-title activator">
-                            Porte / Fiscal<i class="material-icons right deep-orange-text">help</i>
-                        </div>
-                        <div id="chart9_3"></div>
-                    </div>
-                    <div class="card-reveal">
-                        <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                        <p>A Receita Federal do Brasil classifica as empresas de acordo com o seu porte, levando em
-                            consideração o faturamento anual.</p>
-                        <br />- Microempresa (ME): receita bruta anual igual ou inferior a R$ 360 mil.
-                        <br />- Empresa de Pequeno Porte (EPP): receita bruta anual superior a R$ 360 mil e igual ou
-                        inferior a R$ 4,8 milhões.
-                        <br />- Empresa de Médio Porte (EMP): receita bruta anual superior a R$ 4,8 milhões e igual ou
-                        inferior
-                        a R$ 300 milhões.
-                        <br />- Empresa de Grande Porte (GP): receita bruta anual superior a R$ 300 milhões.
-                        <p>Na apresentação dos dados EMP e GP são agrupadas como "DEMAIS"</p>
-                    </div>
-                </div>
-                <div class="card column-p5 hoverable">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-title activator">
-                                Setores<i class="material-icons right deep-orange-text">help</i>
+                        <!---->
+                        <form method="post">
+                            <div class="valign-wrapper margin-b-10">
+                                <input asp-for="MunicipioAtivo" hidden />
+                                <label>Novas Empresas</label>
+                                <select id="select_zone" class="browser-default margin-l-10" asp-for="ZonaAtiva"
+                                    asp-items="Model.Zonas">
+                                    <option></option>
+                                </select>
                             </div>
-                            <div id="chart9_4"></div>
+                        </form>
+                        <div id="map" class="map-d"></div>
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                        <p class="">
+                            O quadro localização aproximada, mostra onde as novas empresas estão localizadas agrupadas por
+                            bairro.
+                        <p>Ex: [Bairro, nº Empresas Novas]</p>
+                        </p>
+                    </div>
+                </div>
+                <div class="column column-p5">
+                    <div class="column-container margin-0 width-100">
+                        <div class="card column-p5 hoverable">
+                            <div class="card-content">
+                                <div class="card-title activator">
+                                    Novas Empresas<i class="material-icons right deep-orange-text">help</i>
+                                </div>
+                                <div id="chart9_1"></div>
+                            </div>
+                            <div class="card-reveal">
+                                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                                <p>Em @DateTime.Now.Year, foram formalizadas
+                                    @Model.LReports!.MatrizFilial_Ano!.Sum(s => s.Value).ToString() novas empresas, sendo elas:
+                                </p>
+                                @foreach (var item in Model.LReports.MatrizFilial_Ano!)
+                                {
+                                    <p>- @item.Key : @item.Value novas empresas</p>
+                                }
+                            </div>
                         </div>
-                        <div class="card-reveal">
-                            <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-
-                            @foreach (var item in Model.LReports.Top3Atividades_Ano!.Take(1))
-                            {
-                                <p>Em @DateTime.Now.Year, das novas empresas formalizadas, o setor de @item.Key teve a maior
-                                    demanda das empresas formalidas.</p>
-                            }
-
+                        <div class="card column-p5 hoverable">
+                            <div class="card-content">
+                                <div class="card-title activator">
+                                    Regime Tributário<i class="material-icons right deep-orange-text">help</i>
+                                </div>
+                                <div id="chart9_2"></div>
+                            </div>
+                            <div class="card-reveal">
+                                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                                <p> No Brasil, existem quatro regimes tributários para empresas:</p>
+                                <br />- Microempreendedor Individual (MEI)
+                                <br />- Simples Nacional
+                                <br />- Lucro Presumido*
+                                <br />- Lucro Real*
+                                <p>* Lucro real e presumido estão agrupados como "Outros" na visualização dos dados</p>
+                            </div>
                         </div>
-                        <div class="card-action center">
-                            <a class="modal-trigger" href="#modal2">Ver Lista Detalhada</a>
+                    </div>
+                    <div class="column-container margin-0 width-100">
+                        <div class="card column-p5 hoverable">
+                            <div class="card-content">
+                                <div class="card-title activator">
+                                    Porte / Fiscal<i class="material-icons right deep-orange-text">help</i>
+                                </div>
+                                <div id="chart9_3"></div>
+                            </div>
+                            <div class="card-reveal">
+                                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                                <p>A Receita Federal do Brasil classifica as empresas de acordo com o seu porte, levando em
+                                    consideração o faturamento anual.</p>
+                                <br />- Microempresa (ME): receita bruta anual igual ou inferior a R$ 360 mil.
+                                <br />- Empresa de Pequeno Porte (EPP): receita bruta anual superior a R$ 360 mil e igual ou
+                                inferior a R$ 4,8 milhões.
+                                <br />- Empresa de Médio Porte (EMP): receita bruta anual superior a R$ 4,8 milhões e igual ou
+                                inferior
+                                a R$ 300 milhões.
+                                <br />- Empresa de Grande Porte (GP): receita bruta anual superior a R$ 300 milhões.
+                                <p>Na apresentação dos dados EMP e GP são agrupadas como "DEMAIS"</p>
+                            </div>
+                        </div>
+                        <div class="card column-p5 hoverable">
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="card-title activator">
+                                        Setores<i class="material-icons right deep-orange-text">help</i>
+                                    </div>
+                                    <div id="chart9_4"></div>
+                                </div>
+                                <div class="card-reveal">
+                                    <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+
+                                @foreach (var item in Model.LReports.Top3Atividades_Ano!.Take(1))
+                                {
+                                        <p>Em @DateTime.Now.Year, das novas empresas formalizadas, o setor de @item.Key teve a maior
+                                            demanda das empresas formalidas.</p>
+                                }
+
+                                </div>
+                                <div class="card-action center">
+                                    <a class="modal-trigger" href="#modal2">Ver Lista Detalhada</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            }
+        }
         <div class="card column-p0 hoverable width-100">
             <div class="card-content">
                 <div class="card-title activator">
@@ -154,11 +155,11 @@
                     empresas baixadas mês a mês dos ultimos 12 meses</p>
             </div>
         </div>
-        <div class="column-p0 font-size-16 margin-t-b-10">
-           Empresas Totalizadas<i class="material-icons left">
+        @* <div class="column-p0 font-size-16 margin-t-b-10">
+            Empresas Totalizadas<i class="material-icons left">
                 stat_minus_3
             </i>
-        </div>
+        </div> *@
         <div class="card column-p3 hoverable">
             <div class="card-content">
                 <div class="card-title activator">
@@ -251,11 +252,11 @@
                 </p>
             </div>
         </div>
-        <div class="column-p0 font-size-16 margin-t-b-10">
+        @* <div class="column-p0 font-size-16 margin-t-b-10">
             Setores Produtivos<i class="material-icons left">
                 stat_minus_3
             </i>
-        </div>
+        </div> *@
         <div class="card column-p5 hoverable">
             <div class="card-content">
                 <div class="card-title activator">
@@ -409,12 +410,12 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
-    
+
     // Carregar dados GeoJSON de uma API
     fetch('/api/v1/geojson/@Model.MunicipioAtivo!.ToLower()')
         .then(response => response.json())
         .then(data => {
-            
+
             // Adicionar camada GeoJSON ao mapa
             var geojsonLayer = L.geoJSON(data, {
                 style: {
@@ -1208,5 +1209,3 @@
     };
 
 </script>
-
-
