@@ -57,7 +57,8 @@ public class ServiceGeojson : IServiceGeojson
         var _features = new List<VFeatures>();
         foreach (var municipio in municipios!)
         {
-            var _filter = municipio == null ? null : Builders<VFeatures>.Filter.Eq(e => e.Properties!.Name, municipio);
+            var _m = municipio.Trim();
+            var _filter = _m == null ? null : Builders<VFeatures>.Filter.Eq(e => e.Properties!.Name, _m);
             foreach (var item in await _mongoDB.DoListAsync(_filter))
                 _features.Add(item);
         }

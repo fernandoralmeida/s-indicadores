@@ -22,11 +22,14 @@ public class DataNpgsql : IData<MEmpresa>
 
     public async IAsyncEnumerable<MEmpresa> ReadStoredProcedureAsync(string query)
     {
-        using (NpgsqlConnection connection = new(DataBase.DS_POSTGRES + $"Database={Helpers.DataBase.DBName};"))
+        using (NpgsqlConnection connection = new(DataBase.DS_POSTGRES_VPS + $"Database={Helpers.DataBase.DBName};"))
         {
             await connection.OpenAsync();
 
-            var command = new NpgsqlCommand(query, connection);
+            var command = new NpgsqlCommand(query, connection)
+            {
+                CommandTimeout = 0
+            };
 
             foreach (NpgsqlParameter p in ParameterCollection.Cast<NpgsqlParameter>())
                 command.Parameters.AddWithValue(p.ParameterName, p.Value!);
@@ -72,7 +75,7 @@ public class DataNpgsql : IData<MEmpresa>
     public async Task<DataTable> ReadDataTableAsync(string query)
      => await Task.Run(() =>
         {
-            using (NpgsqlConnection connection = new(DataBase.DS_POSTGRES + $"Database={Helpers.DataBase.DBName};"))
+            using (NpgsqlConnection connection = new(DataBase.DS_POSTGRES_VPS + $"Database={Helpers.DataBase.DBName};"))
             {
                 try
                 {

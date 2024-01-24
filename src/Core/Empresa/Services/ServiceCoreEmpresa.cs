@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using IDN.Core.Empresa.Interfaces;
 using IDN.Core.Empresa.Models;
 
@@ -22,4 +21,6 @@ public class ServiceCoreEmpresa : ServiceCore<MEmpresa>, IServiceCoreEmpresa
     {
         return _empresa.DoStoredProcedure(paran);
     }
+
+    
 }

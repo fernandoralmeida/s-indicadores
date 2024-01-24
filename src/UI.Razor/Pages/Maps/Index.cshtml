@@ -21,9 +21,9 @@
         @Model.Empresasativas
         <ul class="browser_default">
             Composição produtiva:
-            @foreach (var item in @Model.Setores)
+            @foreach (var item in @Model.Setores?.OrderByDescending(s => s.Value)!)
             {
-                <li>@item.Key @item.Value</li>
+                <li>@item.Key @item.Value %</li>
             }
         </ul>
         <div class="divider margin-b-10"></div>

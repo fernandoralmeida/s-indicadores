@@ -2,7 +2,7 @@
 @model Empresas.IndexModel
 @{
     Layout = "_Layout";
-    ViewData["Title"] = @Model.MunicipioAtivo?.ToUpper();
+    ViewData["Title"] = @Model.Municipio?.ToUpper();
 }
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -31,17 +31,17 @@
                         <div class="card-title activator">
                             Localização Aproximada<i class="material-icons right deep-orange-text">help</i>
                         </div>
-                        <!---->
-                        <form method="post">
-                            <div class="valign-wrapper margin-b-10">
-                                <input asp-for="MunicipioAtivo" hidden />
-                                <label>Novas Empresas</label>
-                                <select id="select_zone" class="browser-default margin-l-10" asp-for="ZonaAtiva"
-                                    asp-items="Model.Zonas">
-                                    <option></option>
-                                </select>
-                            </div>
-                        </form>
+                        @* <!---->
+                <form method="post">
+                <div class="valign-wrapper margin-b-10">
+                <input asp-for="Municipio" hidden />
+                <label>Novas Empresas</label>
+                <select id="select_zone" class="browser-default margin-l-10" asp-for="ZonaAtiva"
+                asp-items="Model.Zonas">
+                <option></option>
+                </select>
+                </div>
+                </form> *@
                         <div id="map" class="map-d"></div>
                     </div>
                     <div class="card-reveal">
@@ -76,7 +76,7 @@
                         <div class="card column-p5 hoverable">
                             <div class="card-content">
                                 <div class="card-title activator">
-                                    Regime Tributário<i class="material-icons right deep-orange-text">help</i>
+                                    Novas Empresas /Regime Tributário<i class="material-icons right deep-orange-text">help</i>
                                 </div>
                                 <div id="chart9_2"></div>
                             </div>
@@ -95,7 +95,7 @@
                         <div class="card column-p5 hoverable">
                             <div class="card-content">
                                 <div class="card-title activator">
-                                    Porte / Fiscal<i class="material-icons right deep-orange-text">help</i>
+                                    Novas Empresas /Porte /Fiscal<i class="material-icons right deep-orange-text">help</i>
                                 </div>
                                 <div id="chart9_3"></div>
                             </div>
@@ -117,18 +117,18 @@
                             <div class="card">
                                 <div class="card-content">
                                     <div class="card-title activator">
-                                        Setores<i class="material-icons right deep-orange-text">help</i>
+                                        Novas Empresas /Setores<i class="material-icons right deep-orange-text">help</i>
                                     </div>
                                     <div id="chart9_4"></div>
                                 </div>
                                 <div class="card-reveal">
                                     <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
 
-                                @foreach (var item in Model.LReports.Top3Atividades_Ano!.Take(1))
-                                {
+                                    @foreach (var item in Model.LReports.Top3Atividades_Ano!.Take(1))
+                                    {
                                         <p>Em @DateTime.Now.Year, das novas empresas formalizadas, o setor de @item.Key teve a maior
                                             demanda das empresas formalidas.</p>
-                                }
+                                    }
 
                                 </div>
                                 <div class="card-action center">
@@ -143,7 +143,7 @@
         <div class="card column-p0 hoverable width-100">
             <div class="card-content">
                 <div class="card-title activator">
-                    Relação de Empresas Novas/Baixas nos ultimos 12 meses<i class="material-icons left">
+                    Empresas Novas/Baixadas nos ultimos 12 meses<i class="material-icons left">
                         date_range
                     </i><i class="material-icons right deep-orange-text">help</i>
                 </div>
@@ -156,9 +156,9 @@
             </div>
         </div>
         @* <div class="column-p0 font-size-16 margin-t-b-10">
-            Empresas Totalizadas<i class="material-icons left">
-                stat_minus_3
-            </i>
+        Empresas Totalizadas<i class="material-icons left">
+        stat_minus_3
+        </i>
         </div> *@
         <div class="card column-p3 hoverable">
             <div class="card-content">
@@ -169,7 +169,7 @@
             </div>
             <div class="card-reveal">
                 <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                <p>O Municipio de @Model.MunicipioAtivo @Model.Local![0], tem atualmente em sua totalidade
+                <p>O Municipio de @Model.Municipio, tem atualmente em sua totalidade
                     @Model.LReports.MatrizFilial!.Sum(s => s.Value).ToString(). CNPJ ativos.</p>
                 <p>
                     @foreach (var item in Model.LReports.MatrizFilial!)
@@ -185,7 +185,7 @@
         <div class="card column-p3 hoverable">
             <div class="card-content">
                 <div class="card-title activator">
-                    Regime Tributário<i class="material-icons right deep-orange-text">help</i>
+                    Empresas /Regime Tributário<i class="material-icons right deep-orange-text">help</i>
                 </div>
                 <div id="chart2"></div>
             </div>
@@ -204,7 +204,7 @@
         <div class="card column-p3 hoverable">
             <div class="card-content">
                 <div class="card-title activator">
-                    Porte / Fiscal<i class="material-icons right deep-orange-text">help</i>
+                    Empresas /Porte /Fiscal<i class="material-icons right deep-orange-text">help</i>
                 </div>
                 <div id="chart3"></div>
             </div>
@@ -220,7 +220,7 @@
         <div class="card column-p5 hoverable">
             <div class="card-content">
                 <div class="card-title activator">
-                    Empresas por idade<i class="material-icons right deep-orange-text">help</i>
+                    Empresas /Idade<i class="material-icons right deep-orange-text">help</i>
                 </div>
                 <div id="chart5"></div>
             </div>
@@ -230,7 +230,7 @@
                 @foreach (var item in Model.LReports.Idade!.Take(1))
                 {
                     <p>
-                        No município de @Model.MunicipioAtivo, a maioria das empresas "@item.Value" tem entre @item.Key de
+                        No município de @Model.Municipio, a maioria das empresas "@item.Value" tem entre @item.Key de
                         atividade.
                     </p>
                 }
@@ -253,14 +253,14 @@
             </div>
         </div>
         @* <div class="column-p0 font-size-16 margin-t-b-10">
-            Setores Produtivos<i class="material-icons left">
-                stat_minus_3
-            </i>
+        Setores Produtivos<i class="material-icons left">
+        stat_minus_3
+        </i>
         </div> *@
         <div class="card column-p5 hoverable">
             <div class="card-content">
                 <div class="card-title activator">
-                    Setores<i class="material-icons right deep-orange-text">help</i>
+                    Empresas /Setores<i class="material-icons right deep-orange-text">help</i>
                 </div>
                 <div id="chart4"></div>
             </div>
@@ -268,13 +268,33 @@
                 <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
                 @foreach (var item in Model.LReports.Top3Atividades!.Take(1))
                 {
-                    <p>Na totalidade de todas as empresasas do Municipio de @Model.MunicipioAtivo,o setor de @item.Key tem a
+                    <p>
+                        Na totalidade de todas as empresasas do Municipio de @Model.Municipio,o setor de @item.Key tem a
                         maior fatia
-                        das atividadas do setor produtivo com @item.Value.Sum(s => s.Value).ToString() empresas.</p>
+                        das atividadas do setor produtivo com @Model.LReports.Setores?.Where(t => t.Key == item.Key).Sum(s => s.Value).ToString() empresas.</p>
                 }
             </div>
         </div>
-        <div class="column column-p5">
+        <div class="card column-p5 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Empresas /Natureza Juridica<i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart_nj"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                @foreach (var item in Model.LReports.Top3Atividades!.Take(1))
+                {
+                    <p>A natureza jurídica determina o regime jurídico aplicável à
+                        empresa. Por exemplo, as empresas de natureza empresária têm responsabilidade limitada, o que
+                        significa que os sócios não respondem com seus bens pessoais pelas dívidas da empresa.
+                        Em resumo, a natureza jurídica é uma informação importante que identifica o tipo de organização de
+                        uma empresa e determina o regime jurídico aplicável a ela.</p>
+                }
+            </div>
+        </div>
+        <div class="column column-p0">
             <div class="column-container flex-wrap margin-0 width-100">
                 @{
                     var _cont = 3;
@@ -300,10 +320,10 @@
                 }
             </div>
         </div>
-        <div class="card column-p0 hoverable width-100">
+        <div class="card column-p5 hoverable">
             <div class="card-content">
                 <div class="card-title activator">
-                    Crescimento Setorial ano/ano<i class="material-icons left">
+                    Desenvolvimento Setorial em 10 anos<i class="material-icons left">
                         date_range
                     </i><i class="material-icons right deep-orange-text">help</i>
                 </div>
@@ -313,6 +333,23 @@
                 <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
                 <p>
                     Nesse quadro, indicamos o crescimento setorial das empresas, onde é mostrado o crescimento ou
+                    descressimo do setor ano a ano, de todos os setores.
+                </p>
+            </div>
+        </div>
+        <div class="card column-p5 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Taxa de Desenvolvimento Setorial em 10 anos<i class="material-icons left">
+                        date_range
+                    </i><i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart_txsetorial"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <p>
+                    Nesse quadro, indicamos a taxa do crescimento setorial das empresas, onde é mostrado o crescimento ou
                     descressimo do setor ano a ano, de todos os setores.
                 </p>
             </div>
@@ -359,21 +396,21 @@
         <a href="#!" class="modal-close btn">Fechar</a>
     </div>
 </div>
-<div id="modal3" class="modal bottom-sheet modal-fixed-footer">
-    <div class="modal-content">
-        <h6>Novas Empresas por Localidade</h6>
-        @foreach (var item in Model.LReports!.EmpresasPorLocal!)
-        {
-            <p class="text-color-grey">- @item.Key
-                <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
-            </p>
-            <div class="divider"></div>
-        }
-    </div>
-    <div class="modal-footer">
-        <a href="#!" class="modal-close btn">Fechar</a>
-    </div>
+@* <div id="modal3" class="modal bottom-sheet modal-fixed-footer">
+<div class="modal-content">
+<h6>Novas Empresas por Localidade</h6>
+@foreach (var item in Model.LReports!.EmpresasPorLocal!)
+{
+<p class="text-color-grey">- @item.Key
+<span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
+</p>
+<div class="divider"></div>
+}
 </div>
+<div class="modal-footer">
+<a href="#!" class="modal-close btn">Fechar</a>
+</div>
+</div> *@
 
 @{
     var _scont = 3;
@@ -412,7 +449,7 @@
     }).addTo(map);
 
     // Carregar dados GeoJSON de uma API
-    fetch('/api/v1/geojson/@Model.MunicipioAtivo!.ToLower()')
+    fetch('/api/v1/geojson/@Model.Municipio!.ToLower()')
         .then(response => response.json())
         .then(data => {
 
@@ -904,6 +941,104 @@
         }
     };
 
+    var _naturezajuridica = {
+        series: [@Model.Charts!.NaturezaJuridica![1]],
+        labels: [@Model.Charts!.NaturezaJuridica![0]],
+        legend: {
+            position: 'bottom',
+        },
+        chart: {
+            type: 'donut',
+            with: _width,
+            height: 400,
+            background: 'transparent'
+        },
+        plotOptions: {
+            pie: {
+                startAngle: -120,
+                endAngle: 120,
+                offsetY: 10,
+                donut: {
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true
+                        }
+                    }
+                }
+            }
+        },
+        grid: {
+            padding: {
+                bottom: -10
+            }
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var _naturezajuridica_ano = {
+        series: [@Model.Charts!.NaturezaJuridica_Ano![1]],
+        labels: [@Model.Charts!.NaturezaJuridica_Ano![0]],
+        legend: {
+            position: 'bottom',
+        },
+        chart: {
+            type: 'donut',
+            with: _width,
+            height: 400,
+            background: 'transparent'
+        },
+        plotOptions: {
+            pie: {
+                startAngle: -120,
+                endAngle: 120,
+                offsetY: 10,
+                donut: {
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true
+                        }
+                    }
+                }
+            }
+        },
+        grid: {
+            padding: {
+                bottom: -10
+            }
+        },
+        theme: {
+            mode: 'light',
+            palette: 'palette1'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    }
+
     var _novas_empresas_mensal_ativas = {
 
         series: [@Model.Charts!.MatrizFilial_Ano![0]],
@@ -1190,6 +1325,58 @@
         }
     };
 
+    var _tx_evolucao_setorial = {
+        series: [@Model.Charts!.TxCrescimentoSetorial![1]],
+        chart: {
+            type: 'area',
+            stacked: false,
+            height: _height,
+            background: 'transparent',
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        markers: {
+            size: 0,
+        },
+        grid: {
+            xaxis: {
+                lines: {
+                    show: true
+                },
+            },
+            yaxis: {
+                lines: {
+                    show: false
+                }
+            }
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                inverseColors: false,
+                opacityFrom: 0.45,
+                opacityTo: 0.05,
+                stops: [20, 100, 100, 100]
+            },
+        },
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'right',
+            offsetX: -10
+        }
+    };
+
     window.onload = function () {
         new ApexCharts(document.querySelector("#chart9_1"), _novas_empresas_mensal_ativas).render();
         new ApexCharts(document.querySelector("#chart9_2"), _novas_empresas_mensal_fiscal).render();
@@ -1205,7 +1392,10 @@
         new ApexCharts(document.querySelector("#chart6"), _rotatividade).render();
 
         new ApexCharts(document.querySelector("#chart4"), _setores).render();
+        new ApexCharts(document.querySelector("#chart_nj"), _naturezajuridica).render();
         new ApexCharts(document.querySelector("#chart10"), _evolucao_setorial).render();
+
+        new ApexCharts(document.querySelector("#chart_txsetorial"), _tx_evolucao_setorial).render();
     };
 
 </script>

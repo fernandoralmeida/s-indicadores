@@ -20,10 +20,39 @@ public class DataEmpresa : IData<MEmpresa>
         ParameterCollection.Clear();
     }
 
-    public Task<DataTable> ReadDataTableAsync(string query)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<DataTable> ReadDataTableAsync(string query)
+    => await Task.Run(() =>
+        {
+            using (SqlConnection connection = new(DataBase.ConnectionString))
+            {
+                try
+                {
+                     
+                    connection.Open();
+
+                    SqlCommand _command = connection.CreateCommand();
+                    _command.CommandType = CommandType.Text;
+                    _command.CommandText = query;
+                    _command.CommandTimeout = 0;
+
+                    foreach (SqlParameter p in ParameterCollection)
+                    {
+                        _command.Parameters.Add(new SqlParameter(p.ParameterName, p.Value));
+                    }
+
+                    DataTable _table = new();
+
+                    new SqlDataAdapter(_command).Fill(_table);
+
+                    return _table;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                    return new DataTable();
+                }
+            }
+        });
 
     public async IAsyncEnumerable<MEmpresa> ReadStoredProcedureAsync(string query)
     {

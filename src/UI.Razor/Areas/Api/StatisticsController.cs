@@ -37,7 +37,6 @@ public class StatisticsController : ControllerBase
         return Ok(_charts);
     }
 
-
     [HttpGet("reports/{m?}")]
     public async Task<IActionResult> DoReport([FromRoute] string? m)
     {

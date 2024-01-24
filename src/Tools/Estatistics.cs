@@ -19,12 +19,12 @@ public static class Estatistics
         Stopwatch _timer = new();
         _timer.Start();
         var _mongoDB = Factory<MEmpresa>.NewDataMongoDB();
-        //var _dataDB = Factory<MEmpresa>.NewDataEmpresa();
-        var _dataPG = Factory<MEmpresa>.NewPostgres();
+        var _dataDB = Factory<MEmpresa>.NewDataEmpresa();
+        //var _dataPG = Factory<MEmpresa>.NewPostgres();
         var _report = new ServiceEmpresa(_serviceEmpresa!, _memoryCache!);
         var _count = 0;
 
-        var _municipios = await _dataPG.ReadDataTableAsync(SqlScript.Select_All_Municipio_Indicadores);
+        var _municipios = await _dataDB.ReadDataTableAsync(@"SELECT [Municipio] FROM [dbo].[Empresas] GROUP BY Municipio ORDER BY Municipio");
 
         foreach (DataRow cidade in _municipios.Rows)
         {
@@ -32,10 +32,10 @@ public static class Estatistics
             var _processtimer = new Stopwatch();
             _processtimer.Start();
 
-            _dataPG.ClearParameters();
-            _dataPG.AddParameters("@municipio", cidade[0]);
+            _dataDB.ClearParameters();
+            _dataDB.AddParameters("@Municipio", cidade[0]);
 
-            var _result = await _report.DoReportEmpresasAsync(_dataPG.ReadStoredProcedureAsync("SELECT * FROM Empresas WHERE Municipio = @municipio"));
+            var _result = await _report.DoReportEmpresasAsync(_dataDB.ReadStoredProcedureAsync("SELECT * FROM Empresas WHERE Municipio = @Municipio"));
 
             var _mongoDB2 = Factory<REmpresas>.NewDataMongoDB();
             var _list2 = new List<REmpresas>() { _result };

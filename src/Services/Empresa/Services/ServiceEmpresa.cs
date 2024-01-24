@@ -42,7 +42,7 @@ public class ServiceEmpresa : IServiceEmpresa
 
         return await Task.Run(() => new REmpresas()
         {
-            Municipio = emps_ativas.FirstOrDefault()!.Municipio!,
+            Municipio = emps_ativas.FirstOrDefault()?.Municipio! == "MOGI-GUACU" ? "MOGI GUACU" : emps_ativas.FirstOrDefault()?.Municipio!  /*emps_ativas.FirstOrDefault()!.Municipio!*/,
 
             Quantitativo = Quantitativo(emps),
 
@@ -204,17 +204,17 @@ public class ServiceEmpresa : IServiceEmpresa
                                 .Take(10)
                            select (new KeyValuePair<string, float>(rt.Key,
                                    Convert.ToSingle(rt.Where(s => s.SituacaoCadastral == "Baixada" && DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) /
-                                   Convert.ToSingle(rt.Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) * 100)),
+                                   Convert.ToSingle(rt.Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) /* 100*/)),
 
-            EmpresasPorLocal = from lc in emps_bairro
-                                  .GroupBy(s => s.Bairro)
-                                  .OrderByDescending(o => o.Count())
-                               select (new KeyValuePair<string, int>(lc.Key, lc.Count())),
+            // EmpresasPorLocal = from lc in emps_bairro
+            //                       .GroupBy(s => s.Bairro)
+            //                       .OrderByDescending(o => o.Count())
+            //                    select (new KeyValuePair<string, int>(lc.Key, lc.Count())),
 
-            EmpresasNovasPorLocal = from nlc in emps_novas_bairro
-                                        .GroupBy(s => s.Bairro)
-                                        .OrderByDescending(o => o.Count())
-                                    select (new KeyValuePair<string, int>(nlc.Key, nlc.Count())),
+            // EmpresasNovasPorLocal = from nlc in emps_novas_bairro
+            //                             .GroupBy(s => s.Bairro)
+            //                             .OrderByDescending(o => o.Count())
+            //                         select (new KeyValuePair<string, int>(nlc.Key, nlc.Count())),
 
             TaxaCrescimentoSetorial = TaxaCrescimentoSetorial(emps_ativas)
 
@@ -481,6 +481,28 @@ public class ServiceEmpresa : IServiceEmpresa
                 return _emp_faixa_etaria.Length > 0 ? _emp_faixa_etaria[..^1] : _emp_faixa_etaria;
             }),
 
+            NaturezaJuridica: await Task.Run(() =>
+            {
+                var _nj = new string[2];
+                foreach (var item in report.NaturezaJuridica!)
+                {
+                    _nj![0] += string.Format(@"`{0}`,", item.Key.RemoveNumbers().NormalizeText().Trim());
+                    _nj![1] += string.Format(@"{0},", item.Value);
+                }
+                return _nj;
+            }),
+
+            NaturezaJuridica_Ano: await Task.Run(() =>
+            {
+                var _nj_ano = new string[2];
+                foreach (var item in report.NaturezaJuridica_Ano!)
+                {
+                    _nj_ano![0] += string.Format(@"`{0}`,", item.Key.RemoveNumbers().NormalizeText().Trim());
+                    _nj_ano![1] += string.Format(@"{0},", item.Value);
+                }
+                return _nj_ano;
+            }),
+
             Setores: await Task.Run(() =>
             {
                 var _setores = new string[2];
@@ -521,6 +543,36 @@ public class ServiceEmpresa : IServiceEmpresa
                     {
                         _acumulador += sub.Value;
                         _datas += string.Format(@"{{x:`{0}`, y:{1}}},", sub.Key, _acumulador);
+                    }
+                    _tx_setorial += string.Format(@"{0}{1}]}},", _nomes, _datas[..^1]);
+                }
+                _crescimentosetorial![1] = _tx_setorial!.Length > 0 ? _tx_setorial![..^1] : _tx_setorial;
+                _crescimentosetorial![0] = _series_names!.Length > 0 ? _series_names[..^1] : _series_names;
+                return _crescimentosetorial;
+            }),
+
+            TxCrescimentoSetorial: await Task.Run(() =>
+            {
+                var _tx_setorial = string.Empty;
+                var _series_names = string.Empty;
+                var _crescimentosetorial = new string[2];
+
+                foreach (var item in report.TaxaCrescimentoSetorial!)
+                {
+                    _series_names += string.Format(@"`{0}`,", item.Key);
+                    var _nomes = string.Format(@"{{name:`{0}`,data:[", item.Key);
+                    var _datas = string.Empty;
+                    float _acumulador = report.Setores!.Where(s => s.Key == item.Key).Sum(s => s.Value) - item.Value.Sum(s => s.Value);
+                    float _valor_anterior = _acumulador;
+                    foreach (var sub in item.Value.OrderBy(s => s.Key))
+                    {
+                        _acumulador += sub.Value;
+                        float _tx = _valor_anterior == 0
+                                    ? _acumulador
+                                    : (_acumulador - _valor_anterior) / _valor_anterior * 100;
+
+                        _datas += string.Format(@"{{x:`{0}`, y:{1}}},", sub.Key, _tx.ToString("N2"));
+                        _valor_anterior = _acumulador;
                     }
                     _tx_setorial += string.Format(@"{0}{1}]}},", _nomes, _datas[..^1]);
                 }

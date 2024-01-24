@@ -7,6 +7,8 @@ public record RCharts(
     string[] BaixasMes,
     string[] MatrizFilial,
     string[] MatrizFilial_Ano,
+    string[] NaturezaJuridica,
+    string[] NaturezaJuridica_Ano,
     string[] Fiscal,
     string[] Fiscal_Ano,
     string[] PorteFiscal,
@@ -16,5 +18,6 @@ public record RCharts(
     string[] Setores,
     string[] SetoresAno,
     string[] CrescimentoSetorial,
+    string[] TxCrescimentoSetorial,
     IEnumerable<string> Setores_Controle
 );

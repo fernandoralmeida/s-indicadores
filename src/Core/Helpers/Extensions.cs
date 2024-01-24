@@ -40,4 +40,24 @@ public static class Extensions
 
         return string.Empty;
     }
+
+    public static string RemoveNumbers(this string str)
+    {
+        // Cria um novo StringBuilder para armazenar a string resultante
+        var sb = new StringBuilder();
+
+        // Itera sobre cada caractere da string original
+        for (int i = 0; i < str.Length; i++)
+        {
+            // Verifica se o caractere é um número
+            if (!char.IsDigit(str[i]))
+            {
+                // Adiciona o caractere ao StringBuilder
+                sb.Append(str[i]);
+            }
+        }
+
+        // Retorna a string resultante
+        return sb.ToString();
+    }
 }
