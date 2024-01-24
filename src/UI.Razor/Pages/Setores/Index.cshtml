@@ -12,7 +12,13 @@
 
 <div id="div-search" class="valign-wrapper">
     <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
-        onkeypress="handle(event)" asp-for="@Model.Cidade">
+        onkeypress="handle(event)" asp-for="@Model.Cidade" list="optcities">
+    <datalist id="optcities">
+        @foreach (var item in Model.ListaMunicipios!.OrderBy(o => o))
+        {
+            <option value="@item" />
+        }
+    </datalist>
     <i class="material-icons margin-y-5">search</i>
     <partial name="_Navmap" />
 </div>
@@ -122,7 +128,7 @@
             grades = ["Industria", "Comercio", "Servicos", "Construcao", "Agro"],
             labels = [];
 
-        div.innerHTML +='Setores<div class="divider"></div'
+        div.innerHTML += 'Setores<div class="divider"></div'
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=

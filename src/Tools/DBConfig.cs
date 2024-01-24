@@ -10,4 +10,13 @@ public static class DBConfig
     public static readonly string DS_POSTGRES
         = Environment.GetEnvironmentVariable("DS_POSTGRES")!;
 
+    public static readonly string DS_POSTGRES_VPS
+        = Environment.GetEnvironmentVariable("DS_POSTGRES_VPS")!;
+
+    public static readonly string DS_MONGODB
+        = Environment.GetEnvironmentVariable("DS_MONGODB")!;
+
+    public static readonly string DS_MONGODB_VPS
+        = Environment.GetEnvironmentVariable("DS_MONGODB_VPS")!;
+
 }

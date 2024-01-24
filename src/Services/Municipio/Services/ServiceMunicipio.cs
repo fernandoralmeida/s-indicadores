@@ -19,9 +19,13 @@ public class ServiceMunicipio : IServiceMunicipio
         _mapper = mapper;
     }
 
-    public IAsyncEnumerable<VMunicipio> DoListAsync(Expression<Func<MMunicipio, bool>>? param = null)
+    public async Task<IEnumerable<VMunicipio>> DoListAsync(Expression<Func<MMunicipio, bool>>? param = null)
     {
-        return _mapper.Map<IAsyncEnumerable<VMunicipio>>(_municipio.DoListAsync(param));
+        var _list = new List<MMunicipio>();
+        await foreach (var item in _municipio.DoListAsync(param))
+            _list.Add(item);
+
+        return _mapper.Map<IEnumerable<VMunicipio>>(_list);
     }
 
     public async Task<IEnumerable<VMunicipio>> DoMicroRegiaoJauAsync()

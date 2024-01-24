@@ -1,6 +1,10 @@
+using System.Globalization;
 using IDN.Coupler;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//builder.Services.AddLocalization();
+//var cultureInfoBR = new[] { new CultureInfo("pt-BR") };
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -16,6 +20,9 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+//CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CreateSpecificCulture("pt-BR");
+//CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.CreateSpecificCulture("pt-BR");
 
 app.UseStaticFiles();
 app.UseForwardedHeaders();

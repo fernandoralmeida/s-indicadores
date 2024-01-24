@@ -30,8 +30,8 @@ public record REmpresas
     public IEnumerable<KeyValuePair<string, int>>? Simples_Ano { get; set; }
     public IEnumerable<KeyValuePair<string, int>>? Idade { get; set; }
     public IEnumerable<KeyValuePair<string, float>>? Rotatividade { get; set; }    
-    public IEnumerable<KeyValuePair<string, int>>? EmpresasPorLocal { get; set; }
-    public IEnumerable<KeyValuePair<string, int>>? EmpresasNovasPorLocal { get; set; }
+    //public IEnumerable<KeyValuePair<string, int>>? EmpresasPorLocal { get; set; }
+    //public IEnumerable<KeyValuePair<string, int>>? EmpresasNovasPorLocal { get; set; }
     public IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>>? TaxaCrescimentoSetorial { get; set; }
 }
 

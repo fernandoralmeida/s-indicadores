@@ -20,6 +20,7 @@ public class IndexModel : PageModel
     public string? Cidade { get; set; }
     public IEnumerable<REmpresas>? LReports { get; set; }
     public string? Empresasativas { get; set; }
+    public IEnumerable<string>? ListaMunicipios { get; set; }
     public IEnumerable<KeyValuePair<string, int>> Setores { get; set; } = new List<KeyValuePair<string, int>>();
 
     public IndexModel()
@@ -30,6 +31,12 @@ public class IndexModel : PageModel
     {
         if (string.IsNullOrEmpty(m))
             return RedirectToPage("/Index");
+
+        var _list = new List<string>();
+        foreach (var item in await _mongoDB!.DoListAsync(null))
+            _list.Add(item.Municipio!);
+
+        ListaMunicipios = _list;
 
         await LoadData(m.NormalizeText().ToLower());
         return Page();

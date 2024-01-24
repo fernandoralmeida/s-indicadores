@@ -258,21 +258,12 @@ CREATE INDEX idx_socios_cnpjbase ON socios (CNPJBase);";
     => @"CREATE INDEX idx_empresas_municipio ON empresas (municipio);";
 
     public static string Select_All_Municipio_Indicadores
-    => @"SELECT municipio FROM empresas GROUP BY municipio ORDER BY municipio";
+    => @"SELECT municipio FROM empresas GROUP BY municipio ORDER BY municipio;";
 
     public static string View_empresas_by_municipio_To_www_indicadores_Empresas
     => @"
-    INSERT INTO tabela_2
-(cnpj, razaosocial, naturezajuridica, capitalsocial, porteempresa,
-identificadormatrizfilial, nomefantasia, situacaocadastral, datasituacaocadastral,
-datainicioatividade, cnaefiscalprincipal, cnaedescricao, cep, logradouro,
-numero, bairro, uf, municipio, opcaosimples, dataopcaosimples,
-dataexclusaosimples, opcaomei, dataopcaomei, dataexclusaomei)
-SELECT cnpj, razaosocial, naturezajuridica, capitalsocial, porteempresa,
-identificadormatrizfilial, nomefantasia, situacaocadastral, datasituacaocadastral,
-datainicioatividade, cnaefiscalprincipal, cnaedescricao, cep, logradouro,
-numero, bairro, uf, municipio, opcaosimples, dataopcaosimples,
-dataexclusaosimples, opcaomei, dataopcaomei, dataexclusaomei
-FROM view_empresas_by_municipio;";
+    INSERT INTO www_indicadores.public.empresas
+    SELECT *
+    FROM Migradata_RFB.public.view_empresas_by_municipio;";
 
 }

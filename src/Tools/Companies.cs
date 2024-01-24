@@ -728,6 +728,20 @@ public static class Companies
         }
     }
 
+    public static async Task CreateIndexadoresMigradata_RFB(string database, string datasource)
+    {
+        try
+        {
+            Console.WriteLine($"Indexing Tables");
+            await WriteAsync(SqlScript.Create_Index_MigraData_RFB, database, datasource);
+            Console.WriteLine($"Index successfully created!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro: {ex.Message}");
+        }
+    }
+
     public static async Task CreateIndicadoresNet(string database, string datasource)
     {
         string connectionString = $"{datasource};Database=postgres;";
@@ -745,6 +759,8 @@ public static class Companies
             {
                 await WriteAsync(SqlScript.Create_Table_Empresas_IndicadoresNet_pstg, database, datasource);
                 Console.WriteLine($"Tables successfully created!");
+                await WriteAsync(SqlScript.Create_Index_Municipios_Empresas_Indicadores, database, datasource);
+                Console.WriteLine($"Index successfully created!");
             }
             catch (Exception ex)
             {
@@ -757,9 +773,40 @@ public static class Companies
         }
     }
 
-    public static async Task DoIndicadores(string databaseOut, string databaseIn, string datasource)
+    public static async Task DoNewIndicadores(string databaseOut, string databaseIn, string datasource)
     {
-        var connectionString = $"{datasource}Database={databaseIn};";
+        var _timer = new Stopwatch();
+        _timer.Start();
+
+        Console.WriteLine($"Populate Indicadores");
+
+        try
+        {
+            var _processtimer = new Stopwatch();
+
+            _processtimer.Start();
+
+            ClearParameters();
+            Console.WriteLine($"Transfer Data...");
+            await ReadAsync(SqlScript.View_empresas_by_municipio_To_www_indicadores_Empresas, databaseIn, datasource);
+
+            Console.WriteLine($"Read Data...");
+            var _rows_inserted = await ReadAsync($"SELECT CNPJ FROM public.Empresas", databaseIn, datasource);
+
+            Console.WriteLine($"Insert rows...");
+            var _municipios = await ReadAsync(SqlScript.Select_All_Municipio_Indicadores, databaseIn, datasource);
+
+            _timer.Stop();
+            Console.WriteLine($"Municipios: {_municipios.Rows.Count} Rows: {_rows_inserted.Rows.Count} | Time: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro: {ex.Message}");
+        }
+    }
+    public static async Task DoIndicadores(string datasource, string database, string datasourceVPS)
+    {
+        var connectionString = $"{datasourceVPS}Database={database};";
         var tableName = "Empresas";
 
         var _timer = new Stopwatch();
@@ -785,9 +832,9 @@ public static class Companies
 
                 ClearParameters();
                 Console.WriteLine($"Reading municipios inicial: {_char}...");
-                var _municipios = await ReadAsync($"SELECT mps.descricao AS municipio FROM public.estabelecimentos est JOIN municipios mps ON est.municipio::text = mps.codigo::text WHERE mps.descricao LIKE '{_char}%' GROUP BY mps.descricao;", databaseOut, datasource);
+                var _municipios = await ReadAsync($"SELECT municipio FROM public.empresas WHERE municipio LIKE '{_char}%' GROUP BY municipio ORDER BY municipio;", database, datasource);
                 _m_count += _municipios.Rows.Count;
-                var _dtable = await ReadAsync($"SELECT * FROM public.view_empresas_by_municipio WHERE municipio LIKE '{_char}%' ORDER BY municipio;", databaseOut, datasource);
+                var _dtable = await ReadAsync($"SELECT * FROM public.empresas WHERE municipio LIKE '{_char}%' ORDER BY municipio;", database, datasource);
 
                 _trows += _dtable.Rows.Count;
 

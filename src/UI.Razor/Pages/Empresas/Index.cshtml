@@ -260,6 +260,41 @@
         <div class="card column-p5 hoverable">
             <div class="card-content">
                 <div class="card-title activator">
+                    Crescimento Setorial ano /ano<i class="material-icons left">
+                        date_range
+                    </i><i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart10"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <p>
+                    Nesse quadro, indicamos o crescimento setorial das empresas, onde é mostrado o crescimento ou
+                    descressimo do setor ano a ano, de todos os setores.
+                </p>
+            </div>
+        </div>
+        <div class="card column-p5 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
+                    Taxa de Crescimento Setorial ano /ano<i class="material-icons left">
+                        date_range
+                    </i><i class="material-icons right deep-orange-text">help</i>
+                </div>
+                <div id="chart_txsetorial"></div>
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <p>
+                    Nesse quadro, indicamos a taxa do crescimento setorial das empresas, onde é mostrado o crescimento
+                    ou
+                    descressimo do setor ano a ano, de todos os setores.
+                </p>
+            </div>
+        </div>
+        <div class="card column-p5 hoverable">
+            <div class="card-content">
+                <div class="card-title activator">
                     Empresas /Setores<i class="material-icons right deep-orange-text">help</i>
                 </div>
                 <div id="chart4"></div>
@@ -271,7 +306,8 @@
                     <p>
                         Na totalidade de todas as empresasas do Municipio de @Model.Municipio,o setor de @item.Key tem a
                         maior fatia
-                        das atividadas do setor produtivo com @Model.LReports.Setores?.Where(t => t.Key == item.Key).Sum(s => s.Value).ToString() empresas.</p>
+                        das atividadas do setor produtivo com @Model.LReports.Setores?.Where(t => t.Key == item.Key).Sum(s
+                    => s.Value).ToString() empresas.</p>
                 }
             </div>
         </div>
@@ -318,40 +354,6 @@
                         </div>
                     </div>
                 }
-            </div>
-        </div>
-        <div class="card column-p5 hoverable">
-            <div class="card-content">
-                <div class="card-title activator">
-                    Desenvolvimento Setorial em 10 anos<i class="material-icons left">
-                        date_range
-                    </i><i class="material-icons right deep-orange-text">help</i>
-                </div>
-                <div id="chart10"></div>
-            </div>
-            <div class="card-reveal">
-                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                <p>
-                    Nesse quadro, indicamos o crescimento setorial das empresas, onde é mostrado o crescimento ou
-                    descressimo do setor ano a ano, de todos os setores.
-                </p>
-            </div>
-        </div>
-        <div class="card column-p5 hoverable">
-            <div class="card-content">
-                <div class="card-title activator">
-                    Taxa de Desenvolvimento Setorial em 10 anos<i class="material-icons left">
-                        date_range
-                    </i><i class="material-icons right deep-orange-text">help</i>
-                </div>
-                <div id="chart_txsetorial"></div>
-            </div>
-            <div class="card-reveal">
-                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                <p>
-                    Nesse quadro, indicamos a taxa do crescimento setorial das empresas, onde é mostrado o crescimento ou
-                    descressimo do setor ano a ano, de todos os setores.
-                </p>
             </div>
         </div>
     </div>

@@ -229,7 +229,18 @@ public class ServiceGeojson : IServiceGeojson
                     Name = feature!["properties"]!["nome"]!.ToString().NormalizeText().ToLower(),
                     Geocode = feature!["properties"]!["geocodigo"]!.ToString()
                 }
+
             };
+
+            if (feature!["properties"]!["nome"]!.ToString().NormalizeText().ToLower() == "florinia")
+            {
+                _feature.Properties.Name = "florinea";
+            }
+
+            if (feature!["properties"]!["nome"]!.ToString().NormalizeText().ToLower() == "mogi guacu")
+            {
+                _feature.Properties.Name = "mogi-guacu";
+            }
 
             foreach (var i in _cities.Where(s => s.Municipio!.ToLower() == _feature.Properties!.Name!.ToLower()))
             {
