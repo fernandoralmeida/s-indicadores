@@ -146,4 +146,8 @@ public static class SqlCommands
     public static string CreateDataBase(string dbname)
         => $"CREATE DATABASE {dbname}";
 
+    public static string Select_All_Municipio_Indicadores
+    => @"SELECT municipio FROM empresas GROUP BY municipio ORDER BY municipio;";
+
+
 }

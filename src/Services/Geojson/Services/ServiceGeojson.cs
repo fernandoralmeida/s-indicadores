@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using IDN.Services.Empresa.Records;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 
 namespace IDN.Services.Geojson.Services;
 
@@ -202,8 +203,16 @@ public class ServiceGeojson : IServiceGeojson
         var _features = new List<VFeatures>();
         var _mongoDBE = Factory<REmpresas>.NewDataMongoDB();
 
-        //var _file = @"C:\\Users\\User\\OneDrive\\Dev\\BC250_2017_Municipio_A.json";
-        var _file = @"/home/dbn/sources/s-indicadores/files/BC250_2017_Municipio_A.json";
+        var _file = string.Empty;
+
+        if(Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            _file = @"C:\\Users\\User\\OneDrive\\Dev\\BC250_2017_Municipio_A.json";
+        }  
+        else if(Environment.OSVersion.Platform == PlatformID.Unix)
+        {
+            _file = @"/home/dbn/sources/s-indicadores/files/BC250_2017_Municipio_A.json";
+        } 
 
         string jsonString = await File.ReadAllTextAsync(_file);
 

@@ -1,142 +1,11 @@
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Text;
-using IDN.Core.Empresa.Interfaces;
-using IDN.Services.Empresa.Services;
-using Microsoft.Extensions.Caching.Memory;
-using Npgsql;
 
 namespace IDN.Tools;
 
-public static class Companies
+public static class Migradata
 {
-    private static readonly NpgsqlParameterCollection ParameterCollection = new NpgsqlCommand().Parameters;
-    public static void ClearParameters()
-    {
-        ParameterCollection.Clear();
-    }
-    public static void AddParameters(string parameterName, object parameterValue)
-    {
-        ParameterCollection.Add(new NpgsqlParameter(parameterName, parameterValue));
-    }
-    public static async Task WriteAsync(string query, string database, string datasource)
-    => await Task.Run(() =>
-        {
-            using (NpgsqlConnection connection = new($"{datasource}Database={database};"))
-            {
-                try
-                {
-                    connection.Open();
-                    NpgsqlCommand _command = connection.CreateCommand();
-                    _command.CommandType = CommandType.Text;
-                    _command.CommandText = query;
-                    _command.CommandTimeout = 0;
-
-                    foreach (NpgsqlParameter p in ParameterCollection)
-                    {
-                        _command.Parameters.Add(new NpgsqlParameter(p.ParameterName, p.Value));
-                    }
-
-                    var r = _command.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error: " + ex.Message);
-                }
-            }
-        });
-    public static async Task<DataTable> ReadAsync(string query, string database, string datasource)
-     => await Task.Run(() =>
-        {
-            using (NpgsqlConnection connection = new($"{datasource}Database={database};"))
-            {
-                try
-                {
-                    connection.Open();
-
-                    NpgsqlCommand _command = connection.CreateCommand();
-                    _command.CommandType = CommandType.Text;
-                    _command.CommandText = query;
-                    _command.CommandTimeout = 0;
-
-                    foreach (NpgsqlParameter p in ParameterCollection)
-                    {
-                        _command.Parameters.Add(new NpgsqlParameter(p.ParameterName, p.Value));
-                    }
-
-                    DataTable _table = new();
-
-                    new NpgsqlDataAdapter(_command).Fill(_table);
-
-                    return _table;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error: " + ex.Message);
-                    return new DataTable();
-                }
-            }
-        });
-    public static async Task InsertDataBulkCopy(string connectionString, string tableName, DataTable dataTable)
-    {
-        var stopwatch = new Stopwatch();
-        stopwatch.Start();
-
-        using var connection = new NpgsqlConnection(connectionString);
-        await connection.OpenAsync();
-
-        using var writer = connection.BeginBinaryImport($"COPY {tableName} FROM STDIN (FORMAT BINARY)");
-
-        foreach (DataRow row in dataTable.Rows)
-        {
-            // Ajuste os tipos de dados e os valores conforme necessário
-            writer.Timeout = TimeSpan.Zero;
-
-            await writer.StartRowAsync();
-            foreach (var item in row.ItemArray)
-            {
-                await writer.WriteAsync(item?.ToString());
-            }
-        }
-
-        writer.Complete();
-
-        stopwatch.Stop();
-        Console.WriteLine($"Process time: {dataTable.Rows.Count} Inserteds rows: {stopwatch.Elapsed}");
-    }
-    public static async Task CreateMigraData_RFB(string database, string datasource)
-    {
-        string connectionString = $"{datasource};Database=postgres;";
-        try
-        {
-            using (var conn = new NpgsqlConnection(connectionString))
-            {
-                conn.Open();
-                using var cmd = new NpgsqlCommand($"CREATE DATABASE {database}", conn);
-                cmd.ExecuteScalar();
-                Console.WriteLine($"{database} successfully created!");
-            }
-
-            try
-            {
-                await WriteAsync(SqlScript.MigraData_RFB, database, datasource);
-                Console.WriteLine($"Tables successfully created!");
-                await WriteAsync(SqlScript.Create_view_postgres_migradata_rfb, database, datasource);
-                await WriteAsync(SqlScript.Create_vew_municipios, database, datasource);
-                Console.WriteLine($"View successfully created!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro: {ex.Message}:");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erro: {ex.Message}");
-        }
-    }
-
     public static async Task DoCNAE(string database, string datasource)
     {
         int i = 0;
@@ -145,12 +14,10 @@ public static class Companies
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".CNAECSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(FilesCsv._DIRECTORY, ".CNAECSV"))
             try
             {
                 Console.WriteLine($"Migrating File {Path.GetFileName(file)}");
-
-                //var _data = Factory.Data(server);
 
                 var _dtable = new DataTable();
 
@@ -159,10 +26,10 @@ public static class Companies
                     {
                         var line = await reader.ReadLineAsync();
                         var fields = line!.Split(';');
-                        ClearParameters();
-                        AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
-                        AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
-                        await WriteAsync(_insert, database, datasource);
+                        Data.ClearParameters();
+                        Data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
+                        Data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
+                        await Data.WriteAsync(_insert, database, datasource);
                         i++;
                     }
 
@@ -183,7 +50,7 @@ public static class Companies
             var _timer = new Stopwatch();
             _timer.Start();
 
-            foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".MOTICSV"))
+            foreach (var file in await FilesCsv.FilesListAsync(FilesCsv._DIRECTORY, ".MOTICSV"))
                 try
                 {
                     Console.WriteLine($"Migrating File {Path.GetFileName(file)}");
@@ -193,10 +60,10 @@ public static class Companies
                         {
                             var line = reader.ReadLine();
                             var fields = line!.Split(';');
-                            ClearParameters();
-                            AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
-                            AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
-                            await WriteAsync(_insert, database, datasource);
+                            Data.ClearParameters();
+                            Data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
+                            Data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
+                            await Data.WriteAsync(_insert, database, datasource);
                             i++;
                         }
 
@@ -217,7 +84,7 @@ public static class Companies
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".MUNICCSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(FilesCsv._DIRECTORY, ".MUNICCSV"))
             try
             {
                 Console.WriteLine($"Migrating File {Path.GetFileName(file)}");
@@ -229,10 +96,10 @@ public static class Companies
                     {
                         var line = await reader.ReadLineAsync();
                         var fields = line!.Split(';');
-                        ClearParameters();
-                        AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
-                        AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
-                        await WriteAsync(_insert, database, datasource);
+                        Data.ClearParameters();
+                        Data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
+                        Data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
+                        await Data.WriteAsync(_insert, database, datasource);
                         i++;
                     }
 
@@ -251,7 +118,7 @@ public static class Companies
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".NATJUCSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(FilesCsv._DIRECTORY, ".NATJUCSV"))
             try
             {
                 Console.WriteLine($"Migrating File {Path.GetFileName(file)}");
@@ -263,10 +130,10 @@ public static class Companies
                     {
                         var line = await reader.ReadLineAsync();
                         var fields = line!.Split(';');
-                        ClearParameters();
-                        AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
-                        AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
-                        await WriteAsync(_insert, database, datasource);
+                        Data.ClearParameters();
+                        Data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
+                        Data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
+                        await Data.WriteAsync(_insert, database, datasource);
                         i++;
                     }
 
@@ -287,7 +154,7 @@ public static class Companies
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".PAISCSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(FilesCsv._DIRECTORY, ".PAISCSV"))
             try
             {
                 Console.WriteLine($"Migrating File {Path.GetFileName(file)}");
@@ -299,10 +166,10 @@ public static class Companies
                     {
                         var line = await reader.ReadLineAsync();
                         var fields = line!.Split(';');
-                        ClearParameters();
-                        AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
-                        AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
-                        await WriteAsync(_insert, database, datasource);
+                        Data.ClearParameters();
+                        Data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
+                        Data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
+                        await Data.WriteAsync(_insert, database, datasource);
                         i++;
                     }
 
@@ -323,7 +190,7 @@ public static class Companies
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".QUALSCSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(FilesCsv._DIRECTORY, ".QUALSCSV"))
             try
             {
                 Console.WriteLine($"Migrating File {Path.GetFileName(file)}");
@@ -335,10 +202,10 @@ public static class Companies
                     {
                         var line = await reader.ReadLineAsync();
                         var fields = line!.Split(';');
-                        ClearParameters();
-                        AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
-                        AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
-                        await WriteAsync(_insert, database, datasource);
+                        Data.ClearParameters();
+                        Data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
+                        Data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
+                        await Data.WriteAsync(_insert, database, datasource);
                         i++;
                     }
 
@@ -366,7 +233,7 @@ public static class Companies
 
         try
         {
-            foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".ESTABELE"))
+            foreach (var file in await FilesCsv.FilesListAsync(FilesCsv._DIRECTORY, ".ESTABELE"))
             {
                 var dataTable = new DataTable();
                 dataTable.Columns.Add("CNPJBase");
@@ -466,7 +333,7 @@ public static class Companies
 
                     // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados
                     Console.WriteLine($"insert {dataTable.Rows.Count} rows...");
-                    await InsertDataBulkCopy(connectionString, tableName, dataTable);
+                    await Data.InsertDataBulkCopy(connectionString, tableName, dataTable);
                 }
                 tc1 += c1;
                 tc2 += c2;
@@ -492,7 +359,7 @@ public static class Companies
 
         try
         {
-            foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".EMPRECSV"))
+            foreach (var file in await FilesCsv.FilesListAsync(FilesCsv._DIRECTORY, ".EMPRECSV"))
             {
                 var dataTable = new DataTable();
                 dataTable.Columns.Add("CNPJBase");
@@ -536,7 +403,7 @@ public static class Companies
                     }
 
                     Console.WriteLine($"insert {dataTable.Rows.Count} rows...");
-                    await InsertDataBulkCopy(connectionString, tableName, dataTable);
+                    await Data.InsertDataBulkCopy(connectionString, tableName, dataTable);
                 }
 
                 _tcount += _count;
@@ -562,7 +429,7 @@ public static class Companies
         try
         {
 
-            foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".D4"))
+            foreach (var file in await FilesCsv.FilesListAsync(FilesCsv._DIRECTORY, ".D4"))
             {
                 _count = 0;
 
@@ -579,7 +446,7 @@ public static class Companies
                         _count++;
                         _lista_simples_completa.Add(line!);
 
-                        if (_count % 10000 == 0)
+                        if (_count % 500000 == 0)
                         {
                             Console.Write($".");
                             //Console.Write("\r");
@@ -635,7 +502,7 @@ public static class Companies
 
                         // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados     
                         Console.WriteLine($"insert {dataTable.Rows.Count} rows...");
-                        await InsertDataBulkCopy(connectionString, tableName, dataTable);
+                        await Data.InsertDataBulkCopy(connectionString, tableName, dataTable);
                         dataTable.Dispose();
                         _processtimer.Stop();
                         Console.WriteLine($"R: {_rows} | TMigrated: {_count} | TTime: {_processtimer.Elapsed:hh\\:mm\\:ss\\.fff}");
@@ -663,7 +530,7 @@ public static class Companies
 
         try
         {
-            foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".SOCIOCSV"))
+            foreach (var file in await FilesCsv.FilesListAsync(FilesCsv._DIRECTORY, ".SOCIOCSV"))
             {
                 var dataTable = new DataTable();
                 dataTable.Columns.Add("CNPJBase");
@@ -718,7 +585,7 @@ public static class Companies
 
                     // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados
                     Console.WriteLine($"insert {dataTable.Rows.Count} rows...");
-                    await InsertDataBulkCopy(connectionString, tableName, dataTable);
+                    await Data.InsertDataBulkCopy(connectionString, tableName, dataTable);
 
                 }
                 _tcount += _count;
@@ -733,102 +600,7 @@ public static class Companies
         }
     }
 
-    public static async Task CreateIndexadoresMigradata_RFB(string database, string datasource)
-    {
-        try
-        {
-            Console.WriteLine($"Indexing Tables");
-            await WriteAsync(SqlScript.Create_Index_MigraData_RFB, database, datasource);
-            Console.WriteLine($"Index successfully created!");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erro: {ex.Message}");
-        }
-    }
 
-    public static async Task DoViewToTable(string database, string datasource)
-    {
-        var _timer = new Stopwatch();
-        _timer.Start();
 
-        Console.WriteLine($"Populate Indicadores");
 
-        try
-        {
-            var _processtimer = new Stopwatch();
-            _processtimer.Start();
-
-            await WriteAsync(SqlScript.Create_Table_FromView_Empresas, database, datasource);
-            Console.WriteLine($"Tables successfully created!");
-            await WriteAsync(SqlScript.Create_Index_Municipios_FromView_Empresas, database, datasource);
-            Console.WriteLine($"Index successfully created!");
-
-            ClearParameters();
-            Console.WriteLine($"Transfer Data...");
-            await WriteAsync(SqlScript.View_empresas_by_municipio_To_Table, database, datasource);
-
-            Console.WriteLine($"Read Data...");
-            var _rows_inserted = await ReadAsync($"SELECT CNPJ FROM public.fromview_empresas", database, datasource);
-
-            Console.WriteLine($"Insert rows...");
-            var _municipios = await ReadAsync(SqlScript.Select_All_Municipio_Indicadores, database, datasource);
-
-            _timer.Stop();
-            Console.WriteLine($"Municipios: {_municipios.Rows.Count} Rows: {_rows_inserted.Rows.Count} | Time: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erro: {ex.Message}");
-        }
-    }
-    public static async Task DoIndicadores(string datasource, string database, string datasourceVPS, string databaseVPS)
-    {
-        var connectionString = $"{datasourceVPS}Database={databaseVPS};";
-        var tableName = "Empresas";
-
-        var _timer = new Stopwatch();
-        _timer.Start();
-
-        Console.WriteLine($"Populate Indicadores");
-
-        try
-        {
-            var _count = 0;
-            var _trows = 0;
-            var _m_count = 0;
-
-            char[] alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-
-            foreach (var _char in alfabeto)
-            {
-                _count++;
-
-                var _processtimer = new Stopwatch();
-
-                _processtimer.Start();
-
-                ClearParameters();
-                Console.WriteLine($"Reading municipios inicial: {_char}...");
-                var _municipios = await ReadAsync($"SELECT municipio FROM public.fromview_empresas WHERE municipio LIKE '{_char}%' GROUP BY municipio ORDER BY municipio;", database, datasource);
-                _m_count += _municipios.Rows.Count;
-                var _dtable = await ReadAsync($"SELECT * FROM public.fromview_empresas WHERE municipio LIKE '{_char}%' ORDER BY municipio;", database, datasource);
-
-                _trows += _dtable.Rows.Count;
-
-                Console.WriteLine($"Insert rows...");
-
-                await InsertDataBulkCopy(connectionString, tableName, _dtable);
-                _processtimer.Stop();
-                Console.WriteLine($"Municipios: {_municipios.Rows.Count} | Rows: {_dtable.Rows.Count} | Time: {_processtimer.Elapsed:hh\\:mm\\:ss\\.fff}");
-            }
-
-            _timer.Stop();
-            Console.WriteLine($"Municipios: {_m_count} Rows: {_trows} | Time: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erro: {ex.Message}");
-        }
-    }
 }

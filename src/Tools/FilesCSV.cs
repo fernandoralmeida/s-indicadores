@@ -5,25 +5,26 @@ namespace IDN.Tools;
 
 public static class FilesCsv
 {
-    public static async Task NormalizeAsync(string path)
+    public static readonly string _DIRECTORY = @"c:\data";
+    public static async Task NormalizeAsync()
     => await Task.Run(async () =>
     {
         var _timer = new Stopwatch();
         _timer.Start();
-        await DeleteNotZip(path);
+        await DeleteNotZip(_DIRECTORY);
 
         var _listfiles = new List<string>();
 
         var _cores = Cpu.Count - 2;
 
-        foreach (string file in Directory.GetFiles(path).OrderBy(s => s))
+        foreach (string file in Directory.GetFiles(_DIRECTORY).OrderBy(s => s))
             if (file.Contains(".zip") == true)
             {
                 _listfiles.Add(file);
                 Console.WriteLine(file);
             }
 
-        var _tasks = _listfiles.Select(file => Task.Run(async () => await Unzip(file, path)));
+        var _tasks = _listfiles.Select(file => Task.Run(async () => await Unzip(file, _DIRECTORY)));
 
         await Parallel.ForEachAsync(_tasks,
             async (t, _) =>
