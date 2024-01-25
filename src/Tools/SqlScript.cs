@@ -100,7 +100,91 @@ CREATE TABLE Socios (
     NomeRepresentante VARCHAR(255) NULL,
     QualificacaoRepresentanteLegal VARCHAR(4) NULL,
     FaixaEtaria VARCHAR(2) NULL
-);";
+);
+
+CREATE OR REPLACE VIEW public.view_empresas_by_municipio
+ AS
+ SELECT (emp.cnpjbase::text || est.cnpjdv::text) || est.cnpjordem::text AS cnpj,
+    emp.razaosocial,
+    (njd.codigo::text || ' '::text) || njd.descricao::text AS naturezajuridica,
+    emp.capitalsocial,
+    emp.porteempresa,
+    est.identificadormatrizfilial,
+    est.nomefantasia,
+    est.situacaocadastral,
+    est.datasituacaocadastral,
+    est.datainicioatividade,
+    est.cnaefiscalprincipal,
+    atv.descricao AS cnaedescricao,
+    est.cep,
+    (est.tipologradouro::text || ' '::text) || est.logradouro::text AS logradouro,
+    est.numero,
+    est.bairro,
+    est.uf,
+    mps.descricao AS municipio,
+    snl.opcaosimples,
+    snl.dataopcaosimples,
+    snl.dataexclusaosimples,
+    snl.opcaomei,
+    snl.dataopcaomei,
+    snl.dataexclusaomei
+   FROM estabelecimentos est
+     JOIN empresas emp ON est.cnpjbase::text = emp.cnpjbase::text
+     JOIN cnaes atv ON est.cnaefiscalprincipal::text = atv.codigo::text
+     JOIN naturezajuridica njd ON emp.naturezajuridica::text = njd.codigo::text
+     JOIN municipios mps ON est.municipio::text = mps.codigo::text
+     LEFT JOIN simples snl ON est.cnpjbase::text = snl.cnpjbase::text;
+
+ALTER TABLE public.view_empresas_by_municipio
+    OWNER TO postgres;
+
+CREATE OR REPLACE VIEW public.view_municipios
+ AS
+ SELECT mps.descricao AS municipio
+   FROM estabelecimentos est
+     JOIN municipios mps ON est.municipio::text = mps.codigo::text
+	 GROUP BY mps.descricao;
+
+ALTER TABLE public.view_municipios
+    OWNER TO postgres;
+
+CREATE TABLE empresas_fromview (    
+    CNPJ varchar(14) NULL,
+    RazaoSocial varchar(255) NULL,
+    NaturezaJuridica varchar(255) NULL,
+    CapitalSocial varchar(255) NULL,
+    PorteEmpresa varchar(2) NULL,
+    IdentificadorMatrizFilial varchar(1) NULL,
+    NomeFantasia varchar(255) NULL,
+    SituacaoCadastral varchar(2) NULL,
+    DataSituacaoCadastral varchar(8) NULL,
+    DataInicioAtividade varchar(8) NULL,
+    CnaeFiscalPrincipal varchar(7) NULL,
+    CnaeDescricao varchar(255) NULL,
+    Logradouro varchar(255) NULL,
+    Numero varchar(255) NULL,
+    Bairro varchar(255) NULL,
+    CEP varchar(255) NULL,
+    UF varchar(2) NULL,
+    Municipio varchar(50) NULL,
+    OpcaoSimples varchar(1) NULL,
+    DataOpcaoSimples varchar(8) NULL,
+    DataExclusaoSimples varchar(8) NULL,
+    OpcaoMEI varchar(1) NULL,
+    DataOpcaoMEI varchar(8) NULL,
+    DataExclusaoMEI varchar(8) NULL    
+);
+
+CREATE INDEX idx_empresas_cnpjbase ON empresas (CNPJBase);
+CREATE INDEX idx_estabelecimentosa_cnpjbase ON estabelecimentos (CNPJBase);
+CREATE INDEX idx_simples_cnpjbase ON simples (CNPJBase);
+CREATE INDEX idx_socios_cnpjbase ON socios (CNPJBase);
+CREATE INDEX idx_empresas_municipio ON empresas (municipio);
+
+"
+
+
+;
 
     public static string Create_View_Empresas_MigraData_RFB
     => @"
@@ -236,6 +320,36 @@ CREATE TABLE Empresas (
     DataExclusaoMEI varchar(8) NULL    
 );";
 
+
+    public static string Create_Table_FromView_Empresas =>
+    @"    
+CREATE TABLE fromview_empresas (    
+    CNPJ varchar(14) NULL,
+    RazaoSocial varchar(255) NULL,
+    NaturezaJuridica varchar(255) NULL,
+    CapitalSocial varchar(255) NULL,
+    PorteEmpresa varchar(2) NULL,
+    IdentificadorMatrizFilial varchar(1) NULL,
+    NomeFantasia varchar(255) NULL,
+    SituacaoCadastral varchar(2) NULL,
+    DataSituacaoCadastral varchar(8) NULL,
+    DataInicioAtividade varchar(8) NULL,
+    CnaeFiscalPrincipal varchar(7) NULL,
+    CnaeDescricao varchar(255) NULL,
+    Logradouro varchar(255) NULL,
+    Numero varchar(255) NULL,
+    Bairro varchar(255) NULL,
+    CEP varchar(255) NULL,
+    UF varchar(2) NULL,
+    Municipio varchar(50) NULL,
+    OpcaoSimples varchar(1) NULL,
+    DataOpcaoSimples varchar(8) NULL,
+    DataExclusaoSimples varchar(8) NULL,
+    OpcaoMEI varchar(1) NULL,
+    DataOpcaoMEI varchar(8) NULL,
+    DataExclusaoMEI varchar(8) NULL    
+);";
+
     public static string Create_vew_municipios =>
     @"CREATE OR REPLACE VIEW public.view_municipios
  AS
@@ -254,16 +368,21 @@ CREATE INDEX idx_estabelecimentosa_cnpjbase ON estabelecimentos (CNPJBase);
 CREATE INDEX idx_simples_cnpjbase ON simples (CNPJBase);
 CREATE INDEX idx_socios_cnpjbase ON socios (CNPJBase);";
 
+    public static string Create_Index_Municipios_FromView_Empresas
+    => @"CREATE INDEX idx_empresas_municipio ON fromview_empresas (municipio);";
     public static string Create_Index_Municipios_Empresas_Indicadores
     => @"CREATE INDEX idx_empresas_municipio ON empresas (municipio);";
 
     public static string Select_All_Municipio_Indicadores
     => @"SELECT municipio FROM empresas GROUP BY municipio ORDER BY municipio;";
 
-    public static string View_empresas_by_municipio_To_www_indicadores_Empresas
+    public static string Select_All_Municipio_FromView_Empresas
+    => @"SELECT municipio FROM fromview_empresas GROUP BY municipio ORDER BY municipio;";
+
+    public static string View_empresas_by_municipio_To_Table
     => @"
-    INSERT INTO www_indicadores.public.empresas
+    INSERT INTO public.fromview_empresas
     SELECT *
-    FROM Migradata_RFB.public.view_empresas_by_municipio;";
+    FROM public.view_empresas_by_municipio;";
 
 }

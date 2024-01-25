@@ -404,7 +404,7 @@ public static class Companies
                 c1 = 0;
 
                 Console.WriteLine($"Reading File {Path.GetFileName(file)}");
-                Console.Write("\n|");
+                //Console.Write("\n|");
 
                 using var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1"));
                 {
@@ -456,15 +456,16 @@ public static class Companies
 
                             c2++;
 
-                            if (c2 % 100 == 0)
+                            if (c2 % 500000 == 0)
                             {
-                                Console.Write($"  {c2}");
-                                Console.Write("\r");
+                                Console.Write($".");
+                                //Console.Write("\r");
                             }
                         }
                     }
 
                     // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados
+                    Console.WriteLine($"insert {dataTable.Rows.Count} rows...");
                     await InsertDataBulkCopy(connectionString, tableName, dataTable);
                 }
                 tc1 += c1;
@@ -505,7 +506,7 @@ public static class Companies
                 int _count = 0;
 
                 Console.WriteLine($"Reading File {Path.GetFileName(file)}");
-                Console.Write("\n|");
+                //Console.Write("\n|");
 
                 using var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1"));
                 {
@@ -527,13 +528,14 @@ public static class Companies
 
                         dataTable.Rows.Add(row);
 
-                        if (_count % 100 == 0)
+                        if (_count % 500000 == 0)
                         {
-                            Console.Write($"  {_count}");
-                            Console.Write("\r");
+                            Console.Write($".");
+                            //Console.Write("\r");
                         }
                     }
 
+                    Console.WriteLine($"insert {dataTable.Rows.Count} rows...");
                     await InsertDataBulkCopy(connectionString, tableName, dataTable);
                 }
 
@@ -560,12 +562,12 @@ public static class Companies
         try
         {
 
-            foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".D3"))
+            foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".D4"))
             {
                 _count = 0;
 
                 Console.WriteLine($"Reading File {Path.GetFileName(file)}");
-                Console.Write("\n|");
+                //Console.Write("\n|");
 
                 var _lista_simples_completa = new List<string>();
 
@@ -579,8 +581,8 @@ public static class Companies
 
                         if (_count % 10000 == 0)
                         {
-                            Console.Write($"  {_count}");
-                            Console.Write("\r");
+                            Console.Write($".");
+                            //Console.Write("\r");
                         }
                     }
 
@@ -597,7 +599,8 @@ public static class Companies
                         var _processtimer = new Stopwatch();
                         _processtimer.Start();
                         var _rows = 0;
-                        Console.Write("\n|");
+                        //Console.Write("\n|");
+                        //Console.WriteLine($"insert {parts.Count()} rows");
 
                         var dataTable = new DataTable();
                         dataTable.Columns.Add("CNPJBase");
@@ -623,14 +626,15 @@ public static class Companies
                             row["DataExclusaoMEI"] = fields[6].Replace("\"", "").Trim();
                             dataTable.Rows.Add(row);
 
-                            if (_rows % 100 == 0)
+                            if (_rows % 500000 == 0)
                             {
-                                Console.Write($"  {_rows}");
-                                Console.Write("\r");
+                                Console.Write($".");
+                                //Console.Write("\r");
                             }
                         }
 
-                        // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados                        
+                        // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados     
+                        Console.WriteLine($"insert {dataTable.Rows.Count} rows...");
                         await InsertDataBulkCopy(connectionString, tableName, dataTable);
                         dataTable.Dispose();
                         _processtimer.Stop();
@@ -677,7 +681,7 @@ public static class Companies
                 _count = 0;
 
                 Console.WriteLine($"Reading File {Path.GetFileName(file)}");
-                Console.Write("\n|");
+                //Console.Write("\n|");
 
                 using var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1"));
                 {
@@ -704,15 +708,16 @@ public static class Companies
 
                         dataTable.Rows.Add(row);
 
-                        if (_count % 100 == 0)
+                        if (_count % 500000 == 0)
                         {
-                            Console.Write($"  {_count}");
-                            Console.Write("\r");
+                            Console.Write($".");
+                            //Console.Write("\r");
                         }
 
                     }
 
                     // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados
+                    Console.WriteLine($"insert {dataTable.Rows.Count} rows...");
                     await InsertDataBulkCopy(connectionString, tableName, dataTable);
 
                 }
@@ -742,38 +747,7 @@ public static class Companies
         }
     }
 
-    public static async Task CreateIndicadoresNet(string database, string datasource)
-    {
-        string connectionString = $"{datasource};Database=postgres;";
-        try
-        {
-            using (var conn = new NpgsqlConnection(connectionString))
-            {
-                conn.Open();
-                using var cmd = new NpgsqlCommand($"CREATE DATABASE {database}", conn);
-                cmd.ExecuteScalar();
-                Console.WriteLine($"{database} successfully created!");
-            }
-
-            try
-            {
-                await WriteAsync(SqlScript.Create_Table_Empresas_IndicadoresNet_pstg, database, datasource);
-                Console.WriteLine($"Tables successfully created!");
-                await WriteAsync(SqlScript.Create_Index_Municipios_Empresas_Indicadores, database, datasource);
-                Console.WriteLine($"Index successfully created!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro: {ex.Message}:");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erro: {ex.Message}");
-        }
-    }
-
-    public static async Task DoNewIndicadores(string databaseOut, string databaseIn, string datasource)
+    public static async Task DoViewToTable(string database, string datasource)
     {
         var _timer = new Stopwatch();
         _timer.Start();
@@ -783,18 +757,22 @@ public static class Companies
         try
         {
             var _processtimer = new Stopwatch();
-
             _processtimer.Start();
+
+            await WriteAsync(SqlScript.Create_Table_FromView_Empresas, database, datasource);
+            Console.WriteLine($"Tables successfully created!");
+            await WriteAsync(SqlScript.Create_Index_Municipios_FromView_Empresas, database, datasource);
+            Console.WriteLine($"Index successfully created!");
 
             ClearParameters();
             Console.WriteLine($"Transfer Data...");
-            await ReadAsync(SqlScript.View_empresas_by_municipio_To_www_indicadores_Empresas, databaseIn, datasource);
+            await WriteAsync(SqlScript.View_empresas_by_municipio_To_Table, database, datasource);
 
             Console.WriteLine($"Read Data...");
-            var _rows_inserted = await ReadAsync($"SELECT CNPJ FROM public.Empresas", databaseIn, datasource);
+            var _rows_inserted = await ReadAsync($"SELECT CNPJ FROM public.fromview_empresas", database, datasource);
 
             Console.WriteLine($"Insert rows...");
-            var _municipios = await ReadAsync(SqlScript.Select_All_Municipio_Indicadores, databaseIn, datasource);
+            var _municipios = await ReadAsync(SqlScript.Select_All_Municipio_Indicadores, database, datasource);
 
             _timer.Stop();
             Console.WriteLine($"Municipios: {_municipios.Rows.Count} Rows: {_rows_inserted.Rows.Count} | Time: {_timer.Elapsed:hh\\:mm\\:ss\\.fff}");
@@ -804,9 +782,9 @@ public static class Companies
             Console.WriteLine($"Erro: {ex.Message}");
         }
     }
-    public static async Task DoIndicadores(string datasource, string database, string datasourceVPS)
+    public static async Task DoIndicadores(string datasource, string database, string datasourceVPS, string databaseVPS)
     {
-        var connectionString = $"{datasourceVPS}Database={database};";
+        var connectionString = $"{datasourceVPS}Database={databaseVPS};";
         var tableName = "Empresas";
 
         var _timer = new Stopwatch();
@@ -832,9 +810,9 @@ public static class Companies
 
                 ClearParameters();
                 Console.WriteLine($"Reading municipios inicial: {_char}...");
-                var _municipios = await ReadAsync($"SELECT municipio FROM public.empresas WHERE municipio LIKE '{_char}%' GROUP BY municipio ORDER BY municipio;", database, datasource);
+                var _municipios = await ReadAsync($"SELECT municipio FROM public.fromview_empresas WHERE municipio LIKE '{_char}%' GROUP BY municipio ORDER BY municipio;", database, datasource);
                 _m_count += _municipios.Rows.Count;
-                var _dtable = await ReadAsync($"SELECT * FROM public.empresas WHERE municipio LIKE '{_char}%' ORDER BY municipio;", database, datasource);
+                var _dtable = await ReadAsync($"SELECT * FROM public.fromview_empresas WHERE municipio LIKE '{_char}%' ORDER BY municipio;", database, datasource);
 
                 _trows += _dtable.Rows.Count;
 
