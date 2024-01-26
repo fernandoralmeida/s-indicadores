@@ -9,9 +9,6 @@ using IDN.Data.Helpers;
 using MongoDB.Driver;
 using IDN.Data.Interface;
 using IDN.Core.Helpers;
-using MongoDB.Driver.Core.Authentication;
-using MongoDB.Bson;
-using System.Net.Mail;
 
 namespace UI.Razor.Pages.Empresas;
 
@@ -66,6 +63,7 @@ public partial class IndexModel : PageModel
             {
                 var _c = city.Trim().ToUpper();
                 Municipio += $"{city.Trim()},";
+
                 var __filter = Builders<REmpresas>.Filter.Eq(e => e.Municipio, _c);
                 foreach (var r in await _mongoDB!.DoListAsync(__filter))
                     _listREmpresas.Add(r);

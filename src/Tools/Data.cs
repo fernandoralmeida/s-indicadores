@@ -90,7 +90,7 @@ public static class Data
         writer.Complete();
 
         stopwatch.Stop();
-        Console.WriteLine($"Inserteds rows: {stopwatch.Elapsed} Process time: {dataTable.Rows.Count}");
+        Console.WriteLine($"Inserteds rows: {dataTable.Rows.Count} Process time: {stopwatch.Elapsed:hh\\:mm\\:ss\\.fff}");
     }
 
     public static async Task CreateDataBase(string sqlscript, string datasource)

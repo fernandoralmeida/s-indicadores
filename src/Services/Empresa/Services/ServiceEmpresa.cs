@@ -57,10 +57,10 @@ public class ServiceEmpresa : IServiceEmpresa
                             select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
 
             NovasEmpresas_Ano = from qtm in emps_ativas
-                                        .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= DateTime.Now.AddMonths(-12))
+                                        .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
 
                                         .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
-                                        .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("MMM"))
+                                        .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
                                 select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
 
             MatrizFilial = from mf in emps_ativas
@@ -76,9 +76,9 @@ public class ServiceEmpresa : IServiceEmpresa
 
 
             Baixas_Ano = from qtm in emps_baixadas
-                            .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= DateTime.Now.AddMonths(-12))
+                            .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
                             .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
-                            .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("MMM"))
+                            .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
                          select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
 
             NaturezaJuridica = from nj in emps_ativas
@@ -201,7 +201,7 @@ public class ServiceEmpresa : IServiceEmpresa
             Rotatividade = from rt in emps
                                 .GroupBy(d => DateTime.ParseExact(d.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString())
                                 .OrderByDescending(s => s.Key)
-                                .Take(10)
+                                .Take(11)
                            select (new KeyValuePair<string, float>(rt.Key,
                                    Convert.ToSingle(rt.Where(s => s.SituacaoCadastral == "Baixada" && DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) /
                                    Convert.ToSingle(rt.Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) * 100)),
@@ -275,11 +275,11 @@ public class ServiceEmpresa : IServiceEmpresa
                select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t.Key.ToString()!,
                             from a in list
                                         .Where(s => s.SetorProdutivo() == t.Key
-                                                    && DateTime.ParseExact(s.DataInicioAtividade!.Trim()[..4], "yyyy", CultureInfo.InvariantCulture).Date >= DateTime.Now.AddYears(-12))
+                                                    && DateTime.ParseExact(s.DataInicioAtividade!.Trim()[..4], "yyyy", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 10, 1, 1))
                                         .GroupBy(s => s.DataInicioAtividade!.Trim()[..4])
                                         .Where(c => c?.Count() > 0)
                                         .OrderByDescending(s => s.Key)
-                                        //.Take(11)
+                                //.Take(11)
                             select (new KeyValuePair<string, int>(a.Key, a.Count()))));
     }
 
