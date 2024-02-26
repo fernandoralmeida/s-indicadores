@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
-using Azure.Core.GeoJson;
 using IDN.Core.Helpers;
 using IDN.Data.Helpers;
 using IDN.Data.Interface;

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace IDN.Data.Repositories;
 public class RepositoryEmpresa : RepositoryContext<MEmpresa>, IRepositoryCoreEmpresa
 {
-    private readonly DataEmpresa _data = new();
+    private readonly DataNpgsql _data = new();
     public RepositoryEmpresa(ContextApp data) : base(data) { }
 
     public async IAsyncEnumerable<MEmpresa> DoListAsync(Expression<Func<MEmpresa, bool>>? param = null)

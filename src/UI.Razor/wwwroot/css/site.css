@@ -5,6 +5,8 @@
   --color-grey: #475966;
   --color-dark: #252B33;
   --color-dark-8: rgba(37, 43, 51, .8);
+  --color-dark-2: rgba(36, 42, 50, 0.075);
+  --color-dark-4: rgba(36, 42, 50, 0.15);
   --color-glass: rgba(37, 43, 51, .8);
   --color-glass-white: rgba(255, 255, 255, .7);
   --color-white: #ffffff;
@@ -241,6 +243,16 @@ iframe {
   background-color: var(--color-dark) !important;
 }
 
+.bg-color-dark-2 {
+  color: var(--color-dark) !important;
+  background-color: var(--color-dark-2) !important;
+}
+
+.bg-color-dark-4 {
+  color: var(--color-dark) !important;
+  background-color: var(--color-dark-4) !important;
+}
+
 .bg-color-grey {
   color: var(--color-light) !important;
   background-color: var(--color-grey) !important;
@@ -305,7 +317,23 @@ iframe {
 }
 
 nav {
+  color: var(--color-dark);
   width: 100%;
+  background-color: var(--color-dark-2);
+}
+
+nav ul a {
+  -webkit-transition: background-color .3s;
+  transition: background-color .3s;
+  font-size: 1rem;
+  color: var(--color-dark);
+  display: block;
+  padding: 0 15px;
+  cursor: pointer;
+}
+
+nav a {
+  color: var(--color-dark);
 }
 
 .nav-city {
@@ -353,6 +381,23 @@ nav i.material-icons {
   z-index: -2;
   height: calc(100vh / 1.5);
   width: 100%;
+}
+
+nav .brand-logo {
+  position: absolute;
+  display: inline-block;
+  font-size: 2.1rem;
+  margin-left: calc(50% - 19px);
+  color: var(--color-dark);
+  padding: 0;
+  margin-top: 10px;
+}
+
+nav .arrow-back {
+  position: absolute;
+  display: inline-block;
+  font-size: 2.1rem;
+  margin-left: 10px;
 }
 
 /***** END NAV`s ******/
@@ -460,7 +505,11 @@ nav i.material-icons {
 
 .map-d {
   width: 100%;
-  height: 575px;
+  height: 300px;
+}
+
+.map-d-bgcolor {
+  background-color: var(--color-dark-2);
 }
 
 .container-m10 {
@@ -494,35 +543,6 @@ nav i.material-icons {
   border-radius: 50px;
   z-index: 1;
 }
-
-
-nav .brand-logo {
-  position: absolute;
-  display: inline-block;
-  font-size: 2.1rem;
-  margin-left: calc(50% - 19px);
-}
-
-nav .arrow-back {
-  position: absolute;
-  display: inline-block;
-  font-size: 2.1rem;
-  margin-left: 10px;
-}
-
-/*
-nav .brand-logo {
-  vertical-align: middle;
-  display: inline-block;
-  padding-top: 8px;
-  padding-left: 16px;
-}
-
-nav .brand-logo.right {
-  right: 0.5rem;
-  padding: 0 10px;
-}
-*/
 
 /**** Controls ****/
 #navmap {
@@ -846,12 +866,12 @@ nav,
 }
 
 .card .card-content {
-  padding: 16px;
+  padding: 5px;
   border-radius: 0 0 6px 6px;
 }
 
 .card .card-reveal {
-  padding: 16px;
+  padding: 5px;
   position: absolute;
   background-color: var(--color-white);
   width: 100%;
@@ -880,16 +900,71 @@ nav,
   /*24px;*/
 }
 
+.card-header.activator i.right {
+  float: right;
+  margin-left: 15px;
+  margin-top: -4px;
+  cursor: pointer;
+}
+
+.card-header.activator i.left {
+  float: left;
+  margin-left: rpx;
+  margin-top: -4px;
+}
+
+.card .card-content p {
+  margin: 5px;
+}
+
+.card .card-title {
+  font-size: inherit;
+  font-weight: 300;
+}
+
+.card .card-reveal .card-title {
+  cursor: pointer;
+  display: block;
+  padding: 5px;
+}
+
+.card .card-reveal .card-title i.right {
+  float: right;
+  margin-left: 15px;
+  margin-top: -4px;
+  cursor: pointer;
+}
+
 /**** Containers ****/
 .width-100 {
   width: 100% !important;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.overflow-y {
+  overflow-y: scroll;
+}
+
+.max-height-400 {
+  max-height: 400px;
+}
+
+.max-height-300 {
+  max-height: 300px;
+}
+
+.max-height-280 {
+  max-height: 280px;
 }
 
 .column-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 10px;
+  gap: 20px;
   margin-left: 10px;
   margin-right: 10px;
   width: calc(100% - 20px);
@@ -899,7 +974,7 @@ nav,
   flex: auto;
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 20px;
   flex-wrap: wrap;
 }
 
@@ -920,52 +995,55 @@ nav,
 }
 
 .column-p0 {
-  width: calc(100% - 10px);
+  width: calc(100% - 20px);
 }
 
 .column-p3 {
-  width: calc(33% - 10px);
+  width: calc(33% - 20px);
 }
 
 .column-w3 {
-  width: calc(30% - 10px);
+  width: calc(30% - 20px);
+}
+
+.column-p37 {
+  width: calc(37.5% - 20px);
 }
 
 .column-p4 {
-  width: calc(25% - 10px);
+  width: calc(25% - 20px);
+}
+
+.column-w4{
+  width: calc(40% - 20px);
 }
 
 .column-p5 {
-  width: calc(50% - 10px);
+  width: calc(50% - 20px);
 }
 
 .column-d5 {
-  width: calc((100% / 5) - 10px);
+  width: calc((100% / 5) - 20px);
+}
+
+.column-p6 {
+  width: calc(60% - 20px);
 }
 
 .column-p8 {
-  width: calc(80% - 10px);
+  width: calc(80% - 20px);
 }
 
 .column-p7 {
-  width: calc(70% - 10px);
+  width: calc(70% - 20px);
 }
 
 .column-p2 {
-  width: calc(20% - 10px);
+  width: calc(20% - 20px);
 }
 
 .column-sw {
   flex: 1 !important;
-}
-
-.card .card-content p {
-  margin: 5px;
-}
-
-.card .card-title {
-  font-size: medium;
-  font-weight: 300;
 }
 
 /**** bordas, backgrounds, degradês ****/
@@ -1016,8 +1094,8 @@ nav,
 }
 
 .glass-box {
-  background-color: var(--color-glass);
-  backdrop-filter: blur(5px);
+  background-color: var(--color-dark-2);
+  backdrop-filter: blur(7px);
   color: var(--color-grey);
   /*opacity: 0.7;*/
 }
@@ -1035,9 +1113,20 @@ nav,
 .padding-10 {
   padding: 10px;
 }
+.padding-5 {
+  padding: 5px;
+}
 
 .padding-r-10 {
   padding-right: 10px;
+}
+
+.padding-l-5 {
+  padding-left: 5px !important;
+}
+
+.padding-l-10 {
+  padding-left: 10px !important;
 }
 
 .padding-t-10 {
@@ -1058,6 +1147,10 @@ nav,
 
 .margin-auto {
   margin: auto;
+}
+
+.margin-t-0 {
+  margin-top: 0px;
 }
 
 .margin-t-10 {
@@ -1094,6 +1187,14 @@ nav,
 
 .margin-b-10 {
   margin-bottom: 10px;
+}
+
+.margin-b-20 {
+  margin-bottom: 20px;
+}
+
+.margin-b-0 {
+  margin-bottom: 0px;
 }
 
 .margin-b-50 {
@@ -1141,6 +1242,10 @@ nav,
 
 .text-color-blue {
   color: var(--color-blue);
+}
+
+.text-max-width-7 {
+  max-width: 70%;
 }
 
 .vertical-center {
@@ -1255,6 +1360,8 @@ nav,
 
   .column-p2,
   .column-p3,
+  .column-p37,
+  .column-w3,
   .column-p4,
   .column-p5,
   .column-p7,
@@ -1266,7 +1373,7 @@ nav,
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 10px;
+    gap: 20px;
     margin-left: 10px;
     margin-right: 10px;
     width: calc(100% - 20px);
@@ -1351,6 +1458,7 @@ nav,
     display: inline-block;
     font-size: 2.1rem;
     margin-left: 0px;
+    margin-top: 5px;
   }
 
   .socialmedia {

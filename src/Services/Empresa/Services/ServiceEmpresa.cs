@@ -216,7 +216,35 @@ public class ServiceEmpresa : IServiceEmpresa
             //                             .OrderByDescending(o => o.Count())
             //                         select (new KeyValuePair<string, int>(nlc.Key, nlc.Count())),
 
-            TaxaCrescimentoSetorial = TaxaCrescimentoSetorial(emps_ativas)
+            TaxaCrescimentoSetorial = TaxaCrescimentoSetorial(emps_ativas),
+
+            NovasMei_Ano = from qtm in emps_ativas
+                                    .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
+                                    .Where(s => s.OpcaoMEI == "S")
+                                    .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
+                                    .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
+                           select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+
+            NovasME_Ano = from qtm in emps_ativas
+                                    .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
+                                    .Where(s => s.OpcaoSimples == "S" && s.OpcaoMEI == "N")
+                                    .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
+                                    .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
+                          select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+
+            NovasEPP_Ano = from qtm in emps_ativas
+                                        .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
+                                        .Where(s => s.PorteEmpresa == "EPP")
+                                        .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
+                                        .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
+                           select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+
+            NovasDemais_Ano = from qtm in emps_ativas
+                                        .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
+                                        .Where(s => s.PorteEmpresa == "Demais")
+                                        .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
+                                        .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
+                              select (new KeyValuePair<string, int>(qtm.Key, qtm.Count()))
 
         });
     }
@@ -328,6 +356,50 @@ public class ServiceEmpresa : IServiceEmpresa
             {
                 string[] _novas_mes = new string[2];
                 foreach (var m in report.NovasEmpresas_Ano!)
+                {
+                    _novas_mes[0] += string.Format(@"{0},", m.Value);
+                    _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
+                }
+                return _novas_mes;
+            }),
+
+            NovasMeiMes: await Task.Run(() =>
+            {
+                string[] _novas_mes = new string[2];
+                foreach (var m in report.NovasMei_Ano!)
+                {
+                    _novas_mes[0] += string.Format(@"{0},", m.Value);
+                    _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
+                }
+                return _novas_mes;
+            }),
+
+            NovasMEMes: await Task.Run(() =>
+            {
+                string[] _novas_mes = new string[2];
+                foreach (var m in report.NovasME_Ano!)
+                {
+                    _novas_mes[0] += string.Format(@"{0},", m.Value);
+                    _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
+                }
+                return _novas_mes;
+            }),
+
+            NovasEPPMes: await Task.Run(() =>
+            {
+                string[] _novas_mes = new string[2];
+                foreach (var m in report.NovasEPP_Ano!)
+                {
+                    _novas_mes[0] += string.Format(@"{0},", m.Value);
+                    _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
+                }
+                return _novas_mes;
+            }),
+
+            NovasDemaisMes: await Task.Run(() =>
+            {
+                string[] _novas_mes = new string[2];
+                foreach (var m in report.NovasDemais_Ano!)
                 {
                     _novas_mes[0] += string.Format(@"{0},", m.Value);
                     _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
@@ -486,7 +558,7 @@ public class ServiceEmpresa : IServiceEmpresa
             NaturezaJuridica: await Task.Run(() =>
             {
                 var _nj = new string[2];
-                foreach (var item in report.NaturezaJuridica!)
+                foreach (var item in report.NaturezaJuridica?.Take(5)!)
                 {
                     _nj![0] += string.Format(@"`{0}`,", item.Key.RemoveNumbers().NormalizeText().Trim());
                     _nj![1] += string.Format(@"{0},", item.Value);

@@ -24,6 +24,8 @@ public partial class IndexModel : PageModel
     public IEnumerable<REmpresas>? ListReports { get; set; }
     public NavbarModel? NavModel { get; set; }
     public RCharts? Charts { get; set; }
+    public string? LastDataExtraction { get; set; }
+
 
     public IndexModel(
         ILogger<IndexModel> logger,
@@ -37,6 +39,7 @@ public partial class IndexModel : PageModel
     public async Task OnGetAsync(string m)
     {
         await DataLoad(m.NormalizeText().ToLower());
+        LastDataExtraction = "22-02-2024";
     }
 
     public async Task OnPostAsync()
@@ -81,6 +84,10 @@ public partial class IndexModel : PageModel
                         NovasEmpresas = SumAndGroup(_listREmpresas,e => e.NovasEmpresas!),
 
                         NovasEmpresas_Ano = SumAndGroup(_listREmpresas,e => e.NovasEmpresas_Ano!),
+                        NovasMei_Ano = SumAndGroup(_listREmpresas,e => e.NovasMei_Ano!),
+                        NovasME_Ano = SumAndGroup(_listREmpresas,e => e.NovasME_Ano!),
+                        NovasEPP_Ano = SumAndGroup(_listREmpresas,e => e.NovasEPP_Ano!),
+                        NovasDemais_Ano = SumAndGroup(_listREmpresas,e => e.NovasDemais_Ano!),
 
                         MatrizFilial = SumAndGroup(_listREmpresas,e => e.MatrizFilial!),
 
@@ -107,11 +114,11 @@ public partial class IndexModel : PageModel
                         Simples_Ano = SumAndGroup(_listREmpresas,e => e.Simples_Ano!),
 
                         Idade = SumAndGroup(_listREmpresas,e => e.Idade!),
-                        
+
                         Rotatividade = _listREmpresas.SelectMany(e=>e.Rotatividade!)
                                                     .GroupBy(kvp => kvp.Key)
                                                     .Select(g => new KeyValuePair<string, float>(g.Key, g.Sum(kvp => kvp.Value) / _cities.Count())),
-                        
+
                         TAtividades = SumAndGroup_SubList(_listREmpresas, e => e.TAtividades!),
                         TAtividadesDescritivas = SumAndGroup_SubList(_listREmpresas, e => e.TAtividadesDescritivas!),
                         Top3Atividades = SumAndGroup_SubList(_listREmpresas, e => e.Top3Atividades!),

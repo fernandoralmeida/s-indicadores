@@ -4,15 +4,16 @@
 
 
 <div class="navbar">
-    <nav class="nav-extended z-depth-0 bg-color-dark">
-        <div class="nav-wrapper">
-            <div class="brand-logo"><img class="margin-t-10" src="~/svg/idnet-new-light-38.svg" alt="Indicadores.NET">
+    <nav class="nav-extended z-depth-0">
+        <div class="nav-wrapper transparent">
+            <div class="brand-logo"><img src="~/svg/idnet-new.svg" style="height: 45px;"
+                    alt="Indicadores.NET">
             </div>
-            <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>   
-            <div class="hide-on-large-only font-size-18 left text-color-light margin-l-10">@Model.Municipio?.ToUpper()-SP</div>       
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <div class="hide-on-large-only left margin-l-10">@Model.Municipio?.ToUpper()</div>
             <ul class="left hide-on-med-and-down col s6">
                 <li><a asp-page="/Index"><i class="material-icons">arrow_back</i></a></li>
-                <div class="font-size-18 left text-color-light margin-l-10">@Model.Municipio?.ToUpper()-SP</div>
+                <div class="left margin-l-10">@Model.Municipio?.ToUpper()</div>
             </ul>
             <ul class="right hide-on-med-and-down col s6">
                 <li><a asp-page="/Index"><i class="material-icons">home</i></a></li>

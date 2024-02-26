@@ -7,9 +7,6 @@ using Newtonsoft.Json.Linq;
 using IDN.Data.Helpers;
 using MongoDB.Driver;
 using IDN.Services.Empresa.Records;
-using Microsoft.IdentityModel.Tokens;
-using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
 
 namespace IDN.Services.Geojson.Services;
 

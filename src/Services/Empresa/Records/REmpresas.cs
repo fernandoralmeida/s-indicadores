@@ -10,6 +10,10 @@ public record REmpresas
     public IEnumerable<KeyValuePair<string, int>>? Quantitativo_Ano { get; set; }
     public IEnumerable<KeyValuePair<string, int>>? NovasEmpresas { get; set; }
     public IEnumerable<KeyValuePair<string, int>>? NovasEmpresas_Ano { get; set; }
+    public IEnumerable<KeyValuePair<string, int>>? NovasMei_Ano { get; set; }
+    public IEnumerable<KeyValuePair<string, int>>? NovasME_Ano { get; set; }
+    public IEnumerable<KeyValuePair<string, int>>? NovasEPP_Ano { get; set; }
+    public IEnumerable<KeyValuePair<string, int>>? NovasDemais_Ano { get; set; }
     public IEnumerable<KeyValuePair<string, int>>? MatrizFilial { get; set; }
     public IEnumerable<KeyValuePair<string, int>>? MatrizFilial_Ano { get; set; }
     public IEnumerable<KeyValuePair<string, int>>? Baixas_Ano { get; set; }

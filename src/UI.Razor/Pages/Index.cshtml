@@ -1,4 +1,4 @@
-﻿@page 
+﻿@page
 @model IndexModel
 @{
     Layout = "_LayoutMap";
@@ -13,12 +13,12 @@
 <div id="div-search" class="valign-wrapper">
     <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
         onkeypress="handle(event)" asp-for="@Model.Cidade" list="optcities">
-        <datalist id="optcities">
-            @foreach(var item in Model.ListaMunicipios!.OrderBy(o => o))
-            {
-                <option value="@item"/>
-            }
-        </datalist>
+    <datalist id="optcities">
+        @foreach (var item in Model.ListaMunicipios!.OrderBy(o => o))
+        {
+            <option value="@item" />
+        }
+    </datalist>
     <i class="material-icons margin-y-5">search</i>
     <partial name="_Navmap" />
 </div>
@@ -121,7 +121,7 @@
             grades = [0, 5000, 10000, 15000, 20000, 25000, 50000, 150000],
             labels = [];
 
-        div.innerHTML +='Empresas<div class="divider"></div'
+        div.innerHTML += 'Empresas<div class="divider"></div'
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
@@ -177,15 +177,30 @@
     }
 
     // Carregar dados GeoJSON
-    loadGeoJSONFromIndexedDB()
-        .then(data => {
-            // Dados encontrados no IndexedDB, processar os dados
-            processData(data);
-        })
-        .catch(error => {
-            // Dados não encontrados no IndexedDB ou erro, carregar dados da API
+    function loadData() {
+        // Verificar se os dados estão no localStorage e se a última atualização foi em um dia diferente
+        var lastUpdateDate = localStorage.getItem('lastUpdateDate');
+        var currentDate = new Date().toLocaleDateString();
+
+        if (!lastUpdateDate || lastUpdateDate !== currentDate) {
+            // Dados não encontrados no localStorage ou último update não foi hoje, carregar dados da API
             fetchDataFromAPI();
-        });
+        } else {
+            // Dados encontrados no localStorage e último update foi hoje, carregar dados do IndexedDB
+            loadGeoJSONFromIndexedDB()
+                .then(data => {
+                    // Dados encontrados no IndexedDB, processar os dados
+                    processData(data);
+                })
+                .catch(error => {
+                    // Dados não encontrados no IndexedDB ou erro, carregar dados da API
+                    fetchDataFromAPI();
+                });
+        }
+    }
+
+    // Chamar a função para carregar dados
+    loadData();
 
     // Função para carregar dados da API
     function fetchDataFromAPI() {
@@ -194,6 +209,9 @@
             .then(data => {
                 // Armazenar dados no IndexedDB para uso futuro
                 storeGeoJSONInIndexedDB(data);
+
+                // Armazenar a data da última atualização no localStorage
+                localStorage.setItem('lastUpdateDate', new Date().toLocaleDateString());
 
                 // Processar os dados GeoJSON
                 processData(data);
@@ -249,5 +267,3 @@
     }
 
 </script>
-
-

@@ -17,14 +17,12 @@ window.addEventListener("scroll", function () {
         _nav.classList.add("glass-box");
         _nav.classList.add("nav-float");
         _nav.classList.remove("z-depth-0");
-        _nav.classList.remove("bg-color-dark");
         _nav.classList.add("z-depth-2");
     } else {
         navbar.classList.remove("navbar-fixed");
         _nav.classList.remove("glass-box");
         _nav.classList.remove("nav-float");
         _nav.classList.add("z-depth-0");
-        _nav.classList.add("bg-color-dark");
         _nav.classList.remove("z-depth-2");
     }
 });

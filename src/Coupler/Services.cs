@@ -29,7 +29,7 @@ public static class Services
     {
         if (services == null) throw new ArgumentNullException(nameof(services));
 
-        services.AddScoped<DataEmpresa>();
+        services.AddScoped<DataNpgsql>();
         services.AddScoped<ContextApp>();
 
         services.AddScoped<IServiceBase<MEmpresa>, ServiceBase<MEmpresa>>();
