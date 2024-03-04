@@ -22,6 +22,8 @@ class Program
             Console.WriteLine("------------------------");
             Console.WriteLine("7 Do All Services [1 -> 6]");
             Console.WriteLine("------------------------");
+            Console.WriteLine("8 Create CNAEs");
+            Console.WriteLine("------------------------");
             Console.WriteLine("0 Exit App");
             string input = Console.ReadLine()!;
             int choice = int.Parse(input);
@@ -91,6 +93,10 @@ class Program
 
                     await Estatistics.Update();
                     await Geojson.GoeCidades();
+                    break;
+
+                case 8:
+                    await Migradata.DoCNAE(DBConfig.IndicadoresNET, DBConfig.DS_POSTGRES);
                     break;
 
                 case 0:

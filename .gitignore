@@ -8,6 +8,7 @@ files/BC250_2017_Municipio_A.json
 config/app-indicadores-net.service
 config/va.sh
 publish/
+deploy/
 
 # User-specific files
 geojson.json

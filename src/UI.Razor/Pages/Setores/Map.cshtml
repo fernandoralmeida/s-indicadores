@@ -1,8 +1,9 @@
-﻿@page "/setores"
-@model Setores.IndexModel
+@page "/setores/{m}"
+@model UI.Razor.Pages.Setores.MapModel
+
 @{
     Layout = "_LayoutMap";
-    ViewData["Title"] = "Densidade Setorial do Estado de SP";
+    ViewData["Title"] = "Penetração Setorial do Estado de SP";
     ViewData["ActivePage"] = Shared.NavPages.MapSetores;
 }
 
@@ -12,7 +13,7 @@
 
 <div id="div-search" class="valign-wrapper">
     <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar por atividade `CNAE`"
-        onkeypress="handle(event)" asp-for="@Model.Cidade">
+        onkeypress="handle(event)" asp-for="@Model.CNAE">
     @* <datalist id="optcities">
         @foreach (var item in Model.ListaMunicipios!.OrderBy(o => o))
         {
@@ -78,11 +79,11 @@
     }
 
     function zoomToFeature(e) {
-        map.fitBounds(e.target.getBounds());        
-        @* var layer = e.target;
-        const url = '/maps/' + layer.feature.properties.name;
+        //map.fitBounds(e.target.getBounds());        
+        var layer = e.target;
+        const url = '/setores/@Model.CNAE/' + layer.feature.properties.name;
         // Redireciona para a página interna
-        location.href = url; *@
+        location.href = url;
     }
 
     function highlightFeature(e) {
@@ -147,86 +148,19 @@
     legend.addTo(map);
     info.addTo(map);
 
-    // Função para carregar dados do IndexedDB
-    function loadGeoJSONFromIndexedDB() {
-        return new Promise((resolve, reject) => {
-            var request = indexedDB.open('geojsonDB', 1);
-
-            request.onupgradeneeded = function (event) {
-                var db = event.target.result;
-                db.createObjectStore('geojsonStore', { keyPath: 'id' });
-            };
-
-            request.onsuccess = function (event) {
-                var db = event.target.result;
-                var transaction = db.transaction(['geojsonStore'], 'readonly');
-                var objectStore = transaction.objectStore('geojsonStore');
-                var request = objectStore.get('cachedGeoJSON');
-
-                request.onsuccess = function (event) {
-                    var cachedData = event.target.result;
-                    if (cachedData) {
-                        resolve(cachedData.data);
-                    } else {
-                        reject('Dados GeoJSON não encontrados no IndexedDB.');
-                    }
-                };
-
-                request.onerror = function (event) {
-                    reject('Erro ao obter dados do IndexedDB.');
-                };
-            };
-
-            request.onerror = function (event) {
-                reject('Erro ao abrir o IndexedDB.');
-            };
-        });
-    }
-
     // Carregar dados GeoJSON
-    loadGeoJSONFromIndexedDB()
-        .then(data => {
-            // Dados encontrados no IndexedDB, processar os dados
-            processData(data);
-        })
-        .catch(error => {
-            // Dados não encontrados no IndexedDB ou erro, carregar dados da API
-            fetchDataFromAPI();
-        });
+    fetchDataFromAPI();
 
     // Função para carregar dados da API
     function fetchDataFromAPI() {
-        fetch(`/api/v1/geojson/`)
+        fetch(`/api/v1/cnae/@Model.CNAE`)
             .then(response => response.json())
             .then(data => {
-                // Armazenar dados no IndexedDB para uso futuro
-                storeGeoJSONInIndexedDB(data);
 
                 // Processar os dados GeoJSON
                 processData(data);
             })
             .catch(error => console.error('Erro ao carregar dados GeoJSON da API:', error));
-    }
-
-    // Função para armazenar dados no IndexedDB
-    function storeGeoJSONInIndexedDB(data) {
-        var request = indexedDB.open('geojsonDB', 1);
-
-        request.onupgradeneeded = function (event) {
-            var db = event.target.result;
-            db.createObjectStore('geojsonStore', { keyPath: 'id' });
-        };
-
-        request.onsuccess = function (event) {
-            var db = event.target.result;
-            var transaction = db.transaction(['geojsonStore'], 'readwrite');
-            var objectStore = transaction.objectStore('geojsonStore');
-            objectStore.put({ id: 'cachedGeoJSON', data: data });
-        };
-
-        request.onerror = function (event) {
-            console.error('Erro ao armazenar dados no IndexedDB.');
-        };
     }
 
     // Função para processar os dados GeoJSON

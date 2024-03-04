@@ -5,7 +5,7 @@ namespace IDN.Core.Empresa.Interfaces;
 
 public interface IRepositoryCoreEmpresa : IRepositoryCore<MEmpresa>
 {
-    IAsyncEnumerable<MEmpresa> DoStoredProcedure(string param);
+    IAsyncEnumerable<MEmpresa> DoStoredProcedure(string field, string param, string? city = null);
     IAsyncEnumerable<MEmpresa> DoListAsync(Expression<Func<MEmpresa, bool>>? param = null);
 }
 

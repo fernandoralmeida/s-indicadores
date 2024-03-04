@@ -6,6 +6,7 @@ using System.Globalization;
 using Microsoft.Extensions.Caching.Memory;
 using IDN.Core.Helpers;
 using System.Text;
+using System.Linq.Expressions;
 
 namespace IDN.Services.Empresa.Services;
 
@@ -249,10 +250,236 @@ public class ServiceEmpresa : IServiceEmpresa
         });
     }
 
-    public async IAsyncEnumerable<MEmpresa> DoStoredProcedure(string param)
+    public async Task<REmpresas> DoReportEmpresasAsync(IEnumerable<MEmpresa> lista, Func<MEmpresa, bool>? param = null)
+    {
+        var ano = DateTime.Now.Year;
+        var _lista = lista;
+
+        var emps_bairro = _lista.Where(s => s.SituacaoCadastral!.ToLower() == "ativa");
+        var emps_novas_bairro = emps_bairro.Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()));
+
+        var emps_raw = _lista;
+        if (param != null)
+            emps_raw = _lista.Where(param).ToList();
+
+        var emps = emps_raw.Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year <= ano);
+
+        var emps_ativas = emps.Where(s => s.SituacaoCadastral!.ToLower() == "ativa");
+        var emps_baixadas = emps.Where(s => s.SituacaoCadastral!.ToLower() == "baixada");
+
+        return await Task.Run(() => new REmpresas()
+        {
+            Municipio = _lista.FirstOrDefault()?.Municipio!,
+
+            Quantitativo = Quantitativo(emps),
+
+            Quantitativo_Ano = from st_a in emps.Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
+                                                .GroupBy(g => g.SituacaoCadastral)
+                                                .OrderByDescending(o => o.Count())
+                               select (new KeyValuePair<string, int>(st_a.Key, st_a.Count())),
+
+            NovasEmpresas = from qtm in emps_ativas
+                                        .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("MM"))
+                                        .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("MMM"))
+                            select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+
+            NovasEmpresas_Ano = from qtm in emps_ativas
+                                        .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
+
+                                        .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
+                                        .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
+                                select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+
+            MatrizFilial = from mf in emps_ativas
+                                        .GroupBy(s => s.IdentificadorMatrizFilial)
+                                        .OrderByDescending(s => s.Count())
+                           select (new KeyValuePair<string, int>(mf.Key, mf.Count())),
+
+            MatrizFilial_Ano = from mfa in emps_ativas
+                                        .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
+                                        .GroupBy(s => s.IdentificadorMatrizFilial)
+                                        .OrderByDescending(s => s.Count())
+                               select (new KeyValuePair<string, int>(mfa.Key, mfa.Count())),
+
+
+            Baixas_Ano = from qtm in emps_baixadas
+                            .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
+                            .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
+                            .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
+                         select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+
+            NaturezaJuridica = from nj in emps_ativas
+                                            .GroupBy(g => g.NaturezaJuridica)
+                                            .OrderByDescending(o => o.Count())
+                               select (new KeyValuePair<string, int>(nj.Key, nj.Count())),
+
+            NaturezaJuridica_Ano = from nja in emps_ativas
+                                            .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
+                                            .GroupBy(g => g.NaturezaJuridica)
+                                            .OrderByDescending(o => o.Count())
+                                   select (new KeyValuePair<string, int>(nja.Key, nja.Count())),
+
+            Setores = from ata in emps_ativas
+                            .GroupBy(s => s.SetorProdutivo())
+                            .OrderByDescending(o => o.Count())
+                      select (new KeyValuePair<string, int>(ata.Key, ata.Count())),
+
+            Setores_Ano = from atm in emps_ativas
+                                .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
+                                .GroupBy(s => s.SetorProdutivo())
+                                .OrderByDescending(o => o.Count())
+                          select (new KeyValuePair<string, int>(atm.Key, atm.Count())),
+
+            TAtividades = from t3 in emps_ativas
+                                .GroupBy(s => s.SetorProdutivo())
+                                .OrderByDescending(s => s.Count())
+                          select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
+                                                                  from tp3 in t3
+                                                                      .Where(s => s.SetorProdutivo() == t3.Key)
+                                                                      .GroupBy(s => s.CnaeFiscalPrincipal![..2])
+                                                                      .OrderByDescending(s => s.Count())
+                                                                  select (new KeyValuePair<string, int>(Dictionaries.CnaesSubClasses[tp3.Key], tp3.Count())))),
+
+            TAtividadesDescritivas = from t3 in emps_ativas
+                                        .GroupBy(s => s.SetorProdutivo())
+                                        .OrderByDescending(s => s.Count())
+                                     select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
+                                                                   from tp3 in t3
+                                                                       .Where(s => s.SetorProdutivo() == t3.Key)
+                                                                       .GroupBy(s => s.CnaeFiscalPrincipal + s.CnaeDescricao)
+                                                                       .OrderByDescending(s => s.Count())
+                                                                   select (new KeyValuePair<string, int>(tp3.Key, tp3.Count())))),
+
+            Top3Atividades = from t3 in emps_ativas
+                                .GroupBy(s => s.SetorProdutivo())
+                                .OrderByDescending(s => s.Count())
+                             select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
+                                                                     from tp3 in t3
+                                                                         .Where(s => s.SetorProdutivo() == t3.Key)
+                                                                         .GroupBy(s => s.CnaeFiscalPrincipal![..2])
+                                                                         .OrderByDescending(s => s.Count())
+                                                                         .Take(3)
+                                                                     select (new KeyValuePair<string, int>(Dictionaries.CnaesSubClasses[tp3.Key], tp3.Count())))),
+
+            Top3Atividades_Ano = from t3 in emps_ativas
+                                .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
+                                .GroupBy(s => s.SetorProdutivo())
+                                .OrderByDescending(s => s.Count())
+                                 select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t3.Key,
+                                                                         from tp3 in t3
+                                                                             .Where(s => s.SetorProdutivo() == t3.Key)
+                                                                             .GroupBy(s => s.CnaeFiscalPrincipal![..2])
+                                                                             .OrderByDescending(s => s.Count())
+                                                                             .Take(3)
+                                                                         select (new KeyValuePair<string, int>(Dictionaries.CnaesSubClasses[tp3.Key], tp3.Count())))),
+
+            Fiscal = from fc in emps_ativas
+                                .GroupBy(s => s.RegimeFiscal())
+                                .OrderByDescending(s => s.Count())
+                     select (new KeyValuePair<string, int>(fc.Key, fc.Count())),
+
+            Fiscal_Ano = from fca in emps_ativas
+                            .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
+                            .GroupBy(s => s.RegimeFiscal())
+                            .OrderByDescending(s => s.Count())
+                         select (new KeyValuePair<String, int>(fca.Key, fca.Count())),
+
+            Porte = from pte in emps_ativas
+                            .GroupBy(s => s.PorteEmpresa)
+                            .OrderByDescending(o => o.Count())
+                    select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(pte.Key,
+                                 from _fiscal in pte
+                                     .GroupBy(s => s.RegimeFiscal())
+                                     .OrderByDescending(s => s.Count())
+                                 select (new KeyValuePair<string, int>(_fiscal.Key, _fiscal.Count())))),
+
+            PorteS = from pte in emps_ativas
+                            .GroupBy(s => s.PorteEmpresa)
+                            .OrderByDescending(o => o.Count())
+                     select (new KeyValuePair<string, int>(pte.Key, pte.Count())),
+
+            Porte_Ano = from ptea in emps_ativas
+                                .Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()))
+                                .GroupBy(s => s.PorteEmpresa)
+                                .OrderByDescending(o => o.Count())
+                        select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(ptea.Key,
+                                     from _fiscal_a in ptea
+                                         .GroupBy(s => s.RegimeFiscal())
+                                         .OrderByDescending(s => s.Count())
+                                     select (new KeyValuePair<string, int>(_fiscal_a.Key, _fiscal_a.Count())))),
+
+            Simples = from sn in emps_ativas
+                                .Where(s => s.OpcaoSimples == "S")
+                                .GroupBy(s => s.PorteEmpresa)
+                                .OrderByDescending(s => s.Count())
+                      select (new KeyValuePair<string, int>(sn.Key, sn.Count())),
+
+            Simples_Ano = from sna in emps_ativas
+                                .Where(s => s.OpcaoSimples == "S" && s.DataInicioAtividade!.StartsWith(ano.ToString()))
+                                .GroupBy(s => s.PorteEmpresa)
+                                .OrderByDescending(s => s.Count())
+                          select (new KeyValuePair<string, int>(sna.Key, sna.Count())),
+
+            Idade = from age in emps_ativas
+                                .GroupBy(d => DateTime.ParseExact(d.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).DateDiference())
+                                .OrderBy(s => s.Key)
+                    select (new KeyValuePair<string, int>(age.Key, age.Count())),
+
+            Rotatividade = from rt in emps
+                                .GroupBy(d => DateTime.ParseExact(d.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString())
+                                .OrderByDescending(s => s.Key)
+                                .Take(11)
+                           select (new KeyValuePair<string, float>(rt.Key,
+                                   Convert.ToSingle(rt.Where(s => s.SituacaoCadastral == "Baixada" && DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) /
+                                   Convert.ToSingle(rt.Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) * 100)),
+
+            // EmpresasPorLocal = from lc in emps_bairro
+            //                       .GroupBy(s => s.Bairro)
+            //                       .OrderByDescending(o => o.Count())
+            //                    select (new KeyValuePair<string, int>(lc.Key, lc.Count())),
+
+            // EmpresasNovasPorLocal = from nlc in emps_novas_bairro
+            //                             .GroupBy(s => s.Bairro)
+            //                             .OrderByDescending(o => o.Count())
+            //                         select (new KeyValuePair<string, int>(nlc.Key, nlc.Count())),
+
+            TaxaCrescimentoSetorial = TaxaCrescimentoSetorial(emps_ativas),
+
+            NovasMei_Ano = from qtm in emps_ativas
+                                    .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
+                                    .Where(s => s.OpcaoMEI == "S")
+                                    .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
+                                    .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
+                           select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+
+            NovasME_Ano = from qtm in emps_ativas
+                                    .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
+                                    .Where(s => s.OpcaoSimples == "S" && s.OpcaoMEI == "N")
+                                    .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
+                                    .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
+                          select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+
+            NovasEPP_Ano = from qtm in emps_ativas
+                                        .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
+                                        .Where(s => s.PorteEmpresa == "EPP")
+                                        .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
+                                        .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
+                           select (new KeyValuePair<string, int>(qtm.Key, qtm.Count())),
+
+            NovasDemais_Ano = from qtm in emps_ativas
+                                        .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date >= new DateTime(DateTime.Now.Year - 1, DateTime.Now.Month, 1))
+                                        .Where(s => s.PorteEmpresa == "Demais")
+                                        .OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)
+                                        .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yy-MMM"))
+                              select (new KeyValuePair<string, int>(qtm.Key, qtm.Count()))
+
+        });
+    }
+
+    public async IAsyncEnumerable<MEmpresa> DoStoredProcedure(string field, string param, string? city = null)
     {
         var cache = _memorycache;
-        var cacheKey = $"DoStoredProcedure_{param!}";
+        var cacheKey = $"DataCache_{field!}_{param!}_{city!}";
 
         if (cache.TryGetValue(cacheKey, out IAsyncEnumerable<MEmpresa>? cachedEmpresas))
             await foreach (var item in cachedEmpresas!)
@@ -260,11 +487,11 @@ public class ServiceEmpresa : IServiceEmpresa
 
         else
         {
-            var empresas = _empresa.DoStoredProcedure(param);
+            var empresas = _empresa.DoStoredProcedure(field, param, city);
             cachedEmpresas = empresas;
             cache.Set(cacheKey, cachedEmpresas, new MemoryCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(15)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
             });
 
             await foreach (var item in empresas)
@@ -311,32 +538,9 @@ public class ServiceEmpresa : IServiceEmpresa
                             select (new KeyValuePair<string, int>(a.Key, a.Count()))));
     }
 
-    public IAsyncEnumerable<MEmpresa> DoListAsync(string? municipio = null)
+    public IAsyncEnumerable<MEmpresa> DoListAsync(Expression<Func<MEmpresa, bool>>? param = null)
     {
-        /*
-        var cache = _memorycache;
-        var cacheKey = $"DoListAsync_{municipio!}";
-
-        if (cache.TryGetValue(cacheKey, out IAsyncEnumerable<MEmpresa>? cachedEmpresas))
-        {
-            await foreach (var item in cachedEmpresas!)
-                yield return item;
-        }
-        else
-        {
-            var empresas = _empresa.DoListAsync(s => s.Municipio == municipio);
-
-            // Adicione os itens ao cache sob demanda
-            cachedEmpresas = empresas;
-            cache.Set(cacheKey, cachedEmpresas, new MemoryCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(15)
-            });
-
-            await foreach (var item in empresas)
-                yield return item;
-        }*/
-        return _empresa.DoListAsync(s => s.Municipio == municipio);
+        return _empresa.DoListAsync(param);
     }
 
     public async Task<RCharts> DoReportToChartAsync(REmpresas report)
@@ -688,4 +892,5 @@ public class ServiceEmpresa : IServiceEmpresa
         }
 
     }
+
 }

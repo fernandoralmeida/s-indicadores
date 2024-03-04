@@ -202,14 +202,14 @@ public class ServiceGeojson : IServiceGeojson
 
         var _file = string.Empty;
 
-        if(Environment.OSVersion.Platform == PlatformID.Win32NT)
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
             _file = @"C:\\Users\\User\\OneDrive\\Dev\\BC250_2017_Municipio_A.json";
-        }  
-        else if(Environment.OSVersion.Platform == PlatformID.Unix)
+        }
+        else if (Environment.OSVersion.Platform == PlatformID.Unix)
         {
             _file = @"/home/dbn/sources/s-indicadores/files/BC250_2017_Municipio_A.json";
-        } 
+        }
 
         string jsonString = await File.ReadAllTextAsync(_file);
 
@@ -382,5 +382,14 @@ public class ServiceGeojson : IServiceGeojson
         var _file = @"/home/dbn/sources/s-indicadores/files/geojson-estado-sp.json";
 
         return await File.ReadAllTextAsync(_file);
+    }
+
+    public async Task<string> GeoJsonUF()
+    {
+        var _path = @"/home/dbn/sources/s-indicadores/files/geojson-uf.json";
+
+        string jsonString = await File.ReadAllTextAsync(_path);
+
+        return jsonString;
     }
 }

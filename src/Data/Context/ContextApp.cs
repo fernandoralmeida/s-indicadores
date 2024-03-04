@@ -33,7 +33,7 @@ public class ContextApp : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
-            optionsBuilder.UseNpgsql(DataBase.ConnectionString);
+            optionsBuilder.UseNpgsql(DataBase.DS_POSTGRES);
 
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)

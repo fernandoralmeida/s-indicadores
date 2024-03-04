@@ -17,10 +17,10 @@ public class ServiceCoreEmpresa : ServiceCore<MEmpresa>, IServiceCoreEmpresa
         return _empresa.DoListAsync(param);
     }
 
-    public IAsyncEnumerable<MEmpresa> DoStoredProcedure(string paran)
+    public IAsyncEnumerable<MEmpresa> DoStoredProcedure(string field, string paran, string? city = null)
     {
-        return _empresa.DoStoredProcedure(paran);
+        return _empresa.DoStoredProcedure(field, paran, city);
     }
 
-    
+
 }

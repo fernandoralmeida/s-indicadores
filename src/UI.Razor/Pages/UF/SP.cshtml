@@ -1,9 +1,9 @@
-﻿@page "/setores"
-@model Setores.IndexModel
+@page "/uf/sp"
+@model UF.SPModel
 @{
     Layout = "_LayoutMap";
-    ViewData["Title"] = "Densidade Setorial do Estado de SP";
-    ViewData["ActivePage"] = Shared.NavPages.MapSetores;
+    ViewData["Title"] = "Densidade Empresarial do Estado de SP";
+    ViewData["ActivePage"] = Shared.NavPages.MapCompanies;
 }
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -11,7 +11,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <div id="div-search" class="valign-wrapper">
-    <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar por atividade `CNAE`"
+    <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
         onkeypress="handle(event)" asp-for="@Model.Cidade">
     @* <datalist id="optcities">
         @foreach (var item in Model.ListaMunicipios!.OrderBy(o => o))
@@ -41,48 +41,41 @@
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
         this._div.innerHTML =
-            '<div class="center margin-b-10"><h6>Composição Setorial do Estado de SP<h6></div>'
+            '<div class="center margin-b-10"><h6>Densidade Empresarial do Estado de SP<h6></div>'
             + '<div class="divider"></div>'
             + (props ?
                 'Município: <span class="text-uppercase">' + props.name + '</span><br />Empresas: ' + props.empresas + '<br />Setor: ' + props.setor : 'Mova o mouse sobre o mapa');
     };
 
     function getColor(d) {
-        const prefixo = d.substr(0, 3);
-        switch (prefixo) {
-            case 'Ser':
-                return '#4797FF';
-            case 'Com':
-                return '#ffa500';
-            case 'Ind':
-                return '#8a2be2';
-            case 'Con':
-                return '#d87093';
-            case 'Agr':
-                return '#00E6C8';
-            default:
-                return '#FFEDA0';
-        }
+        return d > 150000 ? '#800026' :
+            d > 50000 ? '#BD0026' :
+                d > 25000 ? '#E31A1C' :
+                    d > 20000 ? '#FC4E2A' :
+                        d > 15000 ? '#FD8D3C' :
+                            d > 10000 ? '#FEB24C' :
+                                d > 5000 ? '#FED976' :
+                                    '#FFEDA0';
     }
 
     // Função para estilizar as áreas GeoJSON com base no valor da propriedade "empresas"
     function style(feature) {
         return {
-            fillColor: getColor(`${feature.properties.setor}`),
+            fillColor: getColor(feature.properties.empresas),
             weight: 1,
             opacity: 1,
             color: 'black',
             //dashArray: '3',
-            fillOpacity: 0.5
+            fillOpacity: 0.7
         };
     }
 
     function zoomToFeature(e) {
-        map.fitBounds(e.target.getBounds());        
-        @* var layer = e.target;
+        //map.fitBounds(e.target.getBounds());        
+        var layer = e.target;
         const url = '/maps/' + layer.feature.properties.name;
         // Redireciona para a página interna
-        location.href = url; *@
+        location.href = url;
     }
 
     function highlightFeature(e) {
@@ -107,7 +100,7 @@
             weight: 1,
             color: 'black',
             dashArray: '',
-            fillOpacity: 0.5
+            fillOpacity: 0.7
         });
         info.update();
     }
@@ -125,15 +118,15 @@
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
-            grades = ["Industria", "Comercio", "Servicos", "Construcao", "Agro"],
+            grades = [0, 5000, 10000, 15000, 20000, 25000, 50000, 150000],
             labels = [];
 
-        div.innerHTML += 'Setores<div class="divider"></div'
+        div.innerHTML += 'Empresas<div class="divider"></div'
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
                 '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-                grades[i] + '<br>';
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
         }
 
         return div;
@@ -184,15 +177,30 @@
     }
 
     // Carregar dados GeoJSON
-    loadGeoJSONFromIndexedDB()
-        .then(data => {
-            // Dados encontrados no IndexedDB, processar os dados
-            processData(data);
-        })
-        .catch(error => {
-            // Dados não encontrados no IndexedDB ou erro, carregar dados da API
+    function loadData() {
+        // Verificar se os dados estão no localStorage e se a última atualização foi em um dia diferente
+        var lastUpdateDate = localStorage.getItem('lastUpdateDate');
+        var currentDate = new Date().toLocaleDateString();
+
+        if (!lastUpdateDate || lastUpdateDate !== currentDate) {
+            // Dados não encontrados no localStorage ou último update não foi hoje, carregar dados da API
             fetchDataFromAPI();
-        });
+        } else {
+            // Dados encontrados no localStorage e último update foi hoje, carregar dados do IndexedDB
+            loadGeoJSONFromIndexedDB()
+                .then(data => {
+                    // Dados encontrados no IndexedDB, processar os dados
+                    processData(data);
+                })
+                .catch(error => {
+                    // Dados não encontrados no IndexedDB ou erro, carregar dados da API
+                    fetchDataFromAPI();
+                });
+        }
+    }
+
+    // Chamar a função para carregar dados
+    loadData();
 
     // Função para carregar dados da API
     function fetchDataFromAPI() {
@@ -201,6 +209,9 @@
             .then(data => {
                 // Armazenar dados no IndexedDB para uso futuro
                 storeGeoJSONInIndexedDB(data);
+
+                // Armazenar a data da última atualização no localStorage
+                localStorage.setItem('lastUpdateDate', new Date().toLocaleDateString());
 
                 // Processar os dados GeoJSON
                 processData(data);
@@ -250,7 +261,7 @@
             if (v === "")
                 return false;
 
-            const url = '/setores/' + v;
+            const url = '/maps/' + v;
             location.href = url;
         }
     }

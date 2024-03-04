@@ -7,9 +7,11 @@ namespace IDN.Services.Empresa.Interfaces;
 
 public interface IServiceEmpresa : IServiceBase<MEmpresa>
 {
-    IAsyncEnumerable<MEmpresa> DoStoredProcedure(string param);
+    IAsyncEnumerable<MEmpresa> DoStoredProcedure(string field, string param, string? city = null);
     Task<REmpresas> DoReportEmpresasAsync(IAsyncEnumerable<MEmpresa> lista, Func<MEmpresa, bool>? param = null);
+    Task<REmpresas> DoReportEmpresasAsync(IEnumerable<MEmpresa> lista, Func<MEmpresa, bool>? param = null);
     Task<RCharts> DoReportToChartAsync(REmpresas report);
-    IAsyncEnumerable<MEmpresa> DoListAsync(string? municipio = null);
+    IAsyncEnumerable<MEmpresa> DoListAsync(Expression<Func<MEmpresa, bool>>? param = null);
     Task<IEnumerable<string>> DoListMunicipiosEstadoSP();
+    
 }

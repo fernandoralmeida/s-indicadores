@@ -1,11 +1,19 @@
-# s-indicadores
-Data Tools for 
+# Nome
+  Data Tools for s-Indicadores
 
-Ferramenta pra realizar os processos estatisticos e tratamento de dados do Postgres e salvar resultado no MongoDB
-O app é construído com as seguintes stacks:
+# Descrição
+Ferramenta responável por tratar e gerar os dados estatísticos dos CNPJs.
+Funcionamento:
+  1 - Faz o tratamento dos arquivos baixador do portal https://dados.gov.br/home
+  2 - Gera o banco de dados com dados tratados.
+  3 - Realiza o processo estatísticos dos dados tratados.
+  4 - Atualiza o arquivo geojson;
  
-Console App:
-  <br>- .Net 7.0;
+# Tipo:
+  1 - console App com .Net 7.0;
 
-# resumo do app.
-O app consome os servicos da Classe Service.
+# Packages
+  1 - Npgsql 7.0.6
+  2 - MongoDB.Driver 2.23.1
+
+

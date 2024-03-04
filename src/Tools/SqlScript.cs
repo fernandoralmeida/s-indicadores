@@ -177,7 +177,7 @@ DROP DATABASE IF EXISTS www_indicadores;
 -- create a new db
 CREATE DATABASE www_indicadores;
     ";
-    
+
     public static string WWW_INDICADORES_TABLES =>
     @"
 -- create tables
@@ -194,10 +194,10 @@ CREATE TABLE Empresas (
     DataInicioAtividade varchar(8) NULL,
     CnaeFiscalPrincipal varchar(7) NULL,
     CnaeDescricao varchar(255) NULL,
+    CEP varchar(255) NULL,
     Logradouro varchar(255) NULL,
     Numero varchar(255) NULL,
     Bairro varchar(255) NULL,
-    CEP varchar(255) NULL,
     UF varchar(2) NULL,
     Municipio varchar(50) NULL,
     OpcaoSimples varchar(1) NULL,

@@ -41,4 +41,12 @@ public class GeojsonController : ControllerBase
             return Ok(await _geocode.DoGeojson(param));
     }
 
+    [HttpGet("geojson/uf")]
+    public async Task<IActionResult> GetGeojsonUF()
+    {
+        return Ok(await _geocode.GeoJsonUF());
+    }
+
+
+
 }

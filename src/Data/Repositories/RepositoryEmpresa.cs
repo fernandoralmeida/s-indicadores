@@ -21,10 +21,19 @@ public class RepositoryEmpresa : RepositoryContext<MEmpresa>, IRepositoryCoreEmp
             yield return item;
     }
 
-    public IAsyncEnumerable<MEmpresa> DoStoredProcedure(string param)
+    public IAsyncEnumerable<MEmpresa> DoStoredProcedure(string field, string param, string? city = null)
     {
+        var _query = $"SELECT * FROM Empresas WHERE {field} = @param";
+
         _data.ClearParameters();
-        _data.AddParameters("@municipio", param);
-        return _data.ReadStoredProcedureAsync("SELECT * FROM Empresas WHERE Municipio = @municipio");
+        _data.AddParameters("@param", param);
+
+        if (!string.IsNullOrEmpty(city))
+        {
+            _data.AddParameters("@city", city?.ToUpper()!);
+            _query = $"SELECT * FROM Empresas WHERE Municipio = @city AND {field} = @param";
+        }        
+
+        return _data.ReadStoredProcedureAsync(_query);
     }
 }

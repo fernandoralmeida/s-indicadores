@@ -10,13 +10,13 @@
 
 <div id="div-search" class="valign-wrapper">
     <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
-        onkeypress="handle(event)" asp-for="@Model.Cidade" list="optcities">
-    <datalist id="optcities">
+         onkeypress="handle(event)" asp-for="@Model.Cidade"> 
+    @* <datalist id="optcities">
         @foreach (var item in Model.ListaMunicipios!.OrderBy(o => o))
         {
             <option value="@item" />
         }
-    </datalist>
+    </datalist> *@
     <i class="material-icons margin-y-5">search</i>
 </div>
 

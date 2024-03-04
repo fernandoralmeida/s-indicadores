@@ -1,8 +1,8 @@
-﻿@page 
-@model IndexModel
+@page "/brasil"
+@model IndexUFModel
 @{
     Layout = "_LayoutMap";
-    ViewData["Title"] = "Densidade Empresarial do Estado de SP";
+    ViewData["Title"] = "Densidade Empresarial Brasileira";
     ViewData["ActivePage"] = Shared.NavPages.MapCompanies;
 }
 
@@ -10,18 +10,9 @@
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div id="div-search" class="valign-wrapper">
-    <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
-        onkeypress="handle(event)" asp-for="@Model.Cidade">
-    @* <datalist id="optcities">
-        @foreach (var item in Model.ListaMunicipios!.OrderBy(o => o))
-        {
-            <option value="@item" />
-        }
-    </datalist> *@
-    <i class="material-icons margin-y-5">search</i>
+@* <div id="div-search" class="valign-wrapper">
     <partial name="_Navmap" />
-</div>
+</div> *@
 
 <div id="map" class="map"></div>
 
@@ -41,10 +32,10 @@
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
         this._div.innerHTML =
-            '<div class="center margin-b-10"><h6>Densidade Empresarial do Estado de SP<h6></div>'
+            '<div class="center margin-b-10"><h6>Densidade Empresarial do Brasil<h6></div>'
             + '<div class="divider"></div>'
             + (props ?
-                'Município: <span class="text-uppercase">' + props.name + '</span><br />Empresas: ' + props.empresas + '<br />Setor: ' + props.setor : 'Mova o mouse sobre o mapa');
+                'Estado: <span class="text-uppercase">' + props.NOME_UF + '</span><br />Geo: ' + props.GEOCODIGO + '<br />Sigla: ' + props.UF_05 : 'Mova o mouse sobre o mapa');
     };
 
     function getColor(d) {
@@ -61,7 +52,7 @@
     // Função para estilizar as áreas GeoJSON com base no valor da propriedade "empresas"
     function style(feature) {
         return {
-            fillColor: getColor(feature.properties.empresas),
+            fillColor: getColor(feature.properties.GEOCODIGO),
             weight: 1,
             opacity: 1,
             color: 'black',
@@ -73,7 +64,7 @@
     function zoomToFeature(e) {
         //map.fitBounds(e.target.getBounds());        
         var layer = e.target;
-        const url = '/maps/' + layer.feature.properties.name;
+        const url = '/uf/' + layer.feature.properties.UF_05;
         // Redireciona para a página interna
         location.href = url;
     }
@@ -140,104 +131,15 @@
     legend.addTo(map);
     info.addTo(map);
 
-    // Função para carregar dados do IndexedDB
-    function loadGeoJSONFromIndexedDB() {
-        return new Promise((resolve, reject) => {
-            var request = indexedDB.open('geojsonDB', 1);
-
-            request.onupgradeneeded = function (event) {
-                var db = event.target.result;
-                db.createObjectStore('geojsonStore', { keyPath: 'id' });
-            };
-
-            request.onsuccess = function (event) {
-                var db = event.target.result;
-                var transaction = db.transaction(['geojsonStore'], 'readonly');
-                var objectStore = transaction.objectStore('geojsonStore');
-                var request = objectStore.get('cachedGeoJSON');
-
-                request.onsuccess = function (event) {
-                    var cachedData = event.target.result;
-                    if (cachedData) {
-                        resolve(cachedData.data);
-                    } else {
-                        reject('Dados GeoJSON não encontrados no IndexedDB.');
-                    }
-                };
-
-                request.onerror = function (event) {
-                    reject('Erro ao obter dados do IndexedDB.');
-                };
-            };
-
-            request.onerror = function (event) {
-                reject('Erro ao abrir o IndexedDB.');
-            };
-        });
-    }
-
-    // Carregar dados GeoJSON
-    function loadData() {
-        // Verificar se os dados estão no localStorage e se a última atualização foi em um dia diferente
-        var lastUpdateDate = localStorage.getItem('lastUpdateDate');
-        var currentDate = new Date().toLocaleDateString();
-
-        if (!lastUpdateDate || lastUpdateDate !== currentDate) {
-            // Dados não encontrados no localStorage ou último update não foi hoje, carregar dados da API
-            fetchDataFromAPI();
-        } else {
-            // Dados encontrados no localStorage e último update foi hoje, carregar dados do IndexedDB
-            loadGeoJSONFromIndexedDB()
-                .then(data => {
-                    // Dados encontrados no IndexedDB, processar os dados
-                    processData(data);
-                })
-                .catch(error => {
-                    // Dados não encontrados no IndexedDB ou erro, carregar dados da API
-                    fetchDataFromAPI();
-                });
-        }
-    }
-
-    // Chamar a função para carregar dados
-    loadData();
-
     // Função para carregar dados da API
     function fetchDataFromAPI() {
-        fetch(`/api/v1/geojson/`)
+        fetch(`/geojson/geojson-uf.json`)
             .then(response => response.json())
             .then(data => {
-                // Armazenar dados no IndexedDB para uso futuro
-                storeGeoJSONInIndexedDB(data);
-
-                // Armazenar a data da última atualização no localStorage
-                localStorage.setItem('lastUpdateDate', new Date().toLocaleDateString());
-
                 // Processar os dados GeoJSON
                 processData(data);
             })
             .catch(error => console.error('Erro ao carregar dados GeoJSON da API:', error));
-    }
-
-    // Função para armazenar dados no IndexedDB
-    function storeGeoJSONInIndexedDB(data) {
-        var request = indexedDB.open('geojsonDB', 1);
-
-        request.onupgradeneeded = function (event) {
-            var db = event.target.result;
-            db.createObjectStore('geojsonStore', { keyPath: 'id' });
-        };
-
-        request.onsuccess = function (event) {
-            var db = event.target.result;
-            var transaction = db.transaction(['geojsonStore'], 'readwrite');
-            var objectStore = transaction.objectStore('geojsonStore');
-            objectStore.put({ id: 'cachedGeoJSON', data: data });
-        };
-
-        request.onerror = function (event) {
-            console.error('Erro ao armazenar dados no IndexedDB.');
-        };
     }
 
     // Função para processar os dados GeoJSON
@@ -265,5 +167,7 @@
             location.href = url;
         }
     }
+
+    fetchDataFromAPI();
 
 </script>
