@@ -212,4 +212,9 @@ CREATE TABLE Empresas (
 CREATE INDEX idx_empresas_municipio ON empresas (municipio);
 
 ";
+
+    public static string CNAE_TABLE => @"CREATE TABLE Cnaes (
+    Codigo VARCHAR(10) NULL,
+    Descricao varchar(8000) NULL
+);";
 }

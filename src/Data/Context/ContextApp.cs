@@ -1,3 +1,4 @@
+using IDN.Core.Cnae.Models;
 using IDN.Core.Empresa.Models;
 using IDN.Core.Geojson.Models;
 using IDN.Core.Municipio.Models;
@@ -21,6 +22,7 @@ public class ContextApp : DbContext
 
     public DbSet<MMunicipio>? Municipios { get; set; }
     public DbSet<MEmpresa>? Empresas { get; set; }
+    public DbSet<MCnae>? Cnaes { get; set; }
 
     #region Geojson
     public DbSet<MFeatures>? GeojsonFeatures { get; set; }
@@ -33,13 +35,15 @@ public class ContextApp : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
-            optionsBuilder.UseNpgsql(DataBase.DS_POSTGRES);
+            optionsBuilder.UseNpgsql($"{DataBase.DS_POSTGRES}Database={DataBase.DBName};");
 
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<MCnae>().ToTable("cnaes");
         modelBuilder.ApplyConfiguration(new MunicipioDBMap());
         modelBuilder.ApplyConfiguration(new EmpresaDBMap());
+        modelBuilder.ApplyConfiguration(new CnaeDBMap());
         modelBuilder.ApplyConfiguration(new MapFeatures());
         modelBuilder.ApplyConfiguration(new MapGeometry());
         modelBuilder.ApplyConfiguration(new MapProperties());

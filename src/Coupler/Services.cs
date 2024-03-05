@@ -20,6 +20,11 @@ using IDN.Services.Geojson.Interfaces;
 using IDN.Services.Geojson.Services;
 using IDN.Core.Geojson.Models;
 using IDN.Core.Geojson.Interfaces;
+using IDN.Core.Cnae.Models;
+using IDN.Services.Cnae.Services;
+using IDN.Services.Cnae.Interfaces;
+using IDN.Core.Cnae.Interfaces;
+using IDN.Core.Cnae.Services;
 
 namespace IDN.Coupler;
 
@@ -58,6 +63,15 @@ public static class Services
 
         services.AddScoped<IRepositoryCore<MGeojson>, RepositoryContext<MGeojson>>();
         services.AddScoped<IRepositoryCoreGeojson, RepositoryGeojson>();
+
+        services.AddScoped<IServiceBase<MCnae>, ServiceBase<MCnae>>();
+        services.AddScoped<IServiceCnae, ServiceCnae>();
+
+        services.AddScoped<IServiceCore<MCnae>, ServiceCore<MCnae>>();
+        services.AddScoped<IServiceCoreCnae, ServiceCoreCnae>();
+
+        services.AddScoped<IRepositoryCore<MCnae>, RepositoryContext<MCnae>>();
+        services.AddScoped<IRepositoryCoreCnae, RepositoryCnae>();
 
         services.AddAutoMapper(typeof(MapperProfile));
         services.AddMemoryCache();
