@@ -17,10 +17,24 @@ public class ServiceCoreEmpresa : ServiceCore<MEmpresa>, IServiceCoreEmpresa
         return _empresa.DoListAsync(param);
     }
 
-    public IAsyncEnumerable<MEmpresa> DoStoredProcedure(string field, string paran, string? city = null)
-    {
-        return _empresa.DoStoredProcedure(field, paran, city);
-    }
+    // public IAsyncEnumerable<MEmpresa> DoListByCNAE(string param, string? municipio = null)
+    // {
+    //     return _empresa.DoListByCNAE(param, municipio);
+    // }
 
+    // public IAsyncEnumerable<MEmpresa> DoListByMunicipio(string param)
+    // {
+    //     return _empresa.DoListByMunicipio(param);
+    // }
+
+    // public IAsyncEnumerable<MEmpresa> DoListByNJ(string param, string? municipio = null)
+    // {
+    //     return _empresa.DoListByNJ(param, municipio);
+    // }
+
+    // public IAsyncEnumerable<MEmpresa> DoListBySegmento(string param, string? municipio = null)
+    // {
+    //     return _empresa.DoListBySegmento(param, municipio);
+    // }
 
 }

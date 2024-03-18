@@ -19,11 +19,11 @@ public class MEmpresa
     private string _dataopcaomei = string.Empty;
     private string _dataexclusaosn = string.Empty;
     private string _dataexclusaomei = string.Empty;
-    public Guid Id { get; set; }
+    //public Guid Id { get; set; }
     public string? CNPJ { get; set; }
     public string? RazaoSocial { get; set; }
     public string? NaturezaJuridica { get; set; }
-    public decimal? CapitalSocial { get; set; }
+    public string? CapitalSocial { get; set; }
     public string? PorteEmpresa
     {
         get { return Dictionaries.PorteEmpresa[_porte]; }

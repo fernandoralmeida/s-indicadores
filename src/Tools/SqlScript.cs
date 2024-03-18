@@ -210,7 +210,7 @@ CREATE TABLE Empresas (
 
 -- create indexs
 CREATE INDEX idx_empresas_municipio ON empresas (municipio);
-
+CREATE INDEX idx_cnae_principal ON Empresas (CnaeFiscalPrincipal);
 ";
 
     public static string CNAE_TABLE => @"CREATE TABLE Cnaes (

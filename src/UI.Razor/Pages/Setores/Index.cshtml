@@ -11,22 +11,21 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <div id="div-search" class="valign-wrapper">
-    <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar por atividade `CNAE`"
-        onkeypress="handle(event)" asp-for="@Model.Cidade">
-    @* <datalist id="optcities">
-        @foreach (var item in Model.ListaMunicipios!.OrderBy(o => o))
-        {
-            <option value="@item" />
-        }
-    </datalist> *@
+    <input id="input-search" name="input-search" class="browser-default" type="search"
+        placeholder="Procurar por atividade `CNAE`" onkeypress="handle(event)" asp-for="@Model.Cidade">
     <i class="material-icons margin-y-5">search</i>
     <partial name="_Navmap" />
 </div>
 
+<partial name="_NavCNAE" model="Model.Setore_Segmentos_Cnaes" />
+
 <div id="map" class="map"></div>
 
 <script>
-
+    var _min = 0;
+    var _max = 0;
+    var _arrayN = [];
+    var _page_link = '';
     // Criar o mapa Leaflet
     var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
 
@@ -65,6 +64,20 @@
         }
     }
 
+    //Color for Segmento Cnae
+    function getColorSC(d) {
+        return d > 65000 ? '#34000f' :
+            d > 21870 ? '#4d0017' :
+                d > 7290 ? '#800026' :
+                    d > 2430 ? '#BD0026' :
+                        d > 810 ? '#E31A1C' :
+                            d > 270 ? '#FC4E2A' :
+                                d > 90 ? '#FD8D3C' :
+                                    d > 30 ? '#FEB24C' :
+                                        d > 10 ? '#FED976' :
+                                            '#FFEDA0';
+    }
+
     // Função para estilizar as áreas GeoJSON com base no valor da propriedade "empresas"
     function style(feature) {
         return {
@@ -73,16 +86,32 @@
             opacity: 1,
             color: 'black',
             //dashArray: '3',
-            fillOpacity: 0.5
+            fillOpacity: 0.7
+        };
+    }
+
+    // Função para estilizar as áreas GeoJSON com base no valor da propriedade "empresas"
+    // Somente para Segmento e Cnae
+    function styleSC(feature) {
+        return {
+            fillColor: getColorSC(`${feature.properties.empresas}`),
+            weight: 1,
+            opacity: 1,
+            color: 'black',
+            //dashArray: '3',
+            fillOpacity: 0.7
         };
     }
 
     function zoomToFeature(e) {
         map.fitBounds(e.target.getBounds());        
-        @* var layer = e.target;
-        const url = '/maps/' + layer.feature.properties.name;
+    }
+
+    function zoomToFeatureSC(e) {
+        var layer = e.target;
+        const url = '/setores/' + _page_link + '/' + layer.feature.properties.name;
         // Redireciona para a página interna
-        location.href = url; *@
+        location.href = url;
     }
 
     function highlightFeature(e) {
@@ -107,7 +136,7 @@
             weight: 1,
             color: 'black',
             dashArray: '',
-            fillOpacity: 0.5
+            fillOpacity: 0.7
         });
         info.update();
     }
@@ -117,6 +146,14 @@
             mouseover: highlightFeature,
             mouseout: resetHighlight,
             click: zoomToFeature
+        });
+    }
+
+    function onEachFeatureSC(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeatureSC
         });
     }
 
@@ -134,6 +171,27 @@
             div.innerHTML +=
                 '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
                 grades[i] + '<br>';
+        }
+
+        return div;
+    };
+
+
+    // Legenda Segmento e Cnae
+    var legendSC = L.control({ position: 'bottomright' });
+
+    legendSC.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = [1, 10, 30, 90, 270, 810, 2430, 7290, 21870, 65000],
+            labels = [];
+
+        div.innerHTML += 'Empresas<div class="divider"></div'
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColorSC(grades[i] + 1) + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
         }
 
         return div;
@@ -183,6 +241,34 @@
         });
     }
 
+    function goDirectAPI(_url) {
+        $("#loader").show();
+        $(".blackboxload").show();
+
+        // Limpar o mapa (opcional)
+        map.eachLayer(function (layer) {
+            if (layer instanceof L.GeoJSON) {
+                map.removeLayer(layer);
+            }
+        });
+
+        // 2. Remover controles existentes
+        map.removeControl(legend);
+
+        fetch(_url)
+            .then(response => response.json())
+            .then(data => {
+
+                // Processar os dados GeoJSON
+                _max = data.max;
+                _min = data.min;
+                //_arrayN = doArrayNumerico(_max, _min, 8);
+                //alert(_max + ' ' + _min);
+                processDataSC(data);
+            })
+            .catch(error => console.error('Erro ao carregar dados GeoJSON da API:', error));
+    }
+
     // Carregar dados GeoJSON
     loadGeoJSONFromIndexedDB()
         .then(data => {
@@ -191,12 +277,12 @@
         })
         .catch(error => {
             // Dados não encontrados no IndexedDB ou erro, carregar dados da API
-            fetchDataFromAPI();
+            fetchDataFromAPI(`@Model.UrlAPI`);
         });
 
     // Função para carregar dados da API
-    function fetchDataFromAPI() {
-        fetch(`/api/v1/geojson/`)
+    function fetchDataFromAPI(_url) {
+        fetch(_url)
             .then(response => response.json())
             .then(data => {
                 // Armazenar dados no IndexedDB para uso futuro
@@ -244,15 +330,81 @@
         map.fitBounds(geojsonLayer.getBounds());
     }
 
+    // Função para processar os dados GeoJSON
+    function processDataSC(data) {
+        $("#loader").hide();
+        $(".blackboxload").fadeOut("slow");
+
+        // Adicionar camada GeoJSON ao mapa
+        var geojsonLayer = L.geoJSON(data, {
+            style: styleSC,
+            onEachFeature: onEachFeatureSC
+        }).addTo(map);
+
+        legendSC.addTo(map);
+
+        // Ajustar o mapa para abranger a área GeoJSON com zoom
+        map.fitBounds(geojsonLayer.getBounds());
+    }
+
     function handle(e) {
         if (e.keyCode === 13) {
             var v = $("#input-search").val();
             if (v === "")
                 return false;
 
-            const url = '/setores/' + v;
-            location.href = url;
+            @* const url = '/setores/' + v;
+            location.href = url; *@
+            _page_link = v;
+            goDirectAPI(`/api/v1/geojson/cnae/` + v);
         }
+    }
+
+    //Recebe numeros inteiro (6788) e retorna 6000;
+    function FIntZero(numero) {
+        // Converter o número para string
+        const numeroStr = numero.toString();
+
+        // Se o número for menor ou igual a 9, retornar o próprio número
+        if (numeroStr.length <= 1) {
+            return numero;
+        }
+
+        // Obter o primeiro dígito
+        const primeiroDigito = numeroStr[0];
+
+        // Criar uma string com zeros com o mesmo tamanho do número original
+        const zeros = "0".repeat(numeroStr.length - 1);
+
+        // Retornar o primeiro dígito concatenado com a string de zeros
+        return parseInt(primeiroDigito + zeros);
+    }
+
+    function doArrayNumerico(vmax, vmin, numeroPartes) {
+        // Validar entrada
+        if (vmax < vmin) {
+            throw new Error("Valor máximo deve ser maior ou igual ao valor mínimo");
+        }
+        if (numeroPartes <= 0) {
+            throw new Error("Número de partes deve ser maior que zero");
+        }
+
+        // Calcular amplitude
+        const amplitude = (vmax - vmin) / numeroPartes;
+
+        // Criar array
+        const arrayNumerico = [];
+        for (let i = 0; i < numeroPartes; i++) {
+            // Calcular valor da parte
+            const valorParte = vmin + (i * amplitude);
+            // Arredondar valor da parte para número inteiro
+            const valorParteArredondado = Math.round(valorParte);
+            // Adicionar valor da parte ao array
+            arrayNumerico.push(valorParteArredondado);
+        }
+
+        // Retornar array
+        return arrayNumerico;
     }
 
 </script>

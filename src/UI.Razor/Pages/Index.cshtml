@@ -1,4 +1,4 @@
-﻿@page 
+﻿@page
 @model IndexModel
 @{
     Layout = "_LayoutMap";
@@ -14,10 +14,10 @@
     <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
         onkeypress="handle(event)" asp-for="@Model.Cidade">
     @* <datalist id="optcities">
-        @foreach (var item in Model.ListaMunicipios!.OrderBy(o => o))
-        {
-            <option value="@item" />
-        }
+    @foreach (var item in Model.ListaMunicipios!.OrderBy(o => o))
+    {
+    <option value="@item" />
+    }
     </datalist> *@
     <i class="material-icons margin-y-5">search</i>
     <partial name="_Navmap" />
@@ -48,14 +48,16 @@
     };
 
     function getColor(d) {
-        return d > 150000 ? '#800026' :
-            d > 50000 ? '#BD0026' :
-                d > 25000 ? '#E31A1C' :
-                    d > 20000 ? '#FC4E2A' :
-                        d > 15000 ? '#FD8D3C' :
-                            d > 10000 ? '#FEB24C' :
-                                d > 5000 ? '#FED976' :
-                                    '#FFEDA0';
+        return d > 320000 ? '#34000f' :
+            d > 160000 ? '#4d0017' :
+                d > 80000 ? '#800026' :
+                    d > 40000 ? '#BD0026' :
+                        d > 25000 ? '#E31A1C' :
+                            d > 20000 ? '#FC4E2A' :
+                                d > 15000 ? '#FD8D3C' :
+                                    d > 10000 ? '#FEB24C' :
+                                        d > 5000 ? '#FED976' :
+                                            '#FFEDA0';
     }
 
     // Função para estilizar as áreas GeoJSON com base no valor da propriedade "empresas"
@@ -118,7 +120,7 @@
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
-            grades = [0, 5000, 10000, 15000, 20000, 25000, 50000, 150000],
+            grades = [0, 5000, 10000, 15000, 20000, 25000, 48000, 80000, 160000, 320000],
             labels = [];
 
         div.innerHTML += 'Empresas<div class="divider"></div'

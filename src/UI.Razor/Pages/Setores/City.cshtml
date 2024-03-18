@@ -1,4 +1,4 @@
-    @page "/setores/{m}/{r?}"
+@page "/setores/{m}/{r?}"
 @model Setores.CityModel
 @{
     Layout = "_Layout";
@@ -9,7 +9,32 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <header>
-    <partial name="_Navs" model="Model.NavModel" />
+    <div class="navbar">
+        <nav class="nav-extended z-depth-0">
+            <div class="nav-wrapper transparent">
+                <div class="brand-logo"><img src="~/svg/idnet-new.svg" style="height: 45px;" alt="Indicadores.NET">
+                </div>
+                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <div class="hide-on-large-only left margin-l-10">@Model.Municipio?.ToUpper()</div>
+                <ul class="left hide-on-med-and-down col s6">
+                    <li><a asp-page="/Setores/Index"><i class="material-icons">arrow_back</i></a></li>
+                    <div class="left margin-l-10">@Model.Municipio?.ToUpper()</div>
+                </ul>
+                <ul class="right hide-on-med-and-down col s6">
+                    <li><a asp-page="/Index"><i class="material-icons">home</i></a></li>
+                    <li><a asp-page="/About"><i class="material-icons">info</i></a></li>
+                    <li><a asp-page="/Info"><i class="material-icons">help</i></a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <ul class="sidenav" id="mobile-demo">
+        <li><a asp-page="/Setores/Map" asp-route-m="@Model.CNAE"><i class="material-icons">arrow_back</i></a></li>
+        <li><a asp-page="/Index"><i class="material-icons">home</i></a></li>
+        <li><a asp-page="/About"><i class="material-icons">info</i></a></li>
+        <li><a asp-page="/Info"><i class="material-icons">help</i></a></li>
+    </ul>
 </header>
 
 <div class="row">
@@ -442,7 +467,7 @@
             <p class="bg-color-grey text-color-light padding-5">@item.Key</p>
             @foreach (var subitem in item.Value)
             {
-                <p class="text-color-grey "><span class="font-size-10">- @subitem.Key</span>                    
+                <p class="text-color-grey "><span>- @subitem.Key</span>
                     <span class="new bg-color-grey badge" data-badge-caption="@subitem.Value"></span>
                 </p>
                 <div class="divider"></div>

@@ -29,6 +29,9 @@ public class ServiceEmpresa : IServiceEmpresa
         await foreach (var item in lista)
             _lista.Add(item);
 
+        if (!_lista.Any())
+            return new REmpresas();
+
         var emps_bairro = _lista.Where(s => s.SituacaoCadastral!.ToLower() == "ativa");
         var emps_novas_bairro = emps_bairro.Where(s => s.DataInicioAtividade!.StartsWith(ano.ToString()));
 
@@ -476,28 +479,28 @@ public class ServiceEmpresa : IServiceEmpresa
         });
     }
 
-    public async IAsyncEnumerable<MEmpresa> DoStoredProcedure(string field, string param, string? city = null)
-    {
-        var cache = _memorycache;
-        var cacheKey = $"DataCache_{field!}_{param!}_{city!}";
+    // public async IAsyncEnumerable<MEmpresa> DoStoredProcedure(string field, string param, string? city = null)
+    // {
+    //     var cache = _memorycache;
+    //     var cacheKey = $"DataCache_{field!}_{param!}_{city!}";
 
-        if (cache.TryGetValue(cacheKey, out IAsyncEnumerable<MEmpresa>? cachedEmpresas))
-            await foreach (var item in cachedEmpresas!)
-                yield return item;
+    //     if (cache.TryGetValue(cacheKey, out IAsyncEnumerable<MEmpresa>? cachedEmpresas))
+    //         await foreach (var item in cachedEmpresas!)
+    //             yield return item;
 
-        else
-        {
-            var empresas = _empresa.DoStoredProcedure(field, param, city);
-            cachedEmpresas = empresas;
-            cache.Set(cacheKey, cachedEmpresas, new MemoryCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
-            });
+    //     else
+    //     {
+    //         var empresas = _empresa.DoStoredProcedure(field, param, city);
+    //         cachedEmpresas = empresas;
+    //         cache.Set(cacheKey, cachedEmpresas, new MemoryCacheEntryOptions
+    //         {
+    //             AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+    //         });
 
-            await foreach (var item in empresas)
-                yield return item;
-        }
-    }
+    //         await foreach (var item in empresas)
+    //             yield return item;
+    //     }
+    // }
 
     private static IEnumerable<KeyValuePair<string, int>> Quantitativo(IEnumerable<MEmpresa> list)
         => from st in list
@@ -538,9 +541,30 @@ public class ServiceEmpresa : IServiceEmpresa
                             select (new KeyValuePair<string, int>(a.Key, a.Count()))));
     }
 
-    public IAsyncEnumerable<MEmpresa> DoListAsync(Expression<Func<MEmpresa, bool>>? param = null)
+    public async IAsyncEnumerable<MEmpresa> DoListAsync(Expression<Func<MEmpresa, bool>>? param = null, string? token = null)
     {
-        return _empresa.DoListAsync(param);
+        var cache = _memorycache;
+        var cacheKey = $"DataCache_{token!}";
+
+        if (cache.TryGetValue(cacheKey, out IEnumerable<MEmpresa>? cachedEmpresas))
+            foreach (var item in cachedEmpresas!)
+                yield return item;
+
+        else
+        {
+            var _temp = new List<MEmpresa>();
+            await foreach (var item in _empresa.DoListAsync(param))
+                _temp.Add(item);
+
+            cachedEmpresas = _temp;
+            cache.Set(cacheKey, cachedEmpresas, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+            });
+
+            foreach (var item in _temp)
+                yield return item;
+        }
     }
 
     public async Task<RCharts> DoReportToChartAsync(REmpresas report)

@@ -42,7 +42,7 @@ $(document).ready(function () {
 
     $('select').formSelect();
 
-    $('.collapsible').collapsible({ accordion: true });
+    $('.collapsible').collapsible();
 
     $('.sidenav').sidenav();
 

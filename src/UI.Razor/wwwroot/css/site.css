@@ -558,37 +558,36 @@ nav .arrow-back {
 #navmap ul {
   margin: 0;
   display: inline-flex;
+  padding-right: 10px;
 }
 
 #navmap ul li {
   background-color: transparent;
-  transition: background-color .3s;
+  /*  */
   color: var(--color-grey);
   float: left;
-  padding: 5px 10px;
+  /* padding: 5px 10px; */
 }
 
 #navmap ul li a {
   background-color: transparent;
   text-decoration: none;
   color: var(--color-grey);
+  transition: background-color .3s;
+  padding: 10px;
 }
 
-#navmap ul li:hover {
+#navmap ul li a:hover {
   /* #navmap ul li a:hover */
   /*
   color: var(--color-dark);*/
   background-color: var(--color-dark-4);
-  border-radius: 4px;
-}
-
-#navmap ul li.active {
-  background-color: var(--color-grey);
-  border-radius: 4px;
-
+  /* border-radius: 4px; */  
 }
 
 #navmap ul li a.active {
+  background-color: var(--color-grey);
+  /* border-radius: 4px; */
   color: var(--color-light);
 }
 
@@ -605,7 +604,7 @@ input.browser-default {
   z-index: 9999;
   margin-left: 10px;
   margin-top: 10px;
-  padding: 5px;
+  padding: 0px;
   background-color: rgba(240, 245, 255, 0.4);
   transition: all 0.2s ease-in-out;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -641,6 +640,50 @@ input.browser-default {
 
 
 /** end search **/
+
+/* CNAE Selector */
+#cnae-container {
+  border: 0px solid var(--color-white);
+  display: block;
+  position: fixed;
+  z-index: 9999;
+  margin-left: 10px;
+  max-height: calc(100vh - 160px);
+  margin-top: 70px;
+  width: 350px;
+  padding: 0px;
+  background-color: rgba(240, 245, 255, 0.4);
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  backdrop-filter: blur(5px);
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+li>div>div>a,
+li>div>p>a {
+  color: var(--color-grey);
+}
+
+li>div>div>a:link,
+li>div>p>a:link {
+  color: var(--color-grey);
+}
+
+li>div>div>a:hover,
+li>div>p>a:hover {
+  color: var(--color-dark);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+li>div>div>a:active,
+li>div>p>a:active {
+  color: var(--color-grey);
+}
+
+/*  */
 
 .select-start {
   background-color: rgba(0, 0, 0, .1);
@@ -1149,6 +1192,10 @@ nav,
   padding-top: 10px;
 }
 
+.padding-b-10 {
+  padding-bottom: 10px;
+}
+
 .margin-0 {
   margin: 0px !important;
 }
@@ -1230,6 +1277,10 @@ nav,
   margin-right: 5px;
 }
 
+.margin-10 {
+  margin: 10px;
+}
+
 /**** Texto *****/
 
 .text-uppercase {
@@ -1285,6 +1336,10 @@ nav,
 }
 
 /* Opem Street Map */
+.grayscale {
+  filter: grayscale(100%);
+}
+
 .leaflet-container {
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
   font-size: 12px;

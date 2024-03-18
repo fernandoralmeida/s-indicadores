@@ -13,9 +13,12 @@ public class RepositoryMunicipio : RepositoryContext<MMunicipio>, IRepositoryCor
     {
         
     }
-    public async IAsyncEnumerable<MMunicipio> DoListAsync(Expression<Func<MMunicipio, bool>>? param = null)
+    public IAsyncEnumerable<MMunicipio> DoListAsync(Expression<Func<MMunicipio, bool>>? param = null)
     {
-        foreach (var item in await _context.Municipios!.ToListAsync())
-            yield return item;
+        var query = _context.Municipios!
+                            .Where(param ?? (p => true))
+                            .AsNoTrackingWithIdentityResolution();
+
+        return query.AsAsyncEnumerable();
     }
 }

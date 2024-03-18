@@ -6,8 +6,10 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace IDN.Services.Geojson.View;
 
 public class VGeojson
-{    
+{
     public string? Type { get; set; }
+    public int Min { get; set; }
+    public int Max { get; set; }
     public IEnumerable<VFeatures>? Features { get; set; }
 }
 

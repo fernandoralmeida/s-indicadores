@@ -41,6 +41,7 @@ public class ContextApp : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<MCnae>().ToTable("cnaes");
+        modelBuilder.Entity<MEmpresa>().ToTable("empresas");
         modelBuilder.ApplyConfiguration(new MunicipioDBMap());
         modelBuilder.ApplyConfiguration(new EmpresaDBMap());
         modelBuilder.ApplyConfiguration(new CnaeDBMap());

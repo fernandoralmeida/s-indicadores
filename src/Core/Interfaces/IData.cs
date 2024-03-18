@@ -1,6 +1,4 @@
-using System.Data;
-
-namespace IDN.Data.Interface;
+namespace IDN.Core.Interfaces;
 
 public interface IData<T> where T : class
 {
@@ -8,5 +6,5 @@ public interface IData<T> where T : class
     void AddParameters(string parameterName, object parameterValue);
     IAsyncEnumerable<T> ReadStoredProcedureAsync(string query);
     IAsyncEnumerable<T> ReadSqlQueryAsync(string query);
-    Task<DataTable> ReadDataTableAsync(string query);
+    Task<T> ReadDataTableAsync(string query);
 }

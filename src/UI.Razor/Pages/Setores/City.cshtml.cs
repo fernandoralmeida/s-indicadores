@@ -19,6 +19,9 @@ public partial class CityModel : PageModel
 
     [BindProperty(SupportsGet = true)]
     public string? Municipio { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string? CNAE { get; set; }
     public REmpresas? LReports { get; set; }
     public NavbarModel? NavModel { get; set; }
     public RCharts? Charts { get; set; }
@@ -47,8 +50,16 @@ public partial class CityModel : PageModel
 
         var _m = m ?? null;
         Municipio = r;
+        CNAE = m;
 
-        LReports = await _empresa!.DoReportEmpresasAsync(_empresa.DoStoredProcedure("cnaefiscalprincipal", _m!, r));
+        LReports = await _empresa!
+                            .DoReportEmpresasAsync(
+                                _empresa!
+                                .DoListAsync(
+                                    s => s.CnaeFiscalPrincipal!
+                                    .StartsWith(m)
+                                    && s.Municipio == Municipio!.ToUpper(),
+                                    $"empresas_{m}_{r}"));
 
         Charts = await _empresa!.DoReportToChartAsync(LReports);
 
