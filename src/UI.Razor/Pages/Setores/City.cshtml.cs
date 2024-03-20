@@ -57,7 +57,7 @@ public partial class CityModel : PageModel
                                 _empresa!
                                 .DoListAsync(
                                     s => s.CnaeFiscalPrincipal!
-                                    .StartsWith(m)
+                                    .StartsWith(m!)
                                     && s.Municipio == Municipio!.ToUpper(),
                                     $"empresas_{m}_{r}"));
 

@@ -190,6 +190,7 @@
             loadGeoJSONFromIndexedDB()
                 .then(data => {
                     // Dados encontrados no IndexedDB, processar os dados
+                    _max = data.max;
                     processData(data);
                 })
                 .catch(error => {
@@ -214,6 +215,7 @@
                 localStorage.setItem('lastUpdateDate', new Date().toLocaleDateString());
 
                 // Processar os dados GeoJSON
+                _max = data.max;
                 processData(data);
             })
             .catch(error => console.error('Erro ao carregar dados GeoJSON da API:', error));

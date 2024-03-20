@@ -436,13 +436,13 @@
 <!-- Modal Structure -->
 <div id="modal1" class="modal modal-fixed-footer">
     <div class="modal-content">
-        <h6>Modal Header</h6>
+        <h6>Detalhes</h6>
         @foreach (var item in @Model.LReports.TAtividadesDescritivas!)
         {
             <p class="bg-color-grey text-color-light padding-5">@item.Key</p>
             @foreach (var subitem in item.Value)
             {
-                <p class="text-color-grey "><span class="font-size-10">- @subitem.Key</span>                    
+                <p class="text-color-grey "><span class="font-size-12">- @subitem.Key.Remove(0,7)</span>                    
                     <span class="new bg-color-grey badge" data-badge-caption="@subitem.Value"></span>
                 </p>
                 <div class="divider"></div>
@@ -450,7 +450,7 @@
         }
     </div>
     <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+        <a href="#!" class="modal-close waves-effect waves-green btn">Fechar</a>
     </div>
 </div>
 

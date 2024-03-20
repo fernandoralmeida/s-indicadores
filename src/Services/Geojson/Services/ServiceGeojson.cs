@@ -21,10 +21,12 @@ public class ServiceGeojson : IServiceGeojson
         //var _efilter = _m2 == null ? null : Builders<REmpresas>.Filter.Eq(e => e.Municipio, _m2);
         //var _feature = new VFeatures();
         //var _features = new List<VFeatures>();
+        var _features = await _mongoDB.DoListAsync(_filter);
         var _geojson = new VGeojson
         {
             Type = "FeatureCollection",
-            Features = await _mongoDB.DoListAsync(_filter)
+            Max = _features.Sum(s => s.Properties!.Empresas),
+            Features = _features
         };
         /*
         var _cities = await _mongoDBE.DoListAsync(_efilter);
