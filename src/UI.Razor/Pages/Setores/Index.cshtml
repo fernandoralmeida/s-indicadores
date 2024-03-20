@@ -10,11 +10,16 @@
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div id="div-search" class="valign-wrapper">
-    <input id="input-search" name="input-search" class="browser-default" type="search"
-        placeholder="Procurar por atividade `CNAE`" onkeypress="handle(event)" asp-for="@Model.Cidade">
-    <i class="material-icons margin-y-5">search</i>
-    <partial name="_Navmap" />
+<div class="div-topbar">
+    <div id="div-menu">
+        <partial name="_Navmap" />
+    </div>
+    <form method="post" id="div-search" class="valign-wrapper">
+        <i class="material-icons margin-l-10 grey-text">search</i>
+        <input id="input-search" class="browser-default" type="search" placeholder="Procurar CNAE"
+          onkeypress="handle(event)"  asp-for="@Model.Search">
+    </form>
+    <span class="div-result" id="span_result">?</span>
 </div>
 
 <partial name="_NavCNAE" model="Model.Setore_Segmentos_Cnaes" />
@@ -26,8 +31,9 @@
     var _max = 0;
     var _arrayN = [];
     var _page_link = '';
+    var _span_result = 'Setorial';
     // Criar o mapa Leaflet
-    var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
+    var map = L.map('map').setView([-22.902778, -48.28125], 6); // Centro inicial do mapa do estado de sp
 
     var info = L.control();
 
@@ -40,10 +46,10 @@
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
         this._div.innerHTML =
-            '<div class="center margin-b-10"><h6>Composição Setorial do Estado de SP<h6></div>'
+            `<div class="center margin-b-10"><h6>Composição ${_span_result} no Estado de SP<h6></div>`
             + '<div class="divider"></div>'
             + (props ?
-                'Município: <span class="text-uppercase">' + props.name + '</span><br />Empresas: ' + props.empresas + '<br />Setor: ' + props.setor : 'Mova o mouse sobre o mapa');
+                'Município: <span class="text-uppercase">' + props.name + '</span><br />Empresas: ' + props.empresas + ' (' + _max + ') ' + '<br />Setor: ' + props.setor : 'Mova o mouse sobre o mapa');
     };
 
     function getColor(d) {
@@ -165,7 +171,7 @@
             grades = ["Industria", "Comercio", "Servicos", "Construcao", "Agro"],
             labels = [];
 
-        div.innerHTML += 'Setores<div class="divider"></div'
+        div.innerHTML += 'Setores<div class="divider"></div>'
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
@@ -186,7 +192,7 @@
             grades = [1, 10, 30, 90, 270, 810, 2430, 7290, 21870, 65000],
             labels = [];
 
-        div.innerHTML += 'Empresas<div class="divider"></div'
+        div.innerHTML += 'Empresas<div class="divider"></div>'
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=

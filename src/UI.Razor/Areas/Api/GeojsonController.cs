@@ -9,6 +9,7 @@ using IDN.Services.Empresa.Records;
 using MongoDB.Driver;
 using IDN.Data.Interface;
 using MongoDB.Bson;
+using MongoDB.Driver.Core.Misc;
 
 namespace UI.Razor.Areas.Api;
 
@@ -41,10 +42,13 @@ public class GeojsonController : ControllerBase
 
         if (_cities?.Length > 0)
         {
+            var _features = await _geocode!.DoListGeojson(_cities);
+
             return Ok(new VGeojson
             {
                 Type = "FeatureCollection",
-                Features = await _geocode!.DoListGeojson(_cities)
+                Max = _features.Sum(s => s.Properties!.Empresas),
+                Features = _features
             });
         }
         else
@@ -209,7 +213,7 @@ public class GeojsonController : ControllerBase
                     }
 
                     f.Properties!.Empresas = _empresas;
-                    f.Properties!.Setor = IDN.Core.Helpers.Dictionaries.CnaesSubClasses[n!];
+                    f.Properties!.Setor = IDN.Core.Helpers.Dictionaries.SetorProdutivo[n!];
                     _features.Add(f);
                 }
             }
@@ -218,7 +222,7 @@ public class GeojsonController : ControllerBase
             {
                 Type = "FeatureCollection",
                 Min = 0,
-                Max = _min_max.OrderByDescending(v => v).First(),
+                Max = _min_max.Sum(v => v),
                 Features = _features
             });
         }
@@ -228,7 +232,7 @@ public class GeojsonController : ControllerBase
         }
     }
 
-        [HttpGet("geojson/cnae/{n}/{m?}")]
+    [HttpGet("geojson/cnae/{n}/{m?}")]
     public async Task<IActionResult> ListByCnaeAsync([FromRoute] string n, [FromRoute] string? m)
     {
         try
@@ -269,7 +273,7 @@ public class GeojsonController : ControllerBase
                     }
 
                     f.Properties!.Empresas = _empresas;
-                    f.Properties!.Setor = _cnae.SingleOrDefault()?.Descricao;
+                    f.Properties!.Setor = IDN.Core.Helpers.Dictionaries.SetorProdutivo[n![..2]!];
                     _features.Add(f);
                 }
             }
@@ -278,7 +282,7 @@ public class GeojsonController : ControllerBase
             {
                 Type = "FeatureCollection",
                 Min = 0,
-                Max = _min_max.OrderByDescending(v => v).First(),
+                Max = _min_max.Sum(v => v),
                 Features = _features
             });
         }

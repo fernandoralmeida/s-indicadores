@@ -2,7 +2,8 @@
 @model IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, IEnumerable<string>>>>>
 
 <div id="cnae-container">
-    <ul class="collapsible margin-0">
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    <ul class="collapsible margin-0 hide-on-med-and-down">
         @foreach (var setor in Model)
         {
             <li>
@@ -18,12 +19,12 @@
                                 <div class="collapsible-body padding-10">
                                     <div class="row center padding-b-10">
                                         <a class="segmento_click btn-link"
-                                            data-segmento="@segmento.Key[..2]" title="CNAE Grupo: @segmento.Key[..2]">VER
+                                            data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)" title="CNAE Grupo: @segmento.Key[..2]">VER
                                             SEGMENTO @segmento.Key.Remove(0, 2)</a>
                                     </div>
                                     @foreach (var cnae in segmento.Value)
                                     {
-                                        <p><a class="cnae_click" data-cnae="@cnae[..7]" title="CNAE @cnae[..7]">@cnae.Remove(0, 7)</a></p>
+                                        <p><a class="cnae_click" data-cnae="@cnae[..7]" data-descricao="@cnae.Remove(0, 7)" title="CNAE @cnae[..7]">@cnae.Remove(0, 7)</a></p>
                                         <div class="divider"></div>
                                     }
                                 </div>
@@ -35,3 +36,36 @@
         }
     </ul>
 </div>
+
+<ul class="sidenav collapsible" id="mobile-demo">
+        @foreach (var setor in Model)
+        {
+            <li>
+                <div class="collapsible-header"><i class="material-icons">place</i>@setor.Key</div>
+                <div class="collapsible-body">
+                    <ul class="collapsible margin-0">
+                        @foreach (var segmento in setor.Value)
+                        {
+                            <li>
+                                <div class="collapsible-header line-normal padding-b-10 padding-t-10" title="CNAE Grupo: @segmento.Key[..2]">
+                                    @segmento.Key.Remove(0, 2)
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="row line-normal center padding-t-10 margin-b-10">
+                                        <a class="segmento_click btn-link sidenav-close"
+                                            data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)" title="CNAE Grupo: @segmento.Key[..2]">VER
+                                            SEGMENTO @segmento.Key.Remove(0, 2)</a>
+                                    </div>
+                                    @foreach (var cnae in segmento.Value)
+                                    {
+                                        <p class="line-normal"><a class="cnae_click sidenav-close" data-cnae="@cnae[..7]" data-descricao="@cnae.Remove(0, 7)" title="CNAE @cnae[..7]">@cnae.Remove(0, 7)</a></p>
+                                        <div class="divider"></div>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+        }
+</ul>

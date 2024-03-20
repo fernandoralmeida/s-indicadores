@@ -39,7 +39,7 @@
                 style="width: 28px;" alt="instagram"></a>
     </div>
     <div class="footer-map">
-        <img class="margin-t-10" src="~/svg/idnet-new.svg" style="width: 38px;" alt="Indicadores.NET">
+        <img class="margin-t-logo" src="~/svg/idnet-new.svg" style="width: 38px;" alt="Indicadores.NET">
         <b>indicadores.net</b>
     </div>
     <footer class="page-footer">
@@ -50,16 +50,24 @@
     <script>
         $(document).ready(function () {
             $('.collapsible').collapsible();
+            $('.sidenav').sidenav();
+            const spanResult = document.getElementById("span_result");
 
             $(".segmento_click").click(function () {
                 const p = this.dataset.segmento;
+                const desc =`? ${this.dataset.descricao}`;
                 _page_link = p;
-                goDirectAPI(`/api/v1/geojson/segmento/` + p);
+                goDirectAPI(`/api/v1/geojson/segmento/` + p);                
+                spanResult.textContent = desc;
+                //_span_result = desc;
             });
             $(".cnae_click").click(function () {
                 const p = this.dataset.cnae;
+                const desc =`? ${this.dataset.descricao}`;
                 _page_link = p;
                 goDirectAPI(`/api/v1/geojson/cnae/` + p);
+                spanResult.textContent = desc;
+                //_span_result = desc;
             });
         });
     </script>
