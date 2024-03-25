@@ -4,6 +4,12 @@
 <div id="cnae-container">
     <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     <ul class="collapsible margin-0 hide-on-med-and-down">
+        <form method="post" asp-page-handler="FormCnae1">
+            <div class="div-search-cnae valign-wrapper">
+                <i class="material-icons margin-l-10 grey-text">search</i>
+                <input class="input-search-cnae browser-default" type="search" name="cnae1" placeholder="CNAE ex: 15 ou 1531901">
+            </div>
+        </form>
         @foreach (var setor in Model)
         {
             <li>
@@ -38,6 +44,12 @@
 </div>
 
 <ul class="sidenav collapsible" id="mobile-demo">
+        <form method="post" asp-page-handler="FormCnae2">
+            <div class="div-search-cnae valign-wrapper">
+                <i class="material-icons margin-l-10 grey-text">search</i>
+                <input class="input-search-cnae browser-default" type="search" name="cnae2" placeholder="CNAE ex: 15 ou 1531901">
+            </div>
+        </form>
         @foreach (var setor in Model)
         {
             <li>

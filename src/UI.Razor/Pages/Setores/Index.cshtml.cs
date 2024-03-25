@@ -39,17 +39,17 @@ public class IndexModel : PageModel
                                  ));
     }
 
-    public async Task OnPostAsync()
+    private async Task DoListCnae(string param)
     {
         var _list = new List<(string cnae, string desc, string setor)>();
 
-        var _test_search = Search?.ToLower().NormalizeText();
+        var _test_search = param?.ToLower().NormalizeText();
 
-        var _list_cnae = Search == null ?
+        var _list_cnae = param == null ?
                             await _cnaes.DoListAsync() :
-                            await _cnaes.DoListAsync(s => s.Codigo!.StartsWith(Search) ||
-                                                            s.Descricao!                                                                                                                       
-                                                            .ToLower()                                                         
+                            await _cnaes.DoListAsync(s => s.Codigo!.StartsWith(param) ||
+                                                            s.Descricao!
+                                                            .ToLower()
                                                             .Contains(_test_search!));
 
         foreach (var item in _list_cnae)
@@ -68,5 +68,15 @@ public class IndexModel : PageModel
                                         select new string($"{ce.cnae} {ce.desc}")
                                         ))
                                  ));
+    }
+
+    public async Task OnPostFormCnae1(string cnae1)
+    {
+        await DoListCnae(cnae1);
+    }
+
+    public async Task OnPostFormCnae2(string cnae2)
+    {
+        await DoListCnae(cnae2);
     }
 }

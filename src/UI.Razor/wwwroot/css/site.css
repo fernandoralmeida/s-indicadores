@@ -169,28 +169,35 @@ iframe {
 }
 
 .footer-map {
-  background-color: transparent;
+  background-color: var(--color-glass-white);
   z-index: 501;
-  padding: 0 10px;
+  padding: 10px;
   position: fixed;
-  margin-top: calc(100vh - 68px);
-  color: var(--color-dark);
+  margin-top: calc(100vh - 71px);
+  color: var(--color-grey);
+  backdrop-filter: blur(5px);
+  border-radius: 6px;
+  margin-left: 5px;
+  height: 57px;
 }
 
 .socialmedia {
   background-color: var(--color-dark);
   z-index: 501;
   position: fixed;
-  margin-top: calc(100vh - 50px);
+  margin-top: calc(100vh - 52px);
   color: var(--color-dark);
-  margin-left: calc(100vw / 2 - 54px);
-  border-radius: 10px 10px 0 0;
+  margin-left: calc(50% - 35px);
+  border-radius: 25px;
+  height: 39px;
   padding: 5px;
 }
 
 .line-normal {
   line-height: normal !important;
 }
+
+
 
 .font-size-10 {
   font-size: 10px;
@@ -531,7 +538,6 @@ nav .arrow-back {
   padding-bottom: 40px;
 }
 
-
 .div-center {
   margin-top: calc(50vh - 160px);
   margin-left: auto;
@@ -629,7 +635,26 @@ nav .arrow-back {
 input.browser-default {
   display: block;
 }
-
+/* search cnae */
+.div-search-cnae {
+  border: 0px solid var(--color-white);
+  padding: 0px;
+  background-color: var(--color-white);
+  transition: all 0.2s ease-in-out;
+  border-bottom: solid 1px var(--color-dark-4);
+  border-radius: 6px 6px 0 0;
+}
+.input-search-cnae {
+  font-family: Consolas !important;
+  border: 0px solid white;
+  padding: 10px;
+  color: var(--color-grey);
+  border-radius: 4px;
+  outline: none;
+  background-color: var(--color-white);
+  width: 100%;
+}
+/* end search cnae */
 /** search **/
 #div-search {
   border: 0px solid var(--color-white);
@@ -1160,6 +1185,14 @@ nav,
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.border-radius-ob{
+  border-radius: 6px 6px 0 0 !important;
+}
+
+.border-radius-ot{
+  border-radius: 6px 6px 0 0 !important;
+}
+
 .transparent {
   background-color: transparent !important;
 }
@@ -1657,7 +1690,7 @@ nav,
   }
 
   .div-result {
-    margin-left: 56px;
+    margin-left: 0px;
   }
 
   /* End CNAE Container */
