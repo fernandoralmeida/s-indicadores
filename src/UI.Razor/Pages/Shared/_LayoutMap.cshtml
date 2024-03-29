@@ -59,6 +59,7 @@
                 _page_link = p;
                 goDirectAPI(`/api/v1/geojson/segmento/` + p);                
                 spanResult.textContent = desc;
+                spanResult.classList.add("bg-color-blue");
                 //_span_result = desc;
             });
             $(".cnae_click").click(function () {
@@ -67,7 +68,14 @@
                 _page_link = p;
                 goDirectAPI(`/api/v1/geojson/cnae/` + p);
                 spanResult.textContent = desc;
+                spanResult.classList.add("bg-color-green");
                 //_span_result = desc;
+            });
+            $(".rag_click").click(function () {
+                const p = this.dataset.macro;
+                _page_link = p;
+                const url = '/maps/ragsp/' + p;
+                location.href = url;
             });
         });
     </script>

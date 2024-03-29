@@ -144,6 +144,7 @@ public partial class IndexModel : PageModel
 
 
         temporizador.Stop();
+
         NavModel = new()
         {
             Municipio = Municipio,

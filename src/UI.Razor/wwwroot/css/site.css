@@ -635,6 +635,7 @@ nav .arrow-back {
 input.browser-default {
   display: block;
 }
+
 /* search cnae */
 .div-search-cnae {
   border: 0px solid var(--color-white);
@@ -644,6 +645,7 @@ input.browser-default {
   border-bottom: solid 1px var(--color-dark-4);
   border-radius: 6px 6px 0 0;
 }
+
 .input-search-cnae {
   font-family: Consolas !important;
   border: 0px solid white;
@@ -654,6 +656,7 @@ input.browser-default {
   background-color: var(--color-white);
   width: 100%;
 }
+
 /* end search cnae */
 /** search **/
 #div-search {
@@ -1185,11 +1188,11 @@ nav,
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.border-radius-ob{
+.border-radius-ob {
   border-radius: 6px 6px 0 0 !important;
 }
 
-.border-radius-ot{
+.border-radius-ot {
   border-radius: 6px 6px 0 0 !important;
 }
 
@@ -1462,6 +1465,7 @@ nav,
 
 
 @media only screen and (max-width: 992px) {
+
   /*
   nav .brand-logo {
     left: 8%;
@@ -1623,7 +1627,7 @@ nav,
     position: fixed;
     z-index: 9999;
     margin-left: 10px;
-    margin-top: 108px;
+    margin-top: 58px;
     padding: 0px;
     background-color: rgba(240, 245, 255, 0.4);
     transition: all 0.2s ease-in-out;
@@ -1690,7 +1694,7 @@ nav,
   }
 
   .div-result {
-    margin-left: 0px;
+    margin-left: 52px;
   }
 
   /* End CNAE Container */

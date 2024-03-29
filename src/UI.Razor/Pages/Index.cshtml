@@ -14,12 +14,55 @@
     <div id="div-menu">
         <partial name="_Navmap" />
     </div>
-    <div id="div-search" class="valign-wrapper">
+    <form id="div-search" class="valign-wrapper" method="post">
         <i class="material-icons margin-l-10 grey-text">search</i>
-        <input id="input-search" name="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
+        <input id="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
             onkeypress="handle(event)" asp-for="@Model.Cidade">
-    </div>
+    </form>
 </div>
+
+<div id="cnae-container">
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    <ul class="collapsible margin-0 hide-on-med-and-down">
+            <li>
+                <div class="collapsible-header">Regiões Administrativas</div>
+                <div class="collapsible-body padding-10">
+                    
+                        @foreach (var macro in Model.RegioesAdministrativas!)
+                        {
+                            <p><a class="rag_click btn-link" data-macro="ra-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
+                            <div class="divider"></div>
+                        }
+                    
+                </div>
+            </li>    
+            <li>
+                <div class="collapsible-header">Regiões de Governo</div>
+                <div class="collapsible-body padding-10">
+                    
+                   
+                </div>
+            </li>
+            <li>
+                <div class="collapsible-header">Regiões Metropolitanas</div>
+                <div class="collapsible-body padding-10">
+                    
+                   
+                </div>
+            </li>
+            <li>
+                <div class="collapsible-header">Aglomerados Urbanos</div>
+                <div class="collapsible-body padding-10">
+                    
+                   
+                </div>
+            </li>        
+    </ul>
+</div>
+
+<ul class="sidenav collapsible" id="mobile-demo">
+
+</ul>
 
 <div id="map" class="map"></div>
 
@@ -73,7 +116,7 @@
     function zoomToFeature(e) {
         //map.fitBounds(e.target.getBounds());        
         var layer = e.target;
-        const url = '/maps/' + layer.feature.properties.name;
+        const url = '/maps/' + layer.feature.properties.geocode;
         // Redireciona para a página interna
         location.href = url;
     }
@@ -263,8 +306,10 @@
             if (v === "")
                 return false;
 
-            const url = '/maps/' + v;
-            location.href = url;
+            //const url = '/maps/' + v;
+            //location.href = url;
+            $(".blackboxload").show();
+            $("#loader").show();
         }
     }
 

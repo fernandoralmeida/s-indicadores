@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using IDN.Data.Helpers;
 using IDN.Services.Geojson.View;
 using IDN.Services.Cnae.Interfaces;
-using IDN.Core.Empresa.Models;
 using IDN.Services.Empresa.Records;
+using IDN.Core.Helpers;
 using MongoDB.Driver;
 using IDN.Data.Interface;
 using MongoDB.Bson;
-using MongoDB.Driver.Core.Misc;
 
 namespace UI.Razor.Areas.Api;
 
@@ -60,7 +59,6 @@ public class GeojsonController : ControllerBase
     {
         return Ok(await _geocode!.GeoJsonUF());
     }
-
 
     // [HttpGet("geojson/cnae/{n}/{m?}")]
     // public async Task<IActionResult> ListByCNAE([FromRoute] string n, [FromRoute] string? m)
@@ -292,4 +290,45 @@ public class GeojsonController : ControllerBase
         }
     }
 
+
+    [HttpGet("geojson/ram-sp/{r?}")]
+    public async Task<IActionResult> GetGeocode([FromRoute] string? r)
+    {
+        try
+        {
+            var _cities = new List<string>();
+
+            switch (r![..3])
+            {
+                case "ra-":
+                    var _c = r.Remove(0, 3)!.NormalizeText();
+                    _cities = Regions.MacroRegoesRASP[_c!].ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            var _features = new List<VFeatures>();
+
+            foreach (var city in _cities!)
+            {
+                var _c = city.NormalizeText().ToLower();
+                var __city = Builders<VFeatures>.Filter.Eq(e => e.Properties!.Name, _c);
+                foreach (var items in await _geojsonfeatures!.DoListAsync(__city))
+                    _features.Add(items);
+            };
+
+            return Ok(new VGeojson
+            {
+                Type = "FeatureCollection",
+                Min = 0,
+                Max = 0,
+                Features = _features
+            });
+        }
+        catch (Exception ex)
+        {
+            return Ok(ex.Message);
+        }
+    }
 }

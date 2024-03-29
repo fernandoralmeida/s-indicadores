@@ -96,8 +96,8 @@ class Program
                     break;
 
                 case 8:
-                    await Data.CreateTables(SqlScript.CNAE_TABLE, DBConfig.DS_POSTGRES, DBConfig.IndicadoresNET);
-                    await Migradata.DoCNAE(DBConfig.IndicadoresNET, DBConfig.DS_POSTGRES);
+                    await Data.CreateTables(SqlScript.CNAE_TABLE, DBConfig.DS_POSTGRES_VPS, DBConfig.IndicadoresNET);
+                    await Migradata.DoCNAE(DBConfig.IndicadoresNET, DBConfig.DS_POSTGRES_VPS);
                     break;
 
                 case 0:

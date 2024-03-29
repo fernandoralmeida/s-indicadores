@@ -2,68 +2,64 @@
 using IDN.Data.Helpers;
 using IDN.Data.Interface;
 using IDN.Services.Empresa.Records;
-using IDN.Services.Geojson.View;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MongoDB.Driver;
 
 namespace UI.Razor.Pages.Maps;
 
-public class IndexModel : PageModel
+public class RegionsModel : PageModel
 {
     private readonly IMongoDB<REmpresas> _mongoDB;
-    private readonly IMongoDB<VFeatures> _geojson;
 
     [BindProperty(SupportsGet = true)]
     public string? Cidade { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public string? GeoCode { get; set; }
     public IEnumerable<REmpresas>? LReports { get; set; }
     public string? Empresasativas { get; set; }
+    public IEnumerable<string>? Municipios { get; set; }
     public IEnumerable<KeyValuePair<string, int>> Setores { get; set; } = new List<KeyValuePair<string, int>>();
+    public string? Titulo { get; set; }
 
-    public IndexModel()
+    public RegionsModel()
     {
         _mongoDB = Factory<REmpresas>.NewDataMongoDB();
-        _geojson = Factory<VFeatures>.NewDataMongoDB();
     }
     public async Task<ActionResult> OnGetAsync(string? m)
     {
         if (string.IsNullOrEmpty(m))
             return RedirectToPage("/Index");
 
-        await LoadData(m);
+        Cidade = m;
+        Titulo = m.ToUpper();
+        switch (m[..3])
+        {
+            case "ra-":
+                var _c = m.Remove(0, 3).NormalizeText()!;
+                Municipios = Regions.MacroRegoesRASP[_c.NormalizeText().ToLower()];
+                break;
+            default:
+                break;
+        }
+
+        await LoadData();
         return Page();
     }
 
-    public async Task LoadData(string? param)
+    public async Task LoadData()
     {
-        var _param = param ?? null;
 
-        var _cities = param?.Split(',');
-
-        if (_cities?.Length > 0)
+        if (Municipios!.Count()! > 0)
         {
             var _listREmpresas = new List<REmpresas>();
-            Cidade = string.Empty;
-            GeoCode = string.Empty;
 
-            foreach (var city in _cities)
+            foreach (var city in Municipios!)
             {
-                var __city = Builders<VFeatures>.Filter.Eq(e => e.Properties!.Geocode, city);
-                foreach (var _geo in await _geojson.DoListAsync(__city))
-                {
-                    var _c = _geo.Properties!.Name?.ToUpper();
-                    GeoCode += $"{_geo.Properties!.Geocode},";
-                    Cidade += $"{_geo.Properties!.Name},";
-                    var __filter = Builders<REmpresas>.Filter.Eq(e => e.Municipio, _c);
-                    foreach (var r in await _mongoDB.DoListAsync(__filter))
-                        _listREmpresas.Add(r);
-                }
+                var _c = city.NormalizeText().ToUpper();
+                var __filter = Builders<REmpresas>.Filter.Eq(e => e.Municipio, _c);
+                foreach (var r in await _mongoDB.DoListAsync(__filter))
+                    _listREmpresas.Add(r);
             };
-            Cidade = Cidade[..^1];
-            GeoCode = GeoCode[..^1];
+
             LReports = new List<REmpresas>(){
                     new() {
                         _id = Guid.NewGuid(),
@@ -174,17 +170,7 @@ public class IndexModel : PageModel
                         }
                 };
         }
-        else
-        {
-            Cidade = _param;
-            var __city = Builders<VFeatures>.Filter.Eq(e => e.Properties!.Geocode, _param);
-            foreach (var _geo in await _geojson.DoListAsync(__city))
-            {
-                var _c = _geo.Properties!.Name?.ToUpper();
-                var _filter = Builders<REmpresas>.Filter.Eq(e => e.Municipio, _param);
-                LReports = await _mongoDB.DoListAsync(_filter);
-            }
-        }
+
         foreach (var report in LReports!)
         {
             foreach (var q in report.Quantitativo!.Where(s => s.Key == "Ativa"))
@@ -203,41 +189,6 @@ public class IndexModel : PageModel
         return list.SelectMany(selector)
                    .GroupBy(kvp => kvp.Key)
                    .Select(g => new KeyValuePair<string, int>(g.Key, g.Sum(kvp => kvp.Value)));
-    }
-
-    public async Task<ActionResult> OnPostAsync()
-    {
-        if (string.IsNullOrEmpty(Cidade))
-            return Page();
-
-        var _cities = Cidade?.Split(',');
-
-        if (_cities?.Length > 1)
-        {
-            Cidade = string.Empty;
-            GeoCode = string.Empty;
-
-            foreach (var city in _cities!)
-            {
-                var __city = Builders<VFeatures>.Filter.Eq(e => e.Properties!.Name, city);
-                foreach (var _geo in await _geojson.DoListAsync(__city))
-                {
-                    GeoCode += $"{_geo.Properties!.Geocode},";
-                    Cidade += $"{_geo.Properties!.Name},";
-                }
-            };
-            Cidade = Cidade[..^1];
-            GeoCode = GeoCode[..^1];
-        }
-        else
-        {
-            var _param = Cidade?.ToLower();
-            var __city = Builders<VFeatures>.Filter.Eq(e => e.Properties!.Name, _param);
-            foreach (var _geo in await _geojson.DoListAsync(__city))
-                GeoCode = _geo.Properties!.Geocode;
-        }
-
-        return RedirectToPage("/Maps/Index", new { m = GeoCode });
     }
 
 }

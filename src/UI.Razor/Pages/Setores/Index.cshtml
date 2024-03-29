@@ -14,15 +14,89 @@
     <div id="div-menu">
         <partial name="_Navmap" />
     </div>
-    @* <form method="post" id="div-search" class="valign-wrapper">
-        <i class="material-icons margin-l-10 grey-text">search</i>
-        <input id="input-search" class="browser-default" type="search" placeholder="CNAE ex: 15 ou 1531901"
-          onkeypress="handle(event)"  asp-for="@Model.Search">
-    </form> *@
     <span class="div-result" id="span_result">?</span>
 </div>
 
-<partial name="_NavCNAE" model="Model.Setore_Segmentos_Cnaes" />
+<div id="cnae-container">
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    <ul class="collapsible margin-0 hide-on-med-and-down">
+        <form method="post" asp-page-handler="DCnae">
+            <div class="div-search-cnae valign-wrapper">
+                <i class="material-icons margin-l-10 grey-text">search</i>
+                <input class="input-search-cnae browser-default" type="search" asp-for="Search" placeholder="CNAE ex: 15 ou 1531901">
+            </div>
+        </form>
+        @foreach (var setor in Model.Setore_Segmentos_Cnaes!)
+        {
+            <li>
+                <div class="collapsible-header"><i class="material-icons">place</i>@setor.Key</div>
+                <div class="collapsible-body padding-10">
+                    <ul class="collapsible margin-0">
+                        @foreach (var segmento in setor.Value)
+                        {
+                            <li>
+                                <div class="collapsible-header" title="CNAE Grupo: @segmento.Key[..2]">
+                                    @segmento.Key.Remove(0, 2)
+                                </div>
+                                <div class="collapsible-body padding-10">
+                                    <div class="row center padding-b-10">
+                                        <a class="segmento_click btn-link"
+                                            data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)" title="CNAE Grupo: @segmento.Key[..2]">VER
+                                            SEGMENTO @segmento.Key.Remove(0, 2)</a>
+                                    </div>
+                                    @foreach (var cnae in segmento.Value)
+                                    {
+                                        <p><a class="cnae_click" data-cnae="@cnae[..7]" data-descricao="@cnae.Remove(0, 7)" title="CNAE @cnae[..7]">@cnae.Remove(0, 7)</a></p>
+                                        <div class="divider"></div>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
+
+<ul class="sidenav collapsible" id="mobile-demo">
+        <form method="post" asp-page-handler="MCnae">
+            <div class="div-search-cnae valign-wrapper">
+                <i class="material-icons margin-l-10 grey-text">search</i>
+                <input class="input-search-cnae browser-default" type="search" asp-for="Search" placeholder="CNAE ex: 15 ou 1531901">
+            </div>
+        </form>
+        @foreach (var setor in Model.Setore_Segmentos_Cnaes)
+        {
+            <li>
+                <div class="collapsible-header"><i class="material-icons">place</i>@setor.Key</div>
+                <div class="collapsible-body">
+                    <ul class="collapsible margin-0">
+                        @foreach (var segmento in setor.Value)
+                        {
+                            <li>
+                                <div class="collapsible-header line-normal padding-b-10 padding-t-10" title="CNAE Grupo: @segmento.Key[..2]">
+                                    @segmento.Key.Remove(0, 2)
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="row line-normal center padding-t-10 margin-b-10">
+                                        <a class="segmento_click btn-link sidenav-close"
+                                            data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)" title="CNAE Grupo: @segmento.Key[..2]">VER
+                                            SEGMENTO @segmento.Key.Remove(0, 2)</a>
+                                    </div>
+                                    @foreach (var cnae in segmento.Value)
+                                    {
+                                        <p class="line-normal"><a class="cnae_click sidenav-close" data-cnae="@cnae[..7]" data-descricao="@cnae.Remove(0, 7)" title="CNAE @cnae[..7]">@cnae.Remove(0, 7)</a></p>
+                                        <div class="divider"></div>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+        }
+</ul>
 
 <div id="map" class="map"></div>
 
@@ -357,7 +431,7 @@
 
     function handle(e) {
         if (e.keyCode === 13) {
-            var v = $("#input-search").val();
+            var v = $(".input-search-cnae").val();
             if (v === "")
                 return false;
 

@@ -70,13 +70,13 @@ public class IndexModel : PageModel
                                  ));
     }
 
-    public async Task OnPostFormCnae1(string cnae1)
+    public async Task OnPostDCnae()
     {
-        await DoListCnae(cnae1);
+        await DoListCnae(Search!);
     }
 
-    public async Task OnPostFormCnae2(string cnae2)
+    public async Task OnPostMCnae()
     {
-        await DoListCnae(cnae2);
+        await DoListCnae(Search!);
     }
 }

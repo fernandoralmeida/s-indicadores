@@ -1,5 +1,5 @@
-﻿@page "/maps/{m?}"
-@model Pages.Maps.IndexModel
+﻿@page "/maps/ragsp/{m?}"
+@model Pages.Maps.RegionsModel
 @{
     Layout = "_LayoutMap";
     ViewData["Title"] = "Densidade Empresarial do Estado de SP";
@@ -13,16 +13,11 @@
     <div id="div-menu">
         <partial name="_Navmap" />
     </div>
-    <form id="div-search" class="valign-wrapper" method="post">
-        <i class="material-icons margin-l-10 grey-text">search</i>
-        <input id="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
-            onkeypress="handle(event)" asp-for="@Model.Cidade">
-    </form>
 </div>
 
 <div id="div-flutuante">
     <div class="conteudo">
-        <h6>Município: @Model.Cidade?.ToUpper()</h6>
+        <h6>@Model.Titulo?.ToUpper()</h6>
         <div class="divider"></div>
         @Model.Empresasativas
         <ul class="browser_default">
@@ -42,6 +37,8 @@
 <div id="map" class="map"></div>
 
 <script>
+
+    const _modelcidade = "@Model.Cidade";
 
     // Criar o mapa Leaflet
     var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
@@ -64,16 +61,18 @@
         'Município: <span class="text-uppercase">' + props.name + '</span><br />Empresas: ' + props.empresas + '<br />Setor: ' + props.setor : 'Mova o mouse sobre o mapa');
         }; *@
 
-        function getColor(d) {
-            return d > 150000 ? '#800026' :
-                d > 50000 ? '#BD0026' :
-                    d > 25000 ? '#E31A1C' :
-                        d > 20000 ? '#FC4E2A' :
-                            d > 15000 ? '#FD8D3C' :
-                                d > 10000 ? '#FEB24C' :
-                                    d > 5000 ? '#FED976' :
-                                        '#FFEDA0';
-        }
+    function getColor(d) {
+        return d > 320000 ? '#34000f' :
+            d > 160000 ? '#4d0017' :
+                d > 80000 ? '#800026' :
+                    d > 40000 ? '#BD0026' :
+                        d > 25000 ? '#E31A1C' :
+                            d > 20000 ? '#FC4E2A' :
+                                d > 15000 ? '#FD8D3C' :
+                                    d > 10000 ? '#FEB24C' :
+                                        d > 5000 ? '#FED976' :
+                                            '#FFEDA0';
+    }
 
     // Função para estilizar as áreas GeoJSON com base no valor da propriedade "empresas"
     function style(feature) {
@@ -136,7 +135,7 @@
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
-            grades = [0, 5000, 10000, 15000, 20000, 25000, 50000, 150000],
+            grades = [0, 5000, 10000, 15000, 20000, 25000, 48000, 80000, 160000, 320000],
             labels = [];
 
         div.innerHTML += 'Empresas<div class="divider"></div>'
@@ -160,7 +159,7 @@
 
 
     // Carregar dados GeoJSON de uma API
-    fetch('/api/v1/geojson/@Model.GeoCode')
+    fetch('/api/v1/geojson/ram-sp/@Model.Cidade')
         .then(response => response.json())
         .then(data => {
 
@@ -184,10 +183,8 @@
             if (v === "")
                 return false;
 
-            //const url = '/maps/' + v;
-            //location.href = url;
-            $(".blackboxload").show();
-            $("#loader").show();
+            const url = '/maps/' + v;
+            location.href = url;
         }
     }
 
