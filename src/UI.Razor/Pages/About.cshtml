@@ -3,16 +3,16 @@
 @{
     Layout = "/Pages/Shared/_Layout.cshtml";
     ViewData["Title"] = "Sobre nós!";
+    ViewData["ActivePage"] = Shared.NavPages.Info;
 }
 
 <header>
-    <partial name="_Navg" />
-    <partial name="_StripColors" />
+    <partial name="_Navbar" />
 </header>
 
 <div class="container-custom">
 
-    <div class="margin-a-20 padding-10">
+    @* <div class="margin-a-20 padding-10">
         <div class="center">
             <img class="margin-t-10 margin-l-10" src="~/svg/idnet-new.svg" alt="Indicadores.NET">
         </div>
@@ -22,8 +22,9 @@
         <h4 class="text-color-grey">Indicadores.NET</h4>
     </div>
 
-    <div class="divider"></div>
+    <div class="divider"></div> *@
     <div class="margin-a-20">
+        <h6>Sobre</h6>
         <p class="margin-a-20">
             O portal <strong>INDICADORES.NET</strong> é uma plataforma que fornece dados e informações sobre empresas
             existentes no
@@ -39,9 +40,6 @@
             <li>Atividades econômicas das empresas por município;</li>
             <li>Crescimento das empresas por município;</li>
         </ul>
-    </div>
-    <div class="divider"></div>
-    <div class="margin-a-20 margin-b-50">
         <p class="margin-a-20">Esses dados serão uma valiosa ferramenta para uma ampla gama de usuários, incluindo:</p>
 
         <ul class="browser-default margin-a-20">
@@ -61,5 +59,19 @@
             propósitos. Os dados são atualizados mensalmente e estão disponíveis gratuitamente para todos os
             usuários.
         </p>
+        @* <br/>
+        <p>O jeito fácil e simplificado para consultar indicadores empresariais dos municípios!</p> *@
+    </div>
+    <div class="divider"></div>
+    <div class="margin-a-20">
+        <h6>Notas sobre Versões e Atualizações</h6>
+        <ul class="browser-default margin-a-20">
+            <li>
+                2023-12-08 - Versão de Lançamento 1.0
+            </li>
+            <li>
+                2024-01-14 - Atualizado para o versão 1.5
+            </li>
+        </ul>
     </div>
 </div>

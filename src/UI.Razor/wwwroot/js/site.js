@@ -6,26 +6,26 @@
 
 //
 /**/
-window.addEventListener("scroll", function () {
-    const navbar = document.querySelector(".navbar");
-    const _nav = this.document.querySelector('nav');
-    const navbarHeight = navbar.clientHeight;
-    const scrollY = window.scrollY;
+// window.addEventListener("scroll", function () {
+//     const navbar = document.querySelector(".navbar");
+//     const _nav = this.document.querySelector('nav');
+//     const navbarHeight = navbar.clientHeight;
+//     const scrollY = window.scrollY;
 
-    if (scrollY > navbarHeight) {
-        navbar.classList.add("navbar-fixed");
-        _nav.classList.add("glass-box");
-        _nav.classList.add("nav-float");
-        _nav.classList.remove("z-depth-0");
-        _nav.classList.add("z-depth-2");
-    } else {
-        navbar.classList.remove("navbar-fixed");
-        _nav.classList.remove("glass-box");
-        _nav.classList.remove("nav-float");
-        _nav.classList.add("z-depth-0");
-        _nav.classList.remove("z-depth-2");
-    }
-});
+//     if (scrollY > navbarHeight) {
+//         navbar.classList.add("navbar-fixed");
+//         _nav.classList.add("glass-box");
+//         _nav.classList.add("nav-float");
+//         _nav.classList.remove("z-depth-0");
+//         _nav.classList.add("z-depth-2");
+//     } else {
+//         navbar.classList.remove("navbar-fixed");
+//         _nav.classList.remove("glass-box");
+//         _nav.classList.remove("nav-float");
+//         _nav.classList.add("z-depth-0");
+//         _nav.classList.remove("z-depth-2");
+//     }
+// });
 
 
 $(document).ready(function () {

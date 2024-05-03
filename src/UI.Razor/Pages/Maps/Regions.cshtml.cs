@@ -1,6 +1,7 @@
 ﻿using IDN.Core.Helpers;
 using IDN.Data.Helpers;
 using IDN.Data.Interface;
+using IDN.Services.Empresa.Interfaces;
 using IDN.Services.Empresa.Records;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,18 +12,25 @@ namespace UI.Razor.Pages.Maps;
 public class RegionsModel : PageModel
 {
     private readonly IMongoDB<REmpresas> _mongoDB;
+    private readonly IServiceEmpresa? _empresa;
 
     [BindProperty(SupportsGet = true)]
     public string? Cidade { get; set; }
-    public IEnumerable<REmpresas>? LReports { get; set; }
+    public REmpresas? LReports { get; set; }
+    public IEnumerable<REmpresas>? ListReports { get; set; }
+    public RCharts? Charts { get; set; } = null;
     public string? Empresasativas { get; set; }
     public IEnumerable<string>? Municipios { get; set; }
     public IEnumerable<KeyValuePair<string, int>> Setores { get; set; } = new List<KeyValuePair<string, int>>();
     public string? Titulo { get; set; }
+    public string? Span_Result { get; set; }
+    public string? LastDataExtraction { get; set; }
+    // public string? RawPage { get; set; }
 
-    public RegionsModel()
+    public RegionsModel(IServiceEmpresa empresa)
     {
         _mongoDB = Factory<REmpresas>.NewDataMongoDB();
+        _empresa = empresa;
     }
     public async Task<ActionResult> OnGetAsync(string? m)
     {
@@ -36,6 +44,22 @@ public class RegionsModel : PageModel
             case "ra-":
                 var _c = m.Remove(0, 3).NormalizeText()!;
                 Municipios = Regions.MacroRegoesRASP[_c.NormalizeText().ToLower()];
+                Span_Result = $"Regiao Administrativa {_c}";
+                break;
+            case "rg-":
+                var _rg = m.Remove(0, 3).NormalizeText()!;
+                Municipios = Regions.MReigoesGovernoSP[_rg.NormalizeText().ToLower()];
+                Span_Result = $"Regiao de Governo {_rg}";
+                break;
+            case "rm-":
+                var _rm = m.Remove(0, 3).NormalizeText()!;
+                Municipios = Regions.RMetropolitanasSP[_rm.NormalizeText().ToLower()];
+                Span_Result = $"Regiao Metropolitana {_rm}";
+                break;
+            case "au-":
+                var _au = m.Remove(0, 3).NormalizeText()!;
+                Municipios = Regions.AUrbanosSP[_au.NormalizeText().ToLower()];
+                Span_Result = $"Aglomerado Urbano {_au}";
                 break;
             default:
                 break;
@@ -60,118 +84,65 @@ public class RegionsModel : PageModel
                     _listREmpresas.Add(r);
             };
 
-            LReports = new List<REmpresas>(){
+            ListReports = new List<REmpresas>(){
                     new() {
                         _id = Guid.NewGuid(),
                         Municipio = Cidade,
 
-                        Quantitativo = _listREmpresas.SelectMany(e => e.Quantitativo!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        Quantitativo = SumAndGroup(_listREmpresas,e => e.Quantitativo!),
 
-                        Quantitativo_Ano = _listREmpresas.SelectMany(e => e.Quantitativo_Ano!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        Quantitativo_Ano = SumAndGroup(_listREmpresas,e => e.Quantitativo_Ano!),
 
-                        NovasEmpresas = _listREmpresas.SelectMany(e => e.NovasEmpresas!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        NovasEmpresas = SumAndGroup(_listREmpresas,e => e.NovasEmpresas!),
 
-                        NovasEmpresas_Ano = _listREmpresas.SelectMany(e => e.NovasEmpresas_Ano!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        NovasEmpresas_Ano = SumAndGroup(_listREmpresas,e => e.NovasEmpresas_Ano!),
+                        NovasMei_Ano = SumAndGroup(_listREmpresas,e => e.NovasMei_Ano!),
+                        NovasME_Ano = SumAndGroup(_listREmpresas,e => e.NovasME_Ano!),
+                        NovasEPP_Ano = SumAndGroup(_listREmpresas,e => e.NovasEPP_Ano!),
+                        NovasDemais_Ano = SumAndGroup(_listREmpresas,e => e.NovasDemais_Ano!),
 
-                        MatrizFilial = _listREmpresas.SelectMany(e => e.MatrizFilial!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        MatrizFilial = SumAndGroup(_listREmpresas,e => e.MatrizFilial!),
 
-                        MatrizFilial_Ano = _listREmpresas.SelectMany(e => e.MatrizFilial_Ano!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        MatrizFilial_Ano = SumAndGroup(_listREmpresas,e => e.MatrizFilial_Ano!),
 
-                        Baixas_Ano = _listREmpresas.SelectMany(e => e.Baixas_Ano!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        Baixas_Ano = SumAndGroup(_listREmpresas,e => e.Baixas_Ano!),
 
-                        NaturezaJuridica = _listREmpresas.SelectMany(e => e.NaturezaJuridica!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        NaturezaJuridica = SumAndGroup(_listREmpresas,e => e.NaturezaJuridica!),
 
-                        NaturezaJuridica_Ano = _listREmpresas.SelectMany(e => e.NaturezaJuridica_Ano!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        NaturezaJuridica_Ano = SumAndGroup(_listREmpresas,e => e.NaturezaJuridica_Ano!),
 
-                        Setores = _listREmpresas.SelectMany(e => e.Setores!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        Setores = SumAndGroup(_listREmpresas,e => e.Setores!),
 
-                        Setores_Ano = _listREmpresas.SelectMany(e => e.Setores_Ano!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        Setores_Ano = SumAndGroup(_listREmpresas,e => e.Setores_Ano!),
 
-                        Fiscal = _listREmpresas.SelectMany(e => e.Fiscal!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        Fiscal = SumAndGroup(_listREmpresas,e => e.Fiscal!),
 
-                        Fiscal_Ano = _listREmpresas.SelectMany(e => e.Fiscal_Ano!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        Fiscal_Ano = SumAndGroup(_listREmpresas,e => e.Fiscal_Ano!),
 
-                        PorteS = _listREmpresas.SelectMany(e => e.PorteS!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        PorteS = SumAndGroup(_listREmpresas,e => e.PorteS!),
 
-                        Simples = _listREmpresas.SelectMany(e => e.Simples!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        Simples = SumAndGroup(_listREmpresas,e => e.Simples!),
 
-                        Simples_Ano = _listREmpresas.SelectMany(e => e.Simples_Ano!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        Simples_Ano = SumAndGroup(_listREmpresas,e => e.Simples_Ano!),
 
-                        Idade = _listREmpresas.SelectMany(e => e.Idade!)
-                                                        .GroupBy(kvp => kvp.Key)
-                                                        .Select(g => new KeyValuePair<string, int>
-                                                        (g.Key, g.Sum(kvp => kvp.Value))),
+                        Idade = SumAndGroup(_listREmpresas,e => e.Idade!),
 
-                        // TAtividades = _listREmpresas
-                        //                     .SelectMany(m => m.TAtividades!)
-                        //                     .GroupBy(g => g.Key)
-                        //                     .Select(s => new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>
-                        //                         (
-                        //                             s.Key, s.Select(sc => new KeyValuePair<string, int>(sc.Key, 10))
-                        //                         )
-                        //                     )
-                        TAtividades = from l in _listREmpresas
-                                                        .SelectMany(e => e.TAtividades!)
-                                                        .GroupBy(g => g.Key)
+                        Rotatividade = _listREmpresas.SelectMany(e=>e.Rotatividade!)
+                                                    .GroupBy(kvp => kvp.Key)
+                                                    .Select(g => new KeyValuePair<string, float>(g.Key, g.Sum(kvp => kvp.Value) / Municipios.Count())),
 
-                                       select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(l.Key,
-                                                from sl in l.SelectMany(e => e.Value)
-                                                            .GroupBy(g=>g.Key)
-                                                select (new KeyValuePair<string, int>(sl.Key, sl.Sum(sm=>sm.Value)))))
-
+                        TAtividades = SumAndGroup_SubList(_listREmpresas, e => e.TAtividades!),
+                        TAtividadesDescritivas = SumAndGroup_SubList(_listREmpresas, e => e.TAtividadesDescritivas!),
+                        Top3Atividades = SumAndGroup_SubList(_listREmpresas, e => e.Top3Atividades!),
+                        Top3Atividades_Ano = SumAndGroup_SubList(_listREmpresas, e => e.Top3Atividades_Ano!),
+                        Porte = SumAndGroup_SubList(_listREmpresas, e => e.Porte!),
+                        Porte_Ano = SumAndGroup_SubList(_listREmpresas, e => e.Porte_Ano!),
+                        TaxaCrescimentoSetorial = SumAndGroup_SubList(_listREmpresas, e => e.TaxaCrescimentoSetorial!)
                         }
                 };
         }
 
-        foreach (var report in LReports!)
+        foreach (var report in ListReports!)
         {
             foreach (var q in report.Quantitativo!.Where(s => s.Key == "Ativa"))
             {
@@ -181,6 +152,12 @@ public class RegionsModel : PageModel
                           select (new KeyValuePair<string, int>(s.Key, s.Value * 100 / q.Value));
             }
         }
+
+        foreach (var report in ListReports)
+        {
+            LReports = report;
+            Charts = await _empresa!.DoReportToChartAsync(report);
+        }
     }
 
     private IEnumerable<KeyValuePair<string, int>> SumAndGroup(IEnumerable<REmpresas> list,
@@ -189,6 +166,20 @@ public class RegionsModel : PageModel
         return list.SelectMany(selector)
                    .GroupBy(kvp => kvp.Key)
                    .Select(g => new KeyValuePair<string, int>(g.Key, g.Sum(kvp => kvp.Value)));
+    }
+
+    private static IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>> SumAndGroup_SubList(
+    IEnumerable<REmpresas> list,
+    Func<REmpresas, IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>>> selector)
+    {
+        return from l in list
+                            .SelectMany(selector)
+                            .GroupBy(g => g.Key)
+
+               select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(l.Key,
+                       from sl in l.SelectMany(e => e.Value)
+                                   .GroupBy(g => g.Key)
+                       select (new KeyValuePair<string, int>(sl.Key, sl.Sum(sm => sm.Value)))));
     }
 
 }

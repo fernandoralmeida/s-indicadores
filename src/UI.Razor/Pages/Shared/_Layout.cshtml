@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
 </head>
 
-<body id="_smooth" class="bg-color-dark-2">
+<body id="_smooth" class="bg-color-light">
     <div class="blackboxload">
         <div id="loader" class="row div-center glass-80 z-depth-2">
             <div class="preloader-wrapper big active">
@@ -37,33 +37,33 @@
     <main style="margin-bottom:20px;">
         @RenderBody()
     </main>
-    <partial name="_StripColors" />
-    <footer class="page-footer">
+    @* <partial name="_StripColors" /> *@
+    <footer class="page-footer bg-color-light-2">
         <div class="container">
             <div class="row">
                 <div class="col l6 s12">
-                    <h5 class="white-text">indicadores.net</h5>
-                    <p class="grey-text text-lighten-4">O jeito fácil e simplificado para consultar indicadores
+                    <h5 class="text-color-grey">indicadores.net</h5>
+                    <p class="text-color-grey">O jeito fácil e simplificado para consultar indicadores
                         empresariais dos municípios!</p>
                 </div>
                 <div class="col l4 offset-l2 s12">
-                    <h5 class="white-text"><a class="grey-text text-lighten-4 right" href="#_smooth"
+                    <h5 class="text-color-grey"><a class="text-color-grey right" href="#_smooth"
                             title="Ir para o Topo da pagina"><i class="material-icons">stat_3</i></a></h5>
                     <ul>
-                        <li><a class="grey-text text-lighten-3"
+                        <li><a class="text-color-grey"
                                 href="https://www.linkedin.com/in/fernando-roberto-almeida/" target="_blank"><img
                                     src="~/svg/linkedin.svg" alt="linkedin" style="width: 28px;"></a></li>
 
-                        <li><a class="grey-text text-lighten-3" href="#!" target="_blank"><img src="~/svg/instagram.svg"
+                        <li><a class="text-color-grey" href="#!" target="_blank"><img src="~/svg/instagram.svg"
                                     style="width: 28px;" alt="instagram"></a></li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="footer-copyright">
+        <div class="footer-copyright bg-color-light-3">
             <div class="container">
                 &copy; @DateTime.Now.Year - FRA
-                <a class="grey-text text-lighten-4 right" asp-page="/Privacy">Politica de Privacidade</a>
+                <a class="text-color-dark right" asp-page="/Privacy">Politica de Privacidade</a>
             </div>
         </div>
     </footer>
@@ -72,7 +72,7 @@
     <script type="text/javascript" src="~/lib/materialize/js/materialize.min.js"></script>
     <script type="text/javascript" src="~/lib/apexcharts/apexcharts.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/bgimages.js" asp-append-version="true"></script>
+    @* <script type="text/javascript" src="~/js/bgimages.js" asp-append-version="true"></script> *@
 
     @await RenderSectionAsync("Scripts", required: false)
 

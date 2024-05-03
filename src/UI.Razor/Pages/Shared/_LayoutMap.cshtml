@@ -8,6 +8,10 @@
     <link rel="shortcut icon" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/lib/google/material-symbols-sharp.css" />
     <link rel="stylesheet" href="~/lib/materialize/css/materialize.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/apexcharts/apexcharts.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body id="_smooth" class="bg-color-light">
@@ -28,11 +32,13 @@
             </div>
         </div>
     </div>
-
+    <header>
+        <partial name="_Navbar" />
+    </header>
     <main>
         @RenderBody()
     </main>
-    <div class="socialmedia">
+    @* <div class="socialmedia">
         <a class="grey-text text-lighten-3" href="https://www.linkedin.com/in/fernando-roberto-almeida/"
             target="_blank"><img src="~/svg/linkedin.svg" alt="linkedin" style="width: 28px;"></a>
         <a class="grey-text text-lighten-3" href="#!" target="_blank"><img src="~/svg/instagram.svg"
@@ -41,44 +47,14 @@
     <div class="footer-map">
         <img src="~/svg/idnet-new.svg" style="width: 38px;" alt="Indicadores.NET">
         <b>indicadores.net</b>
-    </div>
+    </div> *@
     <footer class="page-footer">
         <partial name="_StripColors" />
     </footer>
     <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/materialize/js/materialize.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('.collapsible').collapsible();
-            $('.sidenav').sidenav();
-            const spanResult = document.getElementById("span_result");
-
-            $(".segmento_click").click(function () {
-                const p = this.dataset.segmento;
-                const desc =`? ${this.dataset.descricao}`;
-                _page_link = p;
-                goDirectAPI(`/api/v1/geojson/segmento/` + p);                
-                spanResult.textContent = desc;
-                spanResult.classList.add("bg-color-blue");
-                //_span_result = desc;
-            });
-            $(".cnae_click").click(function () {
-                const p = this.dataset.cnae;
-                const desc =`? ${this.dataset.descricao}`;
-                _page_link = p;
-                goDirectAPI(`/api/v1/geojson/cnae/` + p);
-                spanResult.textContent = desc;
-                spanResult.classList.add("bg-color-green");
-                //_span_result = desc;
-            });
-            $(".rag_click").click(function () {
-                const p = this.dataset.macro;
-                _page_link = p;
-                const url = '/maps/ragsp/' + p;
-                location.href = url;
-            });
-        });
-    </script>
+    <script type="text/javascript" src="~/lib/apexcharts/apexcharts.min.js"></script>
+    <script src="~/js/s-func.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>

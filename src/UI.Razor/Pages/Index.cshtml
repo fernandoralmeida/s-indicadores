@@ -10,296 +10,111 @@
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div class="div-topbar">
-    <div id="div-menu">
-        <partial name="_Navmap" />
-    </div>
-    <form id="div-search" class="valign-wrapper" method="post">
-        <i class="material-icons margin-l-10 grey-text">search</i>
-        <input id="input-search" class="browser-default" type="search" placeholder="Procurar cidade"
-            onkeypress="handle(event)" asp-for="@Model.Cidade">
-    </form>
-</div>
-
 <div id="cnae-container">
     <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     <ul class="collapsible margin-0 hide-on-med-and-down">
-            <li>
-                <div class="collapsible-header">Regiões Administrativas</div>
-                <div class="collapsible-body padding-10">
-                    
-                        @foreach (var macro in Model.RegioesAdministrativas!)
-                        {
-                            <p><a class="rag_click btn-link" data-macro="ra-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                            <div class="divider"></div>
-                        }
-                    
-                </div>
-            </li>    
-            <li>
-                <div class="collapsible-header">Regiões de Governo</div>
-                <div class="collapsible-body padding-10">
-                    
-                   
-                </div>
-            </li>
-            <li>
-                <div class="collapsible-header">Regiões Metropolitanas</div>
-                <div class="collapsible-body padding-10">
-                    
-                   
-                </div>
-            </li>
-            <li>
-                <div class="collapsible-header">Aglomerados Urbanos</div>
-                <div class="collapsible-body padding-10">
-                    
-                   
-                </div>
-            </li>        
+        <form class="div-search-cnae valign-wrapper" method="post">
+            <i class="material-icons margin-l-10 grey-text">search</i>
+            <input class="input-search-cnae browser-default" type="search" placeholder="Procurar cidade"
+                onkeypress="handle(event)" asp-for="@Model.Cidade">
+        </form>
+        <li>
+            <div class="collapsible-header">Regiões Administrativas</div>
+            <div class="collapsible-body padding-10">                
+                @foreach (var macro in Model.RegioesAdministrativas!)
+                {
+                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="ra-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
+                    <div class="divider"></div>
+                }                
+            </div>
+        </li>    
+        <li>
+            <div class="collapsible-header">Regiões de Governo</div>
+            <div class="collapsible-body padding-10">
+                @foreach (var macro in Model.RegioesGovernoSP!)
+                {
+                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rg-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
+                    <div class="divider"></div>
+                }  
+            </div>
+        </li>
+        <li>
+            <div class="collapsible-header">Regiões Metropolitanas</div>
+            <div class="collapsible-body padding-10">
+                @foreach (var macro in Model.RegioesMetropolitanasSP!)
+                {
+                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rm-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
+                    <div class="divider"></div>
+                }  
+            </div>
+        </li>
+        <li>
+            <div class="collapsible-header">Aglomerados Urbanos</div>
+            <div class="collapsible-body padding-10">
+                @foreach (var macro in Model.AglomeradosUrbanosSP!)
+                {
+                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="au-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
+                    <div class="divider"></div>
+                }  
+            </div>
+        </li>        
     </ul>
 </div>
 
 <ul class="sidenav collapsible" id="mobile-demo">
-
+        <form class="div-search-cnae valign-wrapper" method="post">
+            <i class="material-icons margin-l-10 grey-text">search</i>
+            <input class="input-search-cnae browser-default" type="search" placeholder="Procurar cidade"
+                onkeypress="handle(event)" asp-for="@Model.Cidade">
+        </form>
+        <li>
+            <div class="collapsible-header">Regiões Administrativas</div>
+            <div class="collapsible-body padding-10">                
+                @foreach (var macro in Model.RegioesAdministrativas!)
+                {
+                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="ra-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
+                    <div class="divider"></div>
+                }                
+            </div>
+        </li>    
+        <li>
+            <div class="collapsible-header">Regiões de Governo</div>
+            <div class="collapsible-body padding-10">
+                @foreach (var macro in Model.RegioesGovernoSP!)
+                {
+                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rg-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
+                    <div class="divider"></div>
+                }  
+            </div>
+        </li>
+        <li>
+            <div class="collapsible-header">Regiões Metropolitanas</div>
+            <div class="collapsible-body padding-10">
+                @foreach (var macro in Model.RegioesMetropolitanasSP!)
+                {
+                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rm-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
+                    <div class="divider"></div>
+                }  
+            </div>
+        </li>
+        <li>
+            <div class="collapsible-header">Aglomerados Urbanos</div>
+            <div class="collapsible-body padding-10">
+                @foreach (var macro in Model.AglomeradosUrbanosSP!)
+                {
+                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="au-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
+                    <div class="divider"></div>
+                }  
+            </div>
+        </li>        
 </ul>
 
 <div id="map" class="map"></div>
-
+<script src="~/js/osm-base.js"></script>
+<script src="~/js/osm-base-legends-e.js"></script>
+<script src="~/js/osm-empresas.js"></script>
 <script>
-    var _max = 0;
-    // Criar o mapa Leaflet
-    var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
-
-    var info = L.control();
-
-    info.onAdd = function (map) {
-        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-        this.update();
-        return this._div;
-    };
-
-    // method that we will use to update the control based on feature properties passed
-    info.update = function (props) {
-        this._div.innerHTML =
-            '<div class="center margin-b-10"><h6>Densidade Empresarial do Estado de SP<h6></div>'
-            + '<div class="divider"></div>'
-            + (props ?
-                'Município: <span class="text-uppercase">' + props.name + '</span><br />Empresas: ' + props.empresas + ' (' + _max + ') ' +'<br />Setor: ' + props.setor : 'Mova o mouse sobre o mapa');
-    };
-
-    function getColor(d) {
-        return d > 320000 ? '#34000f' :
-            d > 160000 ? '#4d0017' :
-                d > 80000 ? '#800026' :
-                    d > 40000 ? '#BD0026' :
-                        d > 25000 ? '#E31A1C' :
-                            d > 20000 ? '#FC4E2A' :
-                                d > 15000 ? '#FD8D3C' :
-                                    d > 10000 ? '#FEB24C' :
-                                        d > 5000 ? '#FED976' :
-                                            '#FFEDA0';
-    }
-
-    // Função para estilizar as áreas GeoJSON com base no valor da propriedade "empresas"
-    function style(feature) {
-        return {
-            fillColor: getColor(feature.properties.empresas),
-            weight: 1,
-            opacity: 1,
-            color: 'black',
-            //dashArray: '3',
-            fillOpacity: 0.7
-        };
-    }
-
-    function zoomToFeature(e) {
-        //map.fitBounds(e.target.getBounds());        
-        var layer = e.target;
-        const url = '/maps/' + layer.feature.properties.geocode;
-        // Redireciona para a página interna
-        location.href = url;
-    }
-
-    function highlightFeature(e) {
-        var layer = e.target;
-
-        layer.setStyle({
-            weight: 3,
-            color: 'black',
-            dashArray: '',
-            fillOpacity: 0.7
-        });
-
-        layer.bringToFront();
-        info.update(layer.feature.properties);
-    }
-
-    function resetHighlight(e) {
-        //geojson.resetStyle(e.target);
-        var layer = e.target;
-
-        layer.setStyle({
-            weight: 1,
-            color: 'black',
-            dashArray: '',
-            fillOpacity: 0.7
-        });
-        info.update();
-    }
-
-    function onEachFeature(feature, layer) {
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight,
-            click: zoomToFeature
-        });
-    }
-
-    var legend = L.control({ position: 'bottomright' });
-
-    legend.onAdd = function (map) {
-
-        var div = L.DomUtil.create('div', 'info legend'),
-            grades = [0, 5000, 10000, 15000, 20000, 25000, 48000, 80000, 160000, 320000],
-            labels = [];
-
-        div.innerHTML += 'Empresas<div class="divider"></div>'
-        // loop through our density intervals and generate a label with a colored square for each interval
-        for (var i = 0; i < grades.length; i++) {
-            div.innerHTML +=
-                '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
-        }
-
-        return div;
-    };
-
-    // Adicionar uma camada base do OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    legend.addTo(map);
-    info.addTo(map);
-
-    // Função para carregar dados do IndexedDB
-    function loadGeoJSONFromIndexedDB() {
-        return new Promise((resolve, reject) => {
-            var request = indexedDB.open('geojsonDB', 1);
-
-            request.onupgradeneeded = function (event) {
-                var db = event.target.result;
-                db.createObjectStore('geojsonStore', { keyPath: 'id' });
-            };
-
-            request.onsuccess = function (event) {
-                var db = event.target.result;
-                var transaction = db.transaction(['geojsonStore'], 'readonly');
-                var objectStore = transaction.objectStore('geojsonStore');
-                var request = objectStore.get('cachedGeoJSON');
-
-                request.onsuccess = function (event) {
-                    var cachedData = event.target.result;
-                    if (cachedData) {
-                        resolve(cachedData.data);
-                    } else {
-                        reject('Dados GeoJSON não encontrados no IndexedDB.');
-                    }
-                };
-
-                request.onerror = function (event) {
-                    reject('Erro ao obter dados do IndexedDB.');
-                };
-            };
-
-            request.onerror = function (event) {
-                reject('Erro ao abrir o IndexedDB.');
-            };
-        });
-    }
-
-    // Carregar dados GeoJSON
-    function loadData() {
-        // Verificar se os dados estão no localStorage e se a última atualização foi em um dia diferente
-        var lastUpdateDate = localStorage.getItem('lastUpdateDate');
-        var currentDate = new Date().toLocaleDateString();
-
-        if (!lastUpdateDate || lastUpdateDate !== currentDate) {
-            // Dados não encontrados no localStorage ou último update não foi hoje, carregar dados da API
-            fetchDataFromAPI();
-        } else {
-            // Dados encontrados no localStorage e último update foi hoje, carregar dados do IndexedDB
-            loadGeoJSONFromIndexedDB()
-                .then(data => {
-                    // Dados encontrados no IndexedDB, processar os dados
-                    _max = data.max;
-                    processData(data);
-                })
-                .catch(error => {
-                    // Dados não encontrados no IndexedDB ou erro, carregar dados da API
-                    fetchDataFromAPI();
-                });
-        }
-    }
-
-    // Chamar a função para carregar dados
     loadData();
-
-    // Função para carregar dados da API
-    function fetchDataFromAPI() {
-        fetch(`/api/v1/geojson/`)
-            .then(response => response.json())
-            .then(data => {
-                // Armazenar dados no IndexedDB para uso futuro
-                storeGeoJSONInIndexedDB(data);
-
-                // Armazenar a data da última atualização no localStorage
-                localStorage.setItem('lastUpdateDate', new Date().toLocaleDateString());
-
-                // Processar os dados GeoJSON
-                _max = data.max;
-                processData(data);
-            })
-            .catch(error => console.error('Erro ao carregar dados GeoJSON da API:', error));
-    }
-
-    // Função para armazenar dados no IndexedDB
-    function storeGeoJSONInIndexedDB(data) {
-        var request = indexedDB.open('geojsonDB', 1);
-
-        request.onupgradeneeded = function (event) {
-            var db = event.target.result;
-            db.createObjectStore('geojsonStore', { keyPath: 'id' });
-        };
-
-        request.onsuccess = function (event) {
-            var db = event.target.result;
-            var transaction = db.transaction(['geojsonStore'], 'readwrite');
-            var objectStore = transaction.objectStore('geojsonStore');
-            objectStore.put({ id: 'cachedGeoJSON', data: data });
-        };
-
-        request.onerror = function (event) {
-            console.error('Erro ao armazenar dados no IndexedDB.');
-        };
-    }
-
-    // Função para processar os dados GeoJSON
-    function processData(data) {
-        $("#loader").hide();
-        $(".blackboxload").fadeOut("slow");
-
-        // Adicionar camada GeoJSON ao mapa
-        var geojsonLayer = L.geoJSON(data, {
-            style: style,
-            onEachFeature: onEachFeature
-        }).addTo(map);
-
-        // Ajustar o mapa para abranger a área GeoJSON com zoom
-        map.fitBounds(geojsonLayer.getBounds());
-    }
-
     function handle(e) {
         if (e.keyCode === 13) {
             var v = $("#input-search").val();
@@ -312,5 +127,4 @@
             $("#loader").show();
         }
     }
-
 </script>

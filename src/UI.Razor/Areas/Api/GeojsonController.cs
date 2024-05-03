@@ -304,6 +304,18 @@ public class GeojsonController : ControllerBase
                     var _c = r.Remove(0, 3)!.NormalizeText();
                     _cities = Regions.MacroRegoesRASP[_c!].ToList();
                     break;
+                case "rg-":
+                    var _rg = r.Remove(0, 3)!.NormalizeText();
+                    _cities = Regions.MReigoesGovernoSP[_rg!].ToList();
+                    break;
+                case "rm-":
+                    var _rm = r.Remove(0, 3)!.NormalizeText();
+                    _cities = Regions.RMetropolitanasSP[_rm!].ToList();
+                    break;
+                case "au-":
+                    var _au = r.Remove(0, 3)!.NormalizeText();
+                    _cities = Regions.AUrbanosSP[_au!].ToList();
+                    break;
                 default:
                     break;
             }

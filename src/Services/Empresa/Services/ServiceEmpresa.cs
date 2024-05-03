@@ -574,119 +574,139 @@ public class ServiceEmpresa : IServiceEmpresa
             Rotatividade: await Task.Run(() =>
             {
                 string _rotatividade_emp = string.Empty;
-                foreach (var x in report.Rotatividade!.OrderBy(s => s.Key))
+                foreach (var x in report.Rotatividade?.OrderBy(s => s.Key)!)
                     _rotatividade_emp += string.Format(@"{{x:`{0}`,y:{1}}},", x.Key.NormalizeText(), x.Value.ToString("N1"));
 
-                return _rotatividade_emp.Length > 0 ? _rotatividade_emp[..^1] : _rotatividade_emp;
+                return _rotatividade_emp.Any() ? _rotatividade_emp[..^1] : _rotatividade_emp;
             }),
 
             NovasMes: await Task.Run(() =>
             {
-                string[] _novas_mes = new string[2];
+                string[] _novas_mes = new string[2] { "", "" };
                 foreach (var m in report.NovasEmpresas_Ano!)
                 {
                     _novas_mes[0] += string.Format(@"{0},", m.Value);
                     _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
                 }
+                _novas_mes[0] = _novas_mes[0].Any() ? _novas_mes[0][..^1] : _novas_mes[0];
+                _novas_mes[1] = _novas_mes[1].Any() ? _novas_mes[1][..^1] : _novas_mes[1];
                 return _novas_mes;
             }),
 
             NovasMeiMes: await Task.Run(() =>
             {
-                string[] _novas_mes = new string[2];
+                string[] _novas_mes = new string[2] { "", "" };
                 foreach (var m in report.NovasMei_Ano!)
                 {
                     _novas_mes[0] += string.Format(@"{0},", m.Value);
                     _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
                 }
+                _novas_mes[0] = _novas_mes[0].Any() ? _novas_mes[0][..^1] : _novas_mes[0];
+                _novas_mes[1] = _novas_mes[1].Any() ? _novas_mes[1][..^1] : _novas_mes[1];
                 return _novas_mes;
             }),
 
             NovasMEMes: await Task.Run(() =>
             {
-                string[] _novas_mes = new string[2];
+                string[] _novas_mes = new string[2] { "", "" };
                 foreach (var m in report.NovasME_Ano!)
                 {
                     _novas_mes[0] += string.Format(@"{0},", m.Value);
                     _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
                 }
+                _novas_mes[0] = _novas_mes[0].Any() ? _novas_mes[0][..^1] : _novas_mes[0];
+                _novas_mes[1] = _novas_mes[1].Any() ? _novas_mes[1][..^1] : _novas_mes[1];
                 return _novas_mes;
             }),
 
             NovasEPPMes: await Task.Run(() =>
             {
-                string[] _novas_mes = new string[2];
+                string[] _novas_mes = new string[2] { "", "" };
                 foreach (var m in report.NovasEPP_Ano!)
                 {
                     _novas_mes[0] += string.Format(@"{0},", m.Value);
                     _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
                 }
+                _novas_mes[0] = _novas_mes[0].Any() ? _novas_mes[0][..^1] : _novas_mes[0];
+                _novas_mes[1] = _novas_mes[1].Any() ? _novas_mes[1][..^1] : _novas_mes[1];
                 return _novas_mes;
             }),
 
             NovasDemaisMes: await Task.Run(() =>
             {
-                string[] _novas_mes = new string[2];
+                string[] _novas_mes = new string[2] { "", "" };
                 foreach (var m in report.NovasDemais_Ano!)
                 {
                     _novas_mes[0] += string.Format(@"{0},", m.Value);
                     _novas_mes[1] += string.Format(@"`{0}`,", m.Key);
                 }
+                _novas_mes[0] = _novas_mes[0].Any() ? _novas_mes[0][..^1] : _novas_mes[0];
+                _novas_mes[1] = _novas_mes[1].Any() ? _novas_mes[1][..^1] : _novas_mes[1];
                 return _novas_mes;
             }),
 
             BaixasMes: await Task.Run(() =>
             {
-                string[] _baixas_mes = new string[2];
+                string[] _baixas_mes = new string[2] { "", "" };
                 foreach (var m in report.Baixas_Ano!)
                 {
                     _baixas_mes[0] += string.Format(@"{0},", m.Value);
                     _baixas_mes[1] += string.Format(@"`{0}`,", m.Key);
                 }
+                _baixas_mes[0] = _baixas_mes[0].Any() ? _baixas_mes[0][..^1] : _baixas_mes[0];
+                _baixas_mes[1] = _baixas_mes[1].Any() ? _baixas_mes[1][..^1] : _baixas_mes[1];
                 return _baixas_mes;
             }),
 
             MatrizFilial: await Task.Run(() =>
             {
-                string[] _matriz = new string[2];
+                string[] _matriz = new string[2] { "", "" };
                 foreach (var item in report.MatrizFilial!)
                 {
                     _matriz[0] += string.Format(@"{0},", item.Value);
                     _matriz[1] += string.Format(@"`{0}`,", item.Key);
                 }
+                _matriz[0] = _matriz[0].Any() ? _matriz[0][..^1] : _matriz[0];
+                _matriz[1] = _matriz[1].Any() ? _matriz[1][..^1] : _matriz[1];
                 return _matriz;
             }),
 
             MatrizFilial_Ano: await Task.Run(() =>
             {
-                string[] _matriz_ano = new string[2];
+                string[] _matriz_ano = new string[2] { "", "" };
                 foreach (var item in report.MatrizFilial_Ano!)
                 {
                     _matriz_ano[0] += string.Format(@"{0},", item.Value);
                     _matriz_ano[1] += string.Format(@"`{0}`,", item.Key);
                 }
+                _matriz_ano[0] = _matriz_ano[0].Any() ? _matriz_ano[0][..^1] : _matriz_ano[0];
+                _matriz_ano[1] = _matriz_ano[1].Any() ? _matriz_ano[1][..^1] : _matriz_ano[1];
                 return _matriz_ano;
             }),
 
             Fiscal: await Task.Run(() =>
             {
-                string[] _fiscal = new string[2];
+                string[] _fiscal = new string[2] { "", "" };
                 foreach (var fiscal in report.Fiscal!)
                 {
                     _fiscal[0] += string.Format(@"{0},", fiscal.Value);
                     _fiscal[1] += string.Format(@"`{0}`,", fiscal.Key);
                 }
+                _fiscal[0] = _fiscal[0].Any() ? _fiscal[0][..^1] : _fiscal[0];
+                _fiscal[1] = _fiscal[1].Any() ? _fiscal[1][..^1] : _fiscal[1];
                 return _fiscal;
             }),
 
             Fiscal_Ano: await Task.Run(() =>
             {
-                string[] _fiscal_ano = new string[2];
+                string[] _fiscal_ano = new string[2] { "", "" };
                 foreach (var fiscal in report.Fiscal_Ano!)
                 {
                     _fiscal_ano[0] += string.Format(@"{0},", fiscal.Value);
                     _fiscal_ano[1] += string.Format(@"`{0}`,", fiscal.Key);
                 }
+                _fiscal_ano[0] = _fiscal_ano[0].Any() ? _fiscal_ano[0][..^1] : _fiscal_ano[0];
+                _fiscal_ano[1] = _fiscal_ano[1].Any() ? _fiscal_ano[1][..^1] : _fiscal_ano[1];
                 return _fiscal_ano;
             }),
 
@@ -780,50 +800,58 @@ public class ServiceEmpresa : IServiceEmpresa
                 foreach (var x in report.Idade!)
                     _emp_faixa_etaria += string.Format(@"{{x:`{0}`,y:{1}}},", x.Key.NormalizeText(), x.Value);
 
-                return _emp_faixa_etaria.Length > 0 ? _emp_faixa_etaria[..^1] : _emp_faixa_etaria;
+                return _emp_faixa_etaria.Any() ? _emp_faixa_etaria[..^1] : _emp_faixa_etaria;
             }),
 
             NaturezaJuridica: await Task.Run(() =>
             {
-                var _nj = new string[2];
+                var _nj = new string[2] { "", "" };
                 foreach (var item in report.NaturezaJuridica?.Take(5)!)
                 {
                     _nj![0] += string.Format(@"`{0}`,", item.Key.RemoveNumbers().NormalizeText().Trim());
                     _nj![1] += string.Format(@"{0},", item.Value);
                 }
+                _nj[0] = _nj[0].Any() ? _nj[0][..^1] : _nj[0];
+                _nj[1] = _nj[1].Any() ? _nj[1][..^1] : _nj[1];
                 return _nj;
             }),
 
             NaturezaJuridica_Ano: await Task.Run(() =>
             {
-                var _nj_ano = new string[2];
+                var _nj_ano = new string[2] { "", "" };
                 foreach (var item in report.NaturezaJuridica_Ano!)
                 {
                     _nj_ano![0] += string.Format(@"`{0}`,", item.Key.RemoveNumbers().NormalizeText().Trim());
                     _nj_ano![1] += string.Format(@"{0},", item.Value);
                 }
+                _nj_ano[0] = _nj_ano[0].Any() ? _nj_ano[0][..^1] : _nj_ano[0];
+                _nj_ano[1] = _nj_ano[1].Any() ? _nj_ano[1][..^1] : _nj_ano[1];
                 return _nj_ano;
             }),
 
             Setores: await Task.Run(() =>
             {
-                var _setores = new string[2];
+                var _setores = new string[2] { "", "" };
                 foreach (var item in report.Setores!)
                 {
                     _setores![0] += string.Format(@"`{0}`,", item.Key);
                     _setores![1] += string.Format(@"{0},", item.Value);
                 }
+                _setores[0] = _setores[0].Any() ? _setores[0][..^1] : _setores[0];
+                _setores[1] = _setores[1].Any() ? _setores[1][..^1] : _setores[1];
                 return _setores;
             }),
 
             SetoresAno: await Task.Run(() =>
             {
-                var _setoresano = new string[2];
+                var _setoresano = new string[2] { "", "" };
                 foreach (var item in report.Setores_Ano!)
                 {
                     _setoresano![0] += string.Format(@"`{0}`,", item.Key);
                     _setoresano![1] += string.Format(@"{0},", item.Value);
                 }
+                _setoresano[0] = _setoresano[0].Any() ? _setoresano[0][..^1] : _setoresano[0];
+                _setoresano[1] = _setoresano[1].Any() ? _setoresano[1][..^1] : _setoresano[1];
                 return _setoresano;
             }),
 
@@ -833,7 +861,7 @@ public class ServiceEmpresa : IServiceEmpresa
             {
                 var _tx_setorial = string.Empty;
                 var _series_names = string.Empty;
-                var _crescimentosetorial = new string[2];
+                var _crescimentosetorial = new string[2] { "", "" };
 
                 foreach (var item in report.TaxaCrescimentoSetorial!.Where(c => c.Value.Count() >= 10))
                 {
@@ -848,8 +876,8 @@ public class ServiceEmpresa : IServiceEmpresa
                     }
                     _tx_setorial += string.Format(@"{0}{1}]}},", _nomes, _datas[..^1]);
                 }
-                _crescimentosetorial![1] = _tx_setorial!.Length > 0 ? _tx_setorial![..^1] : _tx_setorial;
-                _crescimentosetorial![0] = _series_names!.Length > 0 ? _series_names[..^1] : _series_names;
+                _crescimentosetorial![1] = _tx_setorial!.Any() ? _tx_setorial![..^1] : _tx_setorial;
+                _crescimentosetorial![0] = _series_names!.Any() ? _series_names[..^1] : _series_names;
                 return _crescimentosetorial;
             }),
 
@@ -857,7 +885,7 @@ public class ServiceEmpresa : IServiceEmpresa
             {
                 var _tx_setorial = string.Empty;
                 var _series_names = string.Empty;
-                var _crescimentosetorial = new string[2];
+                var _crescimentosetorial = new string[2] { "", "" };
 
                 foreach (var item in report.TaxaCrescimentoSetorial!.Where(c => c.Value.Count() >= 10))
                 {
@@ -878,8 +906,8 @@ public class ServiceEmpresa : IServiceEmpresa
                     }
                     _tx_setorial += string.Format(@"{0}{1}]}},", _nomes, _datas[..^1]);
                 }
-                _crescimentosetorial![1] = _tx_setorial!.Length > 0 ? _tx_setorial![..^1] : _tx_setorial;
-                _crescimentosetorial![0] = _series_names!.Length > 0 ? _series_names[..^1] : _series_names;
+                _crescimentosetorial![1] = _tx_setorial!.Any() ? _tx_setorial![..^1] : _tx_setorial;
+                _crescimentosetorial![0] = _series_names!.Any() ? _series_names[..^1] : _series_names;
                 return _crescimentosetorial;
             }),
 
