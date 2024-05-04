@@ -1,4 +1,3 @@
-// Somente para Segmento e Cnae
 function style(feature) {
     return {
         fillColor: getColor(`${feature.properties.setor}`),
@@ -8,9 +7,4 @@ function style(feature) {
         //dashArray: '3',
         fillOpacity: 0.7
     };
-}
-
-// Zoom para setores
-function zoomToFeature(e) {
-    map.fitBounds(e.target.getBounds());
 }

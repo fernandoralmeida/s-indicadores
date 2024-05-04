@@ -88,14 +88,20 @@
 </ul>
 
 <div id="map" class="map"></div>
-<script src="~/js/osm-base.js"></script>
-<script src="~/js/osm-base-legends-s.js"></script>
-<script src="~/js/osm-base-legends-c.js"></script>
-<script src="~/js/osm-setores.js"></script>
-<script src="~/js/osm-setores-cnae.js"></script>
+
+<script src="~/osm/geo-api.js"></script>
+<script src="~/osm/geo-base.js"></script>
+<script src="~/osm/geo-legend-s.js"></script>
+<script src="~/osm/geo-legend-c.js"></script>
+<script src="~/osm/geo-style-s.js"></script>
+<script src="~/osm/geo-style-s-SC.js"></script>
+<script src="~/osm/geo-zoomfeature-d.js"></script>
+<script src="~/osm/geo-zoomfeature-s-SC.js"></script>
+<script src="~/osm/geo-oneachfeature.js"></script>
+<script src="~/osm/geo-oneachfeature-SC.js"></script>
 <script>
     var _page_link = '';
-    loadData();
+    loadData('/api/v1/geojson/');
     function handle(e) {
         if (e.keyCode === 13) {
             var v = $(".input-search-cnae").val();

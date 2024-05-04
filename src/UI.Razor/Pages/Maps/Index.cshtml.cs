@@ -27,6 +27,7 @@ public class IndexModel : PageModel
     public string? Empresasativas { get; set; }
     public IEnumerable<KeyValuePair<string, int>> Setores { get; set; } = new List<KeyValuePair<string, int>>();
     public string? LastDataExtraction { get; set; }
+    public (RCharts g, REmpresas r) ControlCharts { get; set; }
 
     public IndexModel(IServiceEmpresa empresa)
     {
@@ -153,6 +154,8 @@ public class IndexModel : PageModel
             LReports = report;
             Charts = await _empresa!.DoReportToChartAsync(report);
         }
+
+        ControlCharts = new(Charts!, LReports!);
     }
 
     private static IEnumerable<KeyValuePair<string, int>> SumAndGroup(IEnumerable<REmpresas> list,

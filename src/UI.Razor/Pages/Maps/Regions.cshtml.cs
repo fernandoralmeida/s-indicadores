@@ -26,6 +26,7 @@ public class RegionsModel : PageModel
     public string? Span_Result { get; set; }
     public string? LastDataExtraction { get; set; }
     // public string? RawPage { get; set; }
+    public (RCharts g, REmpresas r) ControlCharts { get; set; }
 
     public RegionsModel(IServiceEmpresa empresa)
     {
@@ -158,6 +159,8 @@ public class RegionsModel : PageModel
             LReports = report;
             Charts = await _empresa!.DoReportToChartAsync(report);
         }
+
+        ControlCharts = new(Charts!, LReports!);
     }
 
     private IEnumerable<KeyValuePair<string, int>> SumAndGroup(IEnumerable<REmpresas> list,

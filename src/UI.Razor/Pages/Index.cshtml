@@ -110,11 +110,13 @@
 </ul>
 
 <div id="map" class="map"></div>
-<script src="~/js/osm-base.js"></script>
-<script src="~/js/osm-base-legends-e.js"></script>
-<script src="~/js/osm-empresas.js"></script>
+<script src="~/osm/geo-base.js"></script>
+<script src="~/osm/geo-legend-e.js"></script>
+<script src="~/osm/geo-style-e.js"></script>
+<script src="~/osm/geo-zoomfeature-e.js"></script>
+<script src="~/osm/geo-oneachfeature.js"></script>
 <script>
-    loadData();
+    loadData('/api/v1/geojson/');
     function handle(e) {
         if (e.keyCode === 13) {
             var v = $("#input-search").val();

@@ -1,5 +1,6 @@
 var _max = 0;
 var _min = 0;
+var _url_zoomtofeatures = '';
 // Criar o mapa Leaflet
 var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
 
@@ -23,14 +24,6 @@ info.addTo(map);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
-
-function onEachFeature(feature, layer) {
-    layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
-        click: zoomToFeature
-    });
-}
 
 function highlightFeature(e) {
     var layer = e.target;
@@ -96,14 +89,14 @@ function loadGeoJSONFromIndexedDB() {
 }
 
 // Carregar dados GeoJSON
-function loadData() {
+function loadData(_url) {
     // Verificar se os dados estão no localStorage e se a última atualização foi em um dia diferente
     var lastUpdateDate = localStorage.getItem('lastUpdateDate');
     var currentDate = new Date().toLocaleDateString();
 
     if (!lastUpdateDate || lastUpdateDate !== currentDate) {
         // Dados não encontrados no localStorage ou último update não foi hoje, carregar dados da API
-        fetchDataFromAPI();
+        fetchDataFromAPI(_url);
     } else {
         // Dados encontrados no localStorage e último update foi hoje, carregar dados do IndexedDB
         loadGeoJSONFromIndexedDB()
@@ -115,14 +108,14 @@ function loadData() {
             })
             .catch(error => {
                 // Dados não encontrados no IndexedDB ou erro, carregar dados da API
-                fetchDataFromAPI();
+                fetchDataFromAPI(_url);
             });
     }
 }
 
 // Função para carregar dados da API
-function fetchDataFromAPI() {
-    fetch(`/api/v1/geojson/`)
+function fetchDataFromAPI(_api_url) {
+    fetch(_api_url)
         .then(response => response.json())
         .then(data => {
             // Armazenar dados no IndexedDB para uso futuro

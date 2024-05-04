@@ -1,4 +1,5 @@
 //ignora o IndexDB e força busca direto na API
+//usado para funcoes SC
 function doMapByCNAE(_url) {
     $("#loader").show();
     $(".blackboxload").show();
@@ -38,31 +39,26 @@ function doMapByCNAE(_url) {
         .catch(error => console.error('Erro ao carregar dados GeoJSON da API:', error));
 }
 
-function styleSC(feature) {
-    return {
-        fillColor: getColorSC(`${feature.properties.empresas}`),
-        weight: 1,
-        opacity: 1,
-        color: 'black',
-        //dashArray: '3',
-        fillOpacity: 0.7
-    };
-}
+//usado para funcoes SC
+function doMapByDetail(_url) {
+    // Carregar dados GeoJSON de uma API
+    fetch(_url)
+        .then(response => response.json())
+        .then(data => {
 
-function zoomToFeatureSC(e) {
-    var layer = e.target;
-    $("#loader").show();
-    $(".blackboxload").show();
-    const url = '/setores/' + _page_link + '/' + layer.feature.properties.geocode;
-    // Redireciona para a página interna
-    location.href = url;
-}
+            $("#loader").hide();
+            $(".blackboxload").fadeOut("slow");
 
-function onEachFeatureSC(feature, layer) {
-    layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
-        click: zoomToFeatureSC
-    });
-}
+            // Adicionar camada GeoJSON ao mapa
+            var geojsonLayer = L.geoJSON(data, {
+                style: styleSC,
+                onEachFeature: onEachFeatureSC
+            }).addTo(map);            
 
+            legendSC.addTo(map);
+
+            // Ajustar o mapa para abranger a área GeoJSON com zoom
+            map.fitBounds(geojsonLayer.getBounds());
+        })
+        .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
+}

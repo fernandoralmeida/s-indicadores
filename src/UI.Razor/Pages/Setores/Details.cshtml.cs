@@ -32,6 +32,7 @@ public partial class DetailsModel : PageModel
     public string? LastDataExtraction { get; set; }
     public string? Cnae { get; set; } = string.Empty;
     public string? MaxCnae { get; set; }
+    public (RCharts g, REmpresas r) ControlCharts { get; set; }
 
     public DetailsModel(
         ILogger<IndexModel> logger,
@@ -80,9 +81,11 @@ public partial class DetailsModel : PageModel
 
         var _desc = await _cnae?.DoListAsync(s => s.Codigo!.StartsWith(m!))!;
         Cnae = m!.Length == 2 ? Dictionaries.CnaesSubClasses[m].NormalizeText() : _desc.FirstOrDefault()?.Descricao!.NormalizeText().ToUpper();
-        
+
         foreach (var _c in LReports.Quantitativo!.Where(c => c.Key == "Ativa"))
             MaxCnae = _c.Value.ToString();
+
+        ControlCharts = new(Charts!, LReports!);
 
         temporizador.Stop();
 

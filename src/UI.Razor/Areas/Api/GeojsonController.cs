@@ -321,20 +321,24 @@ public class GeojsonController : ControllerBase
             }
 
             var _features = new List<VFeatures>();
-
+            var _min_max = new List<int>() { 0 };
             foreach (var city in _cities!)
             {
                 var _c = city.NormalizeText().ToLower();
                 var __city = Builders<VFeatures>.Filter.Eq(e => e.Properties!.Name, _c);
                 foreach (var items in await _geojsonfeatures!.DoListAsync(__city))
+                {
+                    _min_max.Add(items.Properties!.Empresas!);
                     _features.Add(items);
+                }
+
             };
 
             return Ok(new VGeojson
             {
                 Type = "FeatureCollection",
                 Min = 0,
-                Max = 0,
+                Max = _min_max.Sum(v => v),
                 Features = _features
             });
         }

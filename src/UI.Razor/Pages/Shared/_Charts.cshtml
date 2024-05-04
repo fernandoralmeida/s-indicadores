@@ -1,170 +1,95 @@
-@page "/empresas/{m?}/{z?}"
-@model Empresas.IndexModel
-@{
-    Layout = "_Layout";
-    ViewData["Title"] = @Model.Municipio?.ToUpper();
-}
+@using IDN.Services.Empresa.Records;
+@model (RCharts g, REmpresas r)
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<header>
-    <partial name="_Navs" model="Model.NavModel" />
-</header>
-
-<div class="row">
-
-    <div class="column-container flex-wrap">
-        <div class="column-p0 width-100">
-            <p class="font-size-16 margin-b-0 padding-5 bg-color-dark-4">
-                Novas Empresas @DateTime.Now.Year
-            </p>
-            <p class="font-size-10 margin-t-0 padding-5 bg-color-dark-2">Ultima extração de dados:
-                @Model.LastDataExtraction</p>
-        </div>
-        <div class="card column-p4 hoverable hide-on-med-and-down">
-            <div id="map" class="map-d"></div>
-        </div>
-        <div class="card column-p4 hoverable">
-
+<div class="charts">
+    <div class="column-container flex-wrap gap-10">
+        @* Acumulado *@
+        <div class="card column-p6">
             <div class="card-header activator">
-                Formalizadas<i class="material-icons right deep-orange-text">help</i>
+                Empresas<i class="material-icons right deep-orange-text">help</i>
             </div>
-            <div id="chart9_1"></div>
-
-            <div class="card-reveal">
-                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                <div class="padding-10">
-                    <p>O gráfrico mostra quatas novas empresas foram formalizadas no ano corrente (@DateTime.Now.Year)
-                    </p>
-                    <p>
-                        No gráfico é possivel ver quantas das novas empresas são Matrizes e Filiais.
-                    </p>
+            <div class="column-container flex-wrap margin-0 width-100 no-gap">
+                <div class="w-50p">
+                    <div id="chart1"></div>
                 </div>
-
-            </div>
-        </div>
-        <div class="card column-p4 hoverable">
-
-            <div class="card-header activator">
-                Regime Tributário<i class="material-icons right deep-orange-text">help</i>
-            </div>
-            <div id="chart9_2"></div>
-
-            <div class="card-reveal">
-                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                <div class="padding-10">
-                    <p> No Brasil, existem quatro regimes tributários para empresas:</p>
-                    <br />- Microempreendedor Individual (MEI)
-                    <br />- Simples Nacional
-                    <br />- Lucro Presumido*
-                    <br />- Lucro Real*
-                    <p>* Lucro real e presumido estão agrupados como "Outros" na visualização dos dados</p>
-                </div>
-            </div>
-        </div>
-        <div class="card column-p4 hoverable">
-
-            <div class="card-header activator">
-                Porte/Fiscal<i class="material-icons right deep-orange-text">help</i>
-            </div>
-            <div id="chart9_3"></div>
-
-            <div class="card-reveal">
-                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                <div class="padding-10">
-                    <br />A Receita Federal do Brasil classifica as empresas de acordo com o seu porte, levando em
-                    consideração o faturamento anual.
-                    <br />- Microempresa (ME): receita bruta anual igual ou inferior a R$ 360 mil.
-                    <br />- Empresa de Pequeno Porte (EPP): receita bruta anual superior a R$ 360 mil e igual ou
-                    inferior a R$ 4,8 milhões.
-                    <br />- Empresa de Médio Porte (EMP): receita bruta anual superior a R$ 4,8 milhões e igual ou
-                    inferior
-                    a R$ 300 milhões.
-                    <br />- Empresa de Grande Porte (GP): receita bruta anual superior a R$ 300 milhões.
-                    <br />Na apresentação dos dados EMP e GP são agrupadas como "DEMAIS".
-                    <p>
-                        Nesse quadro, é realizado o cruzamento dos dados das empresas agrupadas por POrte em relação as
-                        empresas agrupadas por regime fiscal.
-                        Dessa forma podemos entender a composição das empresa classificadas por porte x regime
-                        tributário.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="card column-p6 hoverable">
-            <div class="card">
-                <div class="card-header activator">
-                    Setores<i class="material-icons right deep-orange-text">help</i>
-                </div>
-                <div class="column-container margin-0 width-100 no-gap">
-                    <div class="column-p5">
-                        <div id="chart9_4"></div>
-                    </div>
-                    <div class="column-p5 borderl-l padding-l-10">
-                        Setores/Atividades
-                        <div class="overflow-auto max-height-280 padding-t-10 padding-r-10">
-                            @foreach (var item in Model.LReports!.Top3Atividades_Ano!)
-                            {
-                                <p class="bg-color-grey text-color-light padding-5">@item.Key</p>
-                                @foreach (var subitem in item.Value)
-                                {
-                                    <p class="text-color-grey"><span class="font-size-10">- @subitem.Key</span>
-                                        <span class="new bg-color-grey badge" data-badge-caption="@subitem.Value"></span>
-                                    </p>
-                                    <div class="divider"></div>
-                                }
-                            }
-                        </div>
+                <div class="w-50p borderl-l padding-5">
+                    <div class="overflow-auto max-height-280 padding-t-10 padding-r-10">                                
+                        @foreach (var item in Model.r.Quantitativo?.Where(s => s.Key != "Baixada")!)
+                        {
+                            var _key = @item.Key;
+                            <p class="text-color-grey "><span class="font-size-10">- @_key?.ToUpper()</span>
+                                <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
+                            </p>
+                            <div class="divider"></div>
+                        }
                     </div>
                 </div>
-                <div class="card-reveal">
-                    <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                    <div class="padding-10">
-                        <p>O gráfico mostras a composição dos setores produtivos das novas empresas, agrupando-as
-                            conforme o setor de atuação de sua atividade principal.</p>
-                        <p>
-                            Ao lado do gráfico, é possível conferir as 3 atividades mais exercidas por setor no presente
-                            ano!
+                @* <div class="width-100 borderl-t padding-5 bg-color-green">
+                    <div class="overflow-auto">                                                       
+                        @foreach (var item in Model.r.Quantitativo_Ano!.Where(s => s.Key == "Ativa")!)
+                        {
+                            var _key = @item.Key;
+                            <p class="text-color-grey "><span class="font-size-14">* Formalizadas @DateTime.Now.Year</span>
+                                <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
+                            </p>
+                            <div class="divider"></div> 
+                        }
+
+                    </div>
+                </div> *@
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <div class="padding-10">
+                    <p>
+                        O gráfico mostra o quantiativo total das empresas consolidadas no (os) municipio (os) até a data
+                        da ultinma extração.
+                        A lista ao lado do gráfico mostra o quantitativo das empresas separadas por situação cadastral.
+                    </p>
+                </div>
+            </div>
+            <div class="card-action margin-0 padding-5 bg-color-green">
+                @foreach (var item in Model.r.Quantitativo_Ano!.Where(s => s.Key == "Ativa")!)
+                    {
+                        var _key = @item.Key;
+                        <p class="text-color-dark"><span class="font-size-14">Formalizadas @DateTime.Now.Year</span>
+                            <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
                         </p>
-                    </div>
+                        @* <div class="divider"></div> *@
+                    }
+            </div>
+        </div>
+        <div class="card column-w4">
+            <div class="card-header activator">
+                Top 3 Setores @DateTime.Now.Year<i class="material-icons right deep-orange-text">help</i>
+            </div>                      
+            <div class="overflow-auto max-height-280 padding-5">                        
+                @foreach (var item in Model.r!.Top3Atividades_Ano!)
+                {
+                    <p class="bg-color-grey text-color-light padding-5">@item.Key</p>
+                    @foreach (var subitem in item.Value)
+                    {
+                        <p class="text-color-grey"><span class="font-size-10">- @subitem.Key</span>
+                            <span class="new bg-color-grey badge" data-badge-caption="@subitem.Value"></span>
+                        </p>
+                        <div class="divider"></div>
+                    }
+                }
+            </div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <div class="padding-10">
+                    <p>
+                        O gráfico mostra o quantiativo total das empresas consolidadas no (os) municipio (os) até a data
+                        da ultinma extração.
+                        A lista ao lado do gráfico mostra o quantitativo das empresas separadas por situação cadastral.
+                    </p>
                 </div>
             </div>
         </div>
-        <div class="card column-w4 hoverable">
-            <div class="card">
-                <div class="card-header activator">
-                    Natureza Jurídica<i class="material-icons right deep-orange-text">help</i>
-                </div>
-                <div id="chart_nj_ano"></div>
-                <div class="card-reveal">
-                    <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                    <div class="padding-10">
-                        <br />A natureza jurídica determina o regime jurídico aplicável à
-                        empresa. Por exemplo, as empresas de natureza empresária limitada têm responsabilidade limitada,
-                        o
-                        que
-                        significa que os sócios não respondem com seus bens pessoais pelas dívidas da empresa.
 
-                        <br />Em resumo, a natureza jurídica é uma informação importante que identifica o tipo de
-                        organização de
-                        uma empresa e determina o regime jurídico aplicável a ela.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="column-p0 width-100">
-            <p class="font-size-14 margin-b-0 padding-5 bg-color-dark-4">
-                Histórico de Novas Empresas e Empresas Baixadas nos ultimos 12 meses
-            </p>
-            <p class="font-size-10 margin-0 padding-5 bg-color-dark-2">Ultima extração de dados:
-                @Model.LastDataExtraction</p>
-        </div>
-
-        <div class="card column-p0 hoverable width-100">
-
+        @* Historico 12 meses *@                
+        <div class="card column-p0 width-100">
             <div class="card-header activator">
                 Empresas Formalizadas/Baixadas<i class="material-icons left">
                     date_range
@@ -175,35 +100,27 @@
             <div class="card-reveal">
                 <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
                 <div class="padding-10">
+                    Histórico de Novas Empresas e Empresas Baixadas nos ultimos 12 meses
                     <p>Relação e a evolução das novas empresas formalizadas mês a mês em comparação com
                         as
                         empresas baixadas mês a mês nos ultimos 12 meses</p>
                 </div>
             </div>
         </div>
-
-        <div class="column-p0 width-100">
-            <p class="font-size-14 margin-b-0 padding-5 bg-color-dark-4">
-                Total de empresas consolidadas no(os) municipio (os)
-            </p>
-            <p class="font-size-10 margin-0 padding-5 bg-color-dark-2">Ultima extração de dados:
-                @Model.LastDataExtraction</p>
-        </div>
-
-        <div class="card column-p5 hoverable">
-
+        
+        @* Fiscal *@
+        <div class="card column-p0 width-100">
             <div class="card-header activator">
-                Ativas<i class="material-icons right deep-orange-text">help</i>
+                Porte/Fiscal<i class="material-icons right deep-orange-text">help</i>
             </div>
             <div class="column-container margin-0 width-100 no-gap">
-                <div class="column-p6">
-                    <div id="chart1"></div>
+                <div class="w-50p">
+                    <div id="chart3"></div>
                 </div>
-                <div class="column-w4 borderl-l padding-10">
-                    Lista Completa
+                <div class="w-25p borderl-l padding-5">
                     <div class="overflow-auto max-height-280 padding-t-10 padding-r-10">
-
-                        @foreach (var item in Model.LReports.Quantitativo!)
+                        @DateTime.Now.Year
+                        @foreach (var item in Model.r.Fiscal_Ano!)
                         {
                             var _key = @item.Key;
                             <p class="text-color-grey "><span class="font-size-10">- @_key?.ToUpper()</span>
@@ -214,42 +131,20 @@
 
                     </div>
                 </div>
-            </div>
-            <div class="card-reveal">
-                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                <div class="padding-10">
-                    <p>
-                        O gráfico mostra o quantiativo total das empresas consolidadas no (os) municipio (os) até a data
-                        da ultinma extração (@Model.LastDataExtraction).
-                        A lista ao lado do gráfico mostra o quantitativo das empresas separadas por situação cadastral.
-                    </p>
+                <div class="w-25p borderl-l padding-5">
+                    <div class="overflow-auto max-height-280 padding-t-10 padding-r-10">
+                        Acumulado
+                        @foreach (var item in Model.r.Fiscal!)
+                        {
+                            var _key = @item.Key;
+                            <p class="text-color-grey "><span class="font-size-10">- @_key?.ToUpper()</span>
+                                <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
+                            </p>
+                            <div class="divider"></div>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card column-p4 hoverable">
-
-            <div class="card-header activator">
-                Regime Tributário<i class="material-icons right deep-orange-text">help</i>
-            </div>
-            <div id="chart2"></div>
-
-            <div class="card-reveal">
-                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                <div class="padding-10">
-                    <p> No Brasil, existem quatro regimes tributários para empresas:</p>
-                    <br />- Microempreendedor Individual (MEI)
-                    <br />- Simples Nacional
-                    <br />- Lucro Presumido*
-                    <br />- Lucro Real*
-                    <p />* Lucro real e presumido estão agrupados como "Outros" na visualização dos dados</p>
-                </div>
-            </div>
-        </div>
-        <div class="card column-p4 hoverable">
-            <div class="card-header activator">
-                Porte/Fiscal<i class="material-icons right deep-orange-text">help</i>
-            </div>
-            <div id="chart3"></div>
 
             <div class="card-reveal">
                 <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
@@ -273,8 +168,9 @@
                 </div>
             </div>
         </div>
-        <div class="card column-p5 hoverable">
 
+        @* perfil Etário *@
+        <div class="card column-p5">
             <div class="card-header activator">
                 Perfil Etário<i class="material-icons right deep-orange-text">help</i>
             </div>
@@ -290,8 +186,9 @@
                 </div>
             </div>
         </div>
-        <div class="card column-p5 hoverable">
 
+        @* Rotatividade *@
+        <div class="card column-p5">
             <div class="card-header activator">
                 Rotatividade Empresarial<i class="material-icons right deep-orange-text">help</i>
             </div>
@@ -309,10 +206,11 @@
             </div>
         </div>
 
-        <div class="card column-p5 hoverable">
+        @* Evolução setorial *@
+        <div class="card column-p5">
 
             <div class="card-header activator">
-                Crescimento Setorial ano/ano<i class="material-icons left">
+                Crescimento Setorial<i class="material-icons left">
                     date_range
                 </i><i class="material-icons right deep-orange-text">help</i>
             </div>
@@ -329,10 +227,10 @@
                 </div>
             </div>
         </div>
-        <div class="card column-p5 hoverable">
+        <div class="card column-p5">
 
             <div class="card-header activator">
-                Taxa de Crescimento Setorial ano/ano<i class="material-icons left">
+                Taxa de Crescimento Setorial<i class="material-icons left">
                     date_range
                 </i><i class="material-icons right deep-orange-text">help</i>
             </div>
@@ -350,8 +248,9 @@
                 </div>
             </div>
         </div>
-        
-        <div class="card column-p0 width-100 hoverable">
+
+        @* Atividades *@
+        <div class="card column-p0 width-100">
 
             <div class="card-header activator">
                 Setores<i class="material-icons right deep-orange-text">help</i>
@@ -361,9 +260,8 @@
                     <div id="chart4"></div>
                 </div>
                 <div class="column-p5 borderl-l padding-l-10">
-                    Atividades/Setores
-                    <div class="overflow-auto max-height-280 padding-t-10 padding-r-10">
-                        @foreach (var item in Model.LReports!.TAtividades!)
+                    <div class="overflow-auto max-height-250 padding-t-10 padding-r-10">
+                        @foreach (var item in Model.r!.TAtividades!)
                         {
                             <p class="bg-color-grey text-color-light padding-5">@item.Key</p>
                             @foreach (var subitem in item.Value)
@@ -384,7 +282,7 @@
                 <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
                 <div class="padding-10">
                     <p>O gráfico mostras a composição dos setores produtivos de todas empresas consolidadas até a data
-                        da ultima extração (@Model.LastDataExtraction), agrupando-as conforme o
+                        da ultima extração, agrupando-as conforme o
                         setor de atuação de sua atividade principal.</p>
                     <p>
                         Ao lado do gráfico, é possível conferir todas as atividades exercidas agrupadas por setor.
@@ -392,7 +290,7 @@
                 </div>
             </div>
         </div>
-        <div class="card column-p0 width-100 hoverable">
+        <div class="card column-p0 width-100">
 
             <div class="card-header activator">
                 Natureza Jurídica<i class="material-icons right deep-orange-text">help</i>
@@ -402,9 +300,8 @@
                     <div id="chart_nj"></div>
                 </div>
                 <div class="column-p5 borderl-l padding-l-10">
-                    Lista Completa
-                    <div class="overflow-auto max-height-280 padding-t-10 padding-r-10">
-                        @foreach (var item in Model.LReports.NaturezaJuridica!)
+                    <div class="overflow-auto max-height-250 padding-t-10 padding-r-10">
+                        @foreach (var item in Model.r.NaturezaJuridica!)
                         {
                             var _key = @item.Key?.Remove(0, 5);
                             <p class="text-color-grey "><span class="font-size-10">- @_key?.ToUpper()</span>
@@ -431,91 +328,40 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
-
-<!-- Modal Structure -->
-<div id="modal1" class="modal modal-fixed-footer">
-    <div class="modal-content">
-        <h6>Detalhes</h6>
-        @foreach (var item in @Model.LReports.TAtividadesDescritivas!)
-        {
-            <p class="bg-color-grey text-color-light padding-5">@item.Key</p>
-            @foreach (var subitem in item.Value)
-            {
-                <p class="text-color-grey "><span class="font-size-12">- @subitem.Key.Remove(0,7)</span>                    
-                    <span class="new bg-color-grey badge" data-badge-caption="@subitem.Value"></span>
-                </p>
-                <div class="divider"></div>
-            }
-        }
-    </div>
-    <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect waves-green btn">Fechar</a>
-    </div>
-</div>
-
-<script>
-    // Criar o mapa Leaflet
-    var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
-
-    // Adicionar uma camada base do OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Carregar dados GeoJSON de uma API
-    fetch('/api/v1/geojson/@Model.Municipio!.ToLower()')
-        .then(response => response.json())
-        .then(data => {
-
-            // Adicionar camada GeoJSON ao mapa
-            var geojsonLayer = L.geoJSON(data, {
-                style: {
-                    color: 'green', // Cor da borda
-                    fillColor: 'lightgreen', // Cor de preenchimento
-                    weight: 2, // Largura da borda
-                    opacity: 1, // Opacidade da borda
-                    fillOpacity: 0.2 // Opacidade do preenchimento
-                }
-            }).addTo(map);
-
-            // Ajustar o mapa para abranger a área GeoJSON com zoom
-            map.fitBounds(geojsonLayer.getBounds());
-        })
-        .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
-</script>
 
 <script>
     var _width = '100%';
-    var _height = 300;
+    var _height = 250;
     var _height_2 = 250;
 
     var _novas_empresas_mensal = {
         series: [
             {
-                name: "Novas Tatal",
-                data: [@Model.Charts!.NovasMes![0]]
+                name: "Tatal",
+                data: [@Model.g!.NovasMes![0]]
             },
             {
-                name: "Novas MEIs",
-                data: [@Model.Charts!.NovasMeiMes![0]]
+                name: "MEIs",
+                data: [@Model.g!.NovasMeiMes![0]]
             },
             {
-                name: "Novas MEs",
-                data: [@Model.Charts!.NovasMEMes![0]]
+                name: "MEs",
+                data: [@Model.g!.NovasMEMes![0]]
             },
-    @* {
-            name: "Novas EPPs",
-            data: [@Model.Charts!.NovasEPPMes![0]]
+        {
+            name: "EPPs",
+            data: [@Model.g!.NovasEPPMes![0]]
             },
             {
-            name: "Novas Demais",
-            data: [@Model.Charts!.NovasDemaisMes![0]]
-            }, *@
+            name: "Demais",
+            data: [@Model.g!.NovasDemaisMes![0]]
+            },
             {
                 name: "Baixas",
-                data: [@Model.Charts!.BaixasMes![0]]
+                data: [@Model.g!.BaixasMes![0]]
             }
         ],
         chart: {
@@ -560,7 +406,7 @@
             size: 1
         },
         xaxis: {
-            categories: [@Model.Charts!.NovasMes![1]],
+            categories: [@Model.g!.NovasMes![1]],
         },
         yaxis: {
 
@@ -585,15 +431,15 @@
 
     var _ativas = {
 
-        series: [@Model.Charts!.MatrizFilial![0]],
-        labels: [@Model.Charts!.MatrizFilial![1]],
+        series: [@Model.g!.MatrizFilial![0]],
+        labels: [@Model.g!.MatrizFilial![1]],
         legend: {
             position: 'bottom',
         },
         chart: {
             type: 'donut',
             with: _width,
-            height: 300,
+            height: _height,
             background: 'transparent'
         },
 
@@ -636,8 +482,8 @@
 
     var _fiscal = {
 
-        series: [@Model.Charts!.Fiscal![0]],
-        labels: [@Model.Charts!.Fiscal![1]],
+        series: [@Model.g!.Fiscal![0]],
+        labels: [@Model.g!.Fiscal![1]],
         legend: {
             position: 'bottom',
         },
@@ -687,18 +533,18 @@
 
     var _porte = {
         series: [{
-            name: '@Model.Charts!.LabelPorteFiscal![0]',
-            data: [@Model.Charts!.PorteFiscal![0]]
+            name: '@Model.g!.LabelPorteFiscal![0]',
+            data: [@Model.g!.PorteFiscal![0]]
         }, {
-            name: '@Model.Charts!.LabelPorteFiscal![1]',
-            data: [@Model.Charts!.PorteFiscal![1]]
+            name: '@Model.g!.LabelPorteFiscal![1]',
+            data: [@Model.g!.PorteFiscal![1]]
         }, {
-            name: '@Model.Charts!.LabelPorteFiscal![2]',
-            data: [@Model.Charts!.PorteFiscal![2]]
+            name: '@Model.g!.LabelPorteFiscal![2]',
+            data: [@Model.g!.PorteFiscal![2]]
         }],
         chart: {
             type: 'bar',
-            height: 280,
+            height: _height,
             stacked: true,
             background: 'transparent',
             toolbar: {
@@ -767,8 +613,8 @@
 
     var _setores = {
 
-        series: [@Model.Charts!.Setores![1]],
-        labels: [@Model.Charts!.Setores![0]],
+        series: [@Model.g!.Setores![1]],
+        labels: [@Model.g!.Setores![0]],
         legend: {
             position: 'bottom',
         },
@@ -840,7 +686,7 @@
         },
         series: [{
             name: "Empresas",
-            data: [@Model.Charts!.Maturidade],
+            data: [@Model.g!.Maturidade],
         }],
         dataLabels: {
             enabled: true,
@@ -912,7 +758,7 @@
         },
         series: [{
             name: "Rotatividade",
-            data: [@Model.Charts!.Rotatividade],
+            data: [@Model.g!.Rotatividade],
         }],
         dataLabels: {
             enabled: true,
@@ -979,8 +825,8 @@
     };
 
     var _naturezajuridica = {
-        series: [@Model.Charts!.NaturezaJuridica![1]],
-        labels: [@Model.Charts!.NaturezaJuridica![0]],
+        series: [@Model.g!.NaturezaJuridica![1]],
+        labels: [@Model.g!.NaturezaJuridica![0]],
         legend: {
             position: 'bottom',
         },
@@ -1028,8 +874,8 @@
     };
 
     var _naturezajuridica_ano = {
-        series: [@Model.Charts!.NaturezaJuridica_Ano![1]],
-        labels: [@Model.Charts!.NaturezaJuridica_Ano![0]],
+        series: [@Model.g!.NaturezaJuridica_Ano![1]],
+        labels: [@Model.g!.NaturezaJuridica_Ano![0]],
         legend: {
             position: 'bottom',
         },
@@ -1078,8 +924,8 @@
 
     var _novas_empresas_mensal_ativas = {
 
-        series: [@Model.Charts!.MatrizFilial_Ano![0]],
-        labels: [@Model.Charts!.MatrizFilial_Ano![1]],
+        series: [@Model.g!.MatrizFilial_Ano![0]],
+        labels: [@Model.g!.MatrizFilial_Ano![1]],
         legend: {
             position: 'bottom',
         },
@@ -1126,8 +972,8 @@
 
     var _novas_empresas_mensal_fiscal = {
 
-        series: [@Model.Charts!.Fiscal_Ano![0]],
-        labels: [@Model.Charts!.Fiscal_Ano![1]],
+        series: [@Model.g!.Fiscal_Ano![0]],
+        labels: [@Model.g!.Fiscal_Ano![1]],
         legend: {
             position: 'bottom',
         },
@@ -1179,14 +1025,14 @@
 
     var _novas_empresas_mensal_porte = {
         series: [{
-            name: '@Model.Charts!.LabelPorteFiscal![0]',
-            data: [@Model.Charts!.PorteFiscalAno![0]]
+            name: '@Model.g!.LabelPorteFiscal![0]',
+            data: [@Model.g!.PorteFiscalAno![0]]
         }, {
-            name: '@Model.Charts!.LabelPorteFiscal![1]',
-            data: [@Model.Charts!.PorteFiscalAno![1]]
+            name: '@Model.g!.LabelPorteFiscal![1]',
+            data: [@Model.g!.PorteFiscalAno![1]]
         }, {
-            name: '@Model.Charts!.LabelPorteFiscal![2]',
-            data: [@Model.Charts!.PorteFiscalAno![2]]
+            name: '@Model.g!.LabelPorteFiscal![2]',
+            data: [@Model.g!.PorteFiscalAno![2]]
         }],
         chart: {
             type: 'bar',
@@ -1259,8 +1105,8 @@
 
     var _novas_empresas_mensal_setor = {
 
-        series: [@Model.Charts!.SetoresAno![1]],
-        labels: [@Model.Charts!.SetoresAno![0]],
+        series: [@Model.g!.SetoresAno![1]],
+        labels: [@Model.g!.SetoresAno![0]],
         legend: {
             position: 'bottom',
         },
@@ -1311,7 +1157,7 @@
     };
 
     var _evolucao_setorial = {
-        series: [@Model.Charts!.CrescimentoSetorial![1]],
+        series: [@Model.g!.CrescimentoSetorial![1]],
         chart: {
             type: 'area',
             stacked: false,
@@ -1366,7 +1212,7 @@
     };
 
     var _tx_evolucao_setorial = {
-        series: [@Model.Charts!.TxCrescimentoSetorial![1]],
+        series: [@Model.g!.TxCrescimentoSetorial![1]],
         chart: {
             type: 'area',
             stacked: false,
