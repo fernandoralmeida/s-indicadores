@@ -4,7 +4,7 @@
 <div class="charts">
     <div class="column-container flex-wrap gap-10">
         @* Acumulado *@
-        <div class="card column-p6">
+        <div class="card column-p0 width-100">
             <div class="card-header activator">
                 Empresas<i class="material-icons right deep-orange-text">help</i>
             </div>
@@ -53,7 +53,7 @@
                     {
                         var _key = @item.Key;
                         <p class="text-color-dark">
-                        <span class="font-size-14">Formalizadas @DateTime.Now.Year</span>
+                            <span class="font-size-14">Formalizadas @DateTime.Now.Year</span>
                             <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
                         </p>
                         @* <div class="divider"></div> *@
@@ -61,8 +61,27 @@
             </div>
         </div>
 
+        @* Historico 12 meses *@                
+        <div class="card column-p0 width-100">
+            <div class="card-header activator">
+                Empresas Formalizadas/Baixadas<i class="material-icons left">
+                    date_range
+                </i><i class="material-icons right deep-orange-text">help</i>
+            </div>
+            <div id="chart9" class="padding-l-10"></div>
+            <div class="card-reveal">
+                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
+                <div class="padding-10">
+                    Histórico de Novas Empresas e Empresas Baixadas nos ultimos 12 meses
+                    <p>Relação e a evolução das novas empresas formalizadas mês a mês em comparação com
+                        as
+                        empresas baixadas mês a mês nos ultimos 12 meses</p>
+                </div>
+            </div>
+        </div>
+        
         @* Top 3 Atividades *@
-        <div class="card column-w4">
+        <div class="card column-p0 width-100">
             <div class="card-header activator">
                 Top 3 Setores @DateTime.Now.Year<i class="material-icons right deep-orange-text">help</i>
             </div>                      
@@ -88,26 +107,6 @@
                         da ultinma extração.
                         A lista ao lado do gráfico mostra o quantitativo das empresas separadas por situação cadastral.
                     </p>
-                </div>
-            </div>
-        </div>
-
-        @* Historico 12 meses *@                
-        <div class="card column-p0 width-100">
-            <div class="card-header activator">
-                Empresas Formalizadas/Baixadas<i class="material-icons left">
-                    date_range
-                </i><i class="material-icons right deep-orange-text">help</i>
-            </div>
-            <div id="chart9" class="padding-l-10"></div>
-
-            <div class="card-reveal">
-                <span class="card-title">Detalhes<i class="material-icons right red-text">close</i></span>
-                <div class="padding-10">
-                    Histórico de Novas Empresas e Empresas Baixadas nos ultimos 12 meses
-                    <p>Relação e a evolução das novas empresas formalizadas mês a mês em comparação com
-                        as
-                        empresas baixadas mês a mês nos ultimos 12 meses</p>
                 </div>
             </div>
         </div>
@@ -307,7 +306,7 @@
                         @foreach (var item in Model.r.NaturezaJuridica!)
                         {
                             var _key = @item.Key?.Remove(0, 5);
-                            <div class="text-color-grey column-container gap-5 margin-t-b-5 width-100 flex-row">
+                            <div class="text-color-grey column-container no-gap margin-t-b-5 width-100 flex-row">
                                 <div class="w-80p font-size-10 truncate">- @_key?.ToUpper()</div>
                                 <a href="#" class="w-20p btn-small" data-badge-caption="">@item.Value</a>
                             </div>                       

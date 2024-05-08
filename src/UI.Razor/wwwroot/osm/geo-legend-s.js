@@ -1,5 +1,5 @@
 // Legenda Segmento e Cnae
-var legend = L.control({ position: 'bottomright' });
+var legend = L.control({ position: 'bottomleft' });
 
 legend.onAdd = function (map) {
 

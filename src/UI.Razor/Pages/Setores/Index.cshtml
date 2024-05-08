@@ -7,8 +7,8 @@
 }
 
 <div id="cnae-container">
-    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-    <ul class="collapsible margin-0 hide-on-med-and-down">
+    <a href="#" data-target="slide-out" class="sidenav-trigger btn-small"><i class="material-icons">menu</i></a>
+    @* <ul class="collapsible margin-0 hide-on-med-and-down">
         <form method="post" asp-page-handler="DCnae">
             <div class="div-search-cnae valign-wrapper">
                 <i class="material-icons margin-l-10 grey-text">search</i>
@@ -24,7 +24,7 @@
                         @foreach (var segmento in setor.Value)
                         {
                             <li>
-                                <div class="collapsible-header segmento_click" title="CNAE Grupo: @segmento.Key[..2]" data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)">
+                                <div class="collapsible-header" title="CNAE Grupo: @segmento.Key[..2]" data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)">
                                     @segmento.Key.Remove(0, 2)
                                 </div>
                                 <div class="collapsible-body padding-10">
@@ -45,27 +45,27 @@
                 </div>
             </li>
         }
-    </ul>
+    </ul> *@
 </div>
 
-<ul class="sidenav collapsible" id="mobile-demo">
+<ul class="sidenav collapsible" id="slide-out">
         <form method="post" asp-page-handler="MCnae">
             <div class="div-search-cnae valign-wrapper">
                 <i class="material-icons margin-l-10 grey-text">search</i>
                 <input class="input-search-cnae browser-default" type="search" asp-for="Search" placeholder="CNAE ex: 15 ou 1531901">
             </div>
         </form>
-        @foreach (var setor in Model.Setore_Segmentos_Cnaes)
+        @foreach (var setor in Model.Setore_Segmentos_Cnaes!)
         {
             <li>
-                <div class="collapsible-header"><i class="material-icons">place</i>@setor.Key</div>
+                <div class="collapsible-header">@setor.Key</div>
                 <div class="collapsible-body">
                     <ul class="collapsible margin-0">
                         @foreach (var segmento in setor.Value)
                         {
                             <li>
                                 <div class="collapsible-header line-normal padding-b-10 padding-t-10" title="CNAE Grupo: @segmento.Key[..2]">
-                                    @segmento.Key.Remove(0, 2)
+                                    > @segmento.Key.Remove(0, 2)
                                 </div>
                                 <div class="collapsible-body">
                                     <div class="row line-normal center padding-t-10 margin-b-10">
@@ -75,8 +75,8 @@
                                     </div>
                                     @foreach (var cnae in segmento.Value)
                                     {
-                                        <p class="line-normal"><a class="cnae_click sidenav-close" data-cnae="@cnae[..7]" data-descricao="@cnae.Remove(0, 7)" title="CNAE @cnae[..7]">@cnae.Remove(0, 7)</a></p>
-                                        <div class="divider"></div>
+                                        <p class="line-normal"><a class="cnae_click sidenav-close truncate" data-cnae="@cnae[..7]" data-descricao="@cnae.Remove(0, 7)" title="CNAE @cnae[..7]">>>@cnae.Remove(0, 7)</a></p>
+                                        @* <div class="divider"></div> *@
                                     }
                                 </div>
                             </li>
@@ -89,16 +89,16 @@
 
 <div id="map" class="map"></div>
 
-<script src="~/osm/geo-api.js"></script>
-<script src="~/osm/geo-base.js"></script>
-<script src="~/osm/geo-legend-s.js"></script>
-<script src="~/osm/geo-legend-c.js"></script>
-<script src="~/osm/geo-style-s.js"></script>
-<script src="~/osm/geo-style-s-SC.js"></script>
-<script src="~/osm/geo-zoomfeature-d.js"></script>
-<script src="~/osm/geo-zoomfeature-s-SC.js"></script>
-<script src="~/osm/geo-oneachfeature.js"></script>
-<script src="~/osm/geo-oneachfeature-SC.js"></script>
+<script src="~/osm/geo-api.js" asp-append-version="true"></script>
+<script src="~/osm/geo-base.js" asp-append-version="true"></script>
+<script src="~/osm/geo-legend-s.js" asp-append-version="true"></script>
+<script src="~/osm/geo-legend-c.js" asp-append-version="true"></script>
+<script src="~/osm/geo-style-s.js" asp-append-version="true"></script>
+<script src="~/osm/geo-style-s-SC.js" asp-append-version="true"></script>
+<script src="~/osm/geo-zoomfeature-d.js" asp-append-version="true"></script>
+<script src="~/osm/geo-zoomfeature-s-SC.js" asp-append-version="true"></script>
+<script src="~/osm/geo-oneachfeature.js" asp-append-version="true"></script>
+<script src="~/osm/geo-oneachfeature-SC.js" asp-append-version="true"></script>
 <script>
     var _page_link = '';
     loadData('/api/v1/geojson/');

@@ -15,12 +15,12 @@
     </div>
 </div>
 
-<script src="~/osm/geo-api.js"></script>
-<script src="~/osm/geo-base.js"></script>
-<script src="~/osm/geo-legend-c.js"></script>
-<script src="~/osm/geo-style-m-SC.js"></script>
-<script src="~/osm/geo-zoomfeature-SC.js"></script>
-<script src="~/osm/geo-oneachfeature-SC.js"></script>
+<script src="~/osm/geo-api.js" asp-append-version="true"></script>
+<script src="~/osm/geo-base.js" asp-append-version="true"></script>
+<script src="~/osm/geo-legend-c.js" asp-append-version="true"></script>
+<script src="~/osm/geo-style-m-SC.js" asp-append-version="true"></script>
+<script src="~/osm/geo-zoomfeature-SC.js" asp-append-version="true"></script>
+<script src="~/osm/geo-oneachfeature-SC.js" asp-append-version="true"></script>
 <script>
     const i_spanResult = document.getElementById("span_result");
     i_spanResult.textContent = '@Model.Cidade?.ToUpper() - @Model.Cnae';    

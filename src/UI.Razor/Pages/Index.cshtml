@@ -11,8 +11,8 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <div id="cnae-container">
-    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-    <ul class="collapsible margin-0 hide-on-med-and-down">
+    <a href="#" data-target="slide-out" class="btn-small sidenav-trigger"><i class="material-icons text-color-light">menu</i></a>
+    @* <ul class="collapsible margin-0 hide-on-med-and-down">
         <form class="div-search-cnae valign-wrapper" method="post">
             <i class="material-icons margin-l-10 grey-text">search</i>
             <input class="input-search-cnae browser-default" type="search" placeholder="Procurar cidade"
@@ -58,10 +58,10 @@
                 }  
             </div>
         </li>        
-    </ul>
+    </ul> *@
 </div>
 
-<ul class="sidenav collapsible" id="mobile-demo">
+<ul class="sidenav collapsible" id="slide-out">
         <form class="div-search-cnae valign-wrapper" method="post">
             <i class="material-icons margin-l-10 grey-text">search</i>
             <input class="input-search-cnae browser-default" type="search" placeholder="Procurar cidade"
@@ -69,52 +69,62 @@
         </form>
         <li>
             <div class="collapsible-header">Regiões Administrativas</div>
-            <div class="collapsible-body padding-10">                
+            <div class="collapsible-body">                
                 @foreach (var macro in Model.RegioesAdministrativas!)
                 {
                     <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="ra-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    <div class="divider"></div>
+                    @* <div class="divider"></div> *@
                 }                
             </div>
         </li>    
         <li>
             <div class="collapsible-header">Regiões de Governo</div>
-            <div class="collapsible-body padding-10">
+            <div class="collapsible-body">
                 @foreach (var macro in Model.RegioesGovernoSP!)
                 {
                     <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rg-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    <div class="divider"></div>
+                    @* <div class="divider"></div> *@
                 }  
             </div>
         </li>
         <li>
             <div class="collapsible-header">Regiões Metropolitanas</div>
-            <div class="collapsible-body padding-10">
+            <div class="collapsible-body">
                 @foreach (var macro in Model.RegioesMetropolitanasSP!)
                 {
                     <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rm-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    <div class="divider"></div>
+                    @* <div class="divider"></div> *@
                 }  
             </div>
         </li>
         <li>
             <div class="collapsible-header">Aglomerados Urbanos</div>
-            <div class="collapsible-body padding-10">
+            <div class="collapsible-body">
                 @foreach (var macro in Model.AglomeradosUrbanosSP!)
                 {
                     <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="au-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    <div class="divider"></div>
+                    @* <div class="divider"></div> *@
                 }  
             </div>
         </li>        
 </ul>
 
-<div id="map" class="map"></div>
-<script src="~/osm/geo-base.js"></script>
-<script src="~/osm/geo-legend-e.js"></script>
-<script src="~/osm/geo-style-e.js"></script>
-<script src="~/osm/geo-zoomfeature-e.js"></script>
-<script src="~/osm/geo-oneachfeature.js"></script>
+@* <div id="map" class="map"></div> *@
+<div class="container-map-charts">
+    <div class="w-55p">
+        <div id="map" class="map"></div>
+    </div>
+    <div class="w-45p">
+        <partial name="_Charts" model="Model.ControlCharts" />
+    </div>
+</div>
+
+
+<script src="~/osm/geo-base.js" asp-append-version="true"></script>
+<script src="~/osm/geo-legend-e.js" asp-append-version="true"></script>
+<script src="~/osm/geo-style-e.js" asp-append-version="true"></script>
+<script src="~/osm/geo-zoomfeature-e.js" asp-append-version="true"></script>
+<script src="~/osm/geo-oneachfeature.js" asp-append-version="true"></script>
 <script>
     loadData('/api/v1/geojson/');
     function handle(e) {

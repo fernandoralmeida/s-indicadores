@@ -20,11 +20,11 @@
     </div>
 </div>
 
-<script src="~/osm/geo-base.js"></script>
-<script src="~/osm/geo-legend-e.js"></script>
-<script src="~/osm/geo-style-e.js"></script>
-<script src="~/osm/geo-zoomfeature-d.js"></script>
-<script src="~/osm/geo-oneachfeature.js"></script>
+<script src="~/osm/geo-base.js" asp-append-version="true"></script>
+<script src="~/osm/geo-legend-e.js" asp-append-version="true"></script>
+<script src="~/osm/geo-style-e.js" asp-append-version="true"></script>
+<script src="~/osm/geo-zoomfeature-d.js" asp-append-version="true"></script>
+<script src="~/osm/geo-oneachfeature.js" asp-append-version="true"></script>
 <script>    
     const i_spanResult = document.getElementById("span_result");
     i_spanResult.textContent = '@Model.Cidade?.ToUpper()';
