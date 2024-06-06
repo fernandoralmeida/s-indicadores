@@ -210,15 +210,15 @@ public class ServiceEmpresa : IServiceEmpresa
                                    Convert.ToSingle(rt.Where(s => s.SituacaoCadastral == "Baixada" && DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) /
                                    Convert.ToSingle(rt.Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) * 100)),
 
-            // EmpresasPorLocal = from lc in emps_bairro
-            //                       .GroupBy(s => s.Bairro)
-            //                       .OrderByDescending(o => o.Count())
-            //                    select (new KeyValuePair<string, int>(lc.Key, lc.Count())),
+            EmpresasPorLocal = from lc in emps_bairro
+                                  .GroupBy(s => s.Bairro)
+                                  .OrderByDescending(o => o.Count())
+                               select (new KeyValuePair<string, int>(lc.Key, lc.Count())),
 
-            // EmpresasNovasPorLocal = from nlc in emps_novas_bairro
-            //                             .GroupBy(s => s.Bairro)
-            //                             .OrderByDescending(o => o.Count())
-            //                         select (new KeyValuePair<string, int>(nlc.Key, nlc.Count())),
+            EmpresasNovasPorLocal = from nlc in emps_novas_bairro
+                                        .GroupBy(s => s.Bairro)
+                                        .OrderByDescending(o => o.Count())
+                                    select (new KeyValuePair<string, int>(nlc.Key, nlc.Count())),
 
             TaxaCrescimentoSetorial = TaxaCrescimentoSetorial(emps_ativas),
 
@@ -436,15 +436,15 @@ public class ServiceEmpresa : IServiceEmpresa
                                    Convert.ToSingle(rt.Where(s => s.SituacaoCadastral == "Baixada" && DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) /
                                    Convert.ToSingle(rt.Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) * 100)),
 
-            // EmpresasPorLocal = from lc in emps_bairro
-            //                       .GroupBy(s => s.Bairro)
-            //                       .OrderByDescending(o => o.Count())
-            //                    select (new KeyValuePair<string, int>(lc.Key, lc.Count())),
+            EmpresasPorLocal = from lc in emps_bairro
+                                  .GroupBy(s => s.Bairro)
+                                  .OrderByDescending(o => o.Count())
+                               select (new KeyValuePair<string, int>(lc.Key, lc.Count())),
 
-            // EmpresasNovasPorLocal = from nlc in emps_novas_bairro
-            //                             .GroupBy(s => s.Bairro)
-            //                             .OrderByDescending(o => o.Count())
-            //                         select (new KeyValuePair<string, int>(nlc.Key, nlc.Count())),
+            EmpresasNovasPorLocal = from nlc in emps_novas_bairro
+                                        .GroupBy(s => s.Bairro)
+                                        .OrderByDescending(o => o.Count())
+                                    select (new KeyValuePair<string, int>(nlc.Key, nlc.Count())),
 
             TaxaCrescimentoSetorial = TaxaCrescimentoSetorial(emps_ativas),
 

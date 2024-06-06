@@ -154,8 +154,8 @@ function storeGeoJSONInIndexedDB(data) {
 
 // Função para processar os dados GeoJSON
 function processData(data) {
-    $("#loader").hide();
-    $(".blackboxload").fadeOut("slow");
+    // $("#loader").hide();
+    // $(".blackboxload").fadeOut("slow");
 
     // Adicionar camada GeoJSON ao mapa
     var geojsonLayer = L.geoJSON(data, {

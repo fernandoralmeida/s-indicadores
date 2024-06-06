@@ -28,7 +28,7 @@ public class IndexModel : PageModel
     public RCharts? Charts { get; set; } = null;
     public string? Empresasativas { get; set; }
     public IEnumerable<KeyValuePair<string, int>> Setores { get; set; } = new List<KeyValuePair<string, int>>();
-    public (RCharts g, REmpresas r) ControlCharts { get; set; }
+    public (RCharts g, REmpresas r) ModelCharts { get; set; }
     public IEnumerable<string>? Municipios { get; set; }
 
     public IndexModel(IServiceEmpresa empresa)
@@ -64,9 +64,9 @@ public class IndexModel : PageModel
         await LoadData();
     }
 
-    public async Task<ActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync()
     {
-        if (string.IsNullOrEmpty(Cidade))
+        if (!ModelState.IsValid)
             return Page();
 
         var _cities = Cidade?.Split(',');
@@ -155,8 +155,8 @@ public class IndexModel : PageModel
 
                         TAtividades = SumAndGroup_SubList(_listREmpresas, e => e.TAtividades!),
                         TAtividadesDescritivas = SumAndGroup_SubList(_listREmpresas, e => e.TAtividadesDescritivas!),
-                        Top3Atividades = SumAndGroup_SubList(_listREmpresas, e => e.Top3Atividades!),
-                        Top3Atividades_Ano = SumAndGroup_SubList(_listREmpresas, e => e.Top3Atividades_Ano!),
+                        Top3Atividades = SumAndGroup_SubList_Top3(_listREmpresas, e => e.Top3Atividades!),
+                        Top3Atividades_Ano = SumAndGroup_SubList_Top3(_listREmpresas, e => e.Top3Atividades_Ano!),
                         Porte = SumAndGroup_SubList(_listREmpresas, e => e.Porte!),
                         Porte_Ano = SumAndGroup_SubList(_listREmpresas, e => e.Porte_Ano!),
                         TaxaCrescimentoSetorial = SumAndGroup_SubList(_listREmpresas, e => e.TaxaCrescimentoSetorial!)
@@ -181,7 +181,17 @@ public class IndexModel : PageModel
             Charts = await _empresa!.DoReportToChartAsync(report);
         }
 
-        ControlCharts = new(Charts!, LReports!);
+        ModelCharts = new(Charts!, LReports!);
+    }
+
+    private IEnumerable<KeyValuePair<string, int>> SumAndGroupTop3(IEnumerable<REmpresas> list,
+                                                            Func<REmpresas, IEnumerable<KeyValuePair<string, int>>> selector)
+    {
+        return list.SelectMany(selector)
+               .GroupBy(k => k.Key)
+               .OrderByDescending(k => k.Sum(e => e.Value))
+               .Take(3)
+               .Select(g => new KeyValuePair<string, int>(g.Key, g.Sum(kvp => kvp.Value)));
     }
 
     private IEnumerable<KeyValuePair<string, int>> SumAndGroup(IEnumerable<REmpresas> list,
@@ -203,6 +213,22 @@ public class IndexModel : PageModel
                select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(l.Key,
                        from sl in l.SelectMany(e => e.Value)
                                    .GroupBy(g => g.Key)
+                       select (new KeyValuePair<string, int>(sl.Key, sl.Sum(sm => sm.Value)))));
+    }
+
+    private static IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>> SumAndGroup_SubList_Top3(
+IEnumerable<REmpresas> list,
+Func<REmpresas, IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>>> selector)
+    {
+        return from l in list
+                            .SelectMany(selector)
+                            .GroupBy(g => g.Key)
+
+               select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(l.Key,
+                       from sl in l.SelectMany(e => e.Value)
+                                   .GroupBy(g => g.Key)
+                                    .OrderByDescending(k => k.Sum(e => e.Value))
+                                    .Take(3)
                        select (new KeyValuePair<string, int>(sl.Key, sl.Sum(sm => sm.Value)))));
     }
 }

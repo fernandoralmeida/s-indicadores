@@ -1,17 +1,61 @@
-﻿@page "/maps/{m?}"
+﻿@page "/maps/{m?}/{zn?}"
 @model Pages.Maps.IndexModel
+
 @{
     Layout = "_LayoutMap";
     ViewData["Title"] = "Densidade Empresarial do Estado de SP";
     ViewData["ActivePage"] = Shared.NavPages.MapCompanies;
 }
 
+<div id="float-container-l">
+    <a class="btn" asp-page="/Index" title="Voltar"><i class="material-icons">arrow_back</i></a>
+    @if (Model.Zones_ON)
+    {
+        <a href="#" data-target="slide-out" class="btn sidenav-trigger"><i class="material-icons">place</i></a>
+    }
+</div>
+
+<div class="sidenav bg-color-white" id="slide-out">
+    <p><a class="rag_click submit btn-link padding-r-10" asp-page="./Index" asp-route-zn="">TODOS</a><i
+            class="material-icons left">place</i></p>
+    <div class="divider"></div>
+    <div id="zones-container"></div>
+</div>
+
+@if (Model.Zones_ON)
+{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/maps/@Model.GeoCode?handler=Zones&c=@Model.GeoCode',
+            method: 'GET',
+            success: function (data) {
+                $('#zones-container').append(data);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading zones:', status, error);
+            }
+        });
+        $(".submit").click(function () {
+            $(".blackboxload").show();
+            $("#loader").show();
+        });
+    });
+</script>
+}
+
 <div class="container-map-charts">
     <div class="w-45p">
+        @{
+            await Html.RenderPartialAsync("_Navbar");
+        }
         <div id="map" class="map"></div>
     </div>
     <div class="w-55p">
-        <partial name="_Charts" model="Model.ControlCharts" />
+        @{
+            await Html.RenderPartialAsync("_Charts", Model.ControlCharts);
+        }
     </div>
 </div>
 
@@ -29,10 +73,10 @@
     fetch('/api/v1/geojson/@Model.GeoCode')
         .then(response => response.json())
         .then(data => {
-            $("#loader").hide();
-            $(".blackboxload").fadeOut("slow");
+    @* $("#loader").hide();
+                $(".blackboxload").fadeOut("slow"); *@
 
-            _max = data.max;
+                _max = data.max;
             // Adicionar camada GeoJSON ao mapa
             processData(data);
         })
@@ -52,4 +96,3 @@
     }
 
 </script>
-

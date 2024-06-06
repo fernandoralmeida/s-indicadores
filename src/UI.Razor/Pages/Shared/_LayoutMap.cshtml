@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
-<body id="_smooth" class="bg-color-light">
+<body id="_smooth">
     <div class="blackboxload">
         <div id="loader" class="row div-center glass-80 z-depth-2">
             <div class="preloader-wrapper big active">
@@ -32,29 +32,16 @@
             </div>
         </div>
     </div>
-    <header>
-        <partial name="_Navbar" />
-    </header>
     <main>
         @RenderBody()
     </main>
-    @* <div class="socialmedia">
-        <a class="grey-text text-lighten-3" href="https://www.linkedin.com/in/fernando-roberto-almeida/"
-            target="_blank"><img src="~/svg/linkedin.svg" alt="linkedin" style="width: 28px;"></a>
-        <a class="grey-text text-lighten-3" href="#!" target="_blank"><img src="~/svg/instagram.svg"
-                style="width: 28px;" alt="instagram"></a>
-    </div>
-    <div class="footer-map">
-        <img src="~/svg/idnet-new.svg" style="width: 38px;" alt="Indicadores.NET">
-        <b>indicadores.net</b>
-    </div> *@
     <footer class="page-footer">
         <partial name="_StripColors" />
     </footer>
     <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/materialize/js/materialize.min.js"></script>
     <script type="text/javascript" src="~/lib/apexcharts/apexcharts.min.js"></script>
-    <script src="~/js/s-func.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/s-func.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>

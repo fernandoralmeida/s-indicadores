@@ -31,3 +31,8 @@ $(document).ready(function () {
         $(this).addClass('pre-active');
     });
 });
+
+$(window).on('load', function () {
+    $("#loader").hide();
+    $(".blackboxload").fadeOut("slow");
+});

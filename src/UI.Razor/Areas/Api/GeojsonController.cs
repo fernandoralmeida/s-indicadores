@@ -201,7 +201,7 @@ public class GeojsonController : ControllerBase
                     string _segmento = string.Empty;
                     int _empresas = 0;
                     foreach (var subitem in item.TAtividadesDescritivas!
-                                                .Where(k => k.Key == IDN.Core.Helpers.Dictionaries.SetorProdutivo[n]))
+                                                .Where(k => k.Key == Dictionaries.SetorProdutivo[n]))
                     {
                         _empresas = subitem.Value
                                                 .Where(s => s.Key.StartsWith(n!))
@@ -211,7 +211,7 @@ public class GeojsonController : ControllerBase
                     }
 
                     f.Properties!.Empresas = _empresas;
-                    f.Properties!.Setor = IDN.Core.Helpers.Dictionaries.SetorProdutivo[n!];
+                    f.Properties!.Setor = Dictionaries.SetorProdutivo[n!];
                     _features.Add(f);
                 }
             }
@@ -261,7 +261,7 @@ public class GeojsonController : ControllerBase
                     string _segmento = string.Empty;
                     int _empresas = 0;
                     foreach (var subitem in item.TAtividadesDescritivas!
-                                                .Where(k => k.Key == IDN.Core.Helpers.Dictionaries.SetorProdutivo[n![..2]!]))
+                                                .Where(k => k.Key == Dictionaries.SetorProdutivo[n![..2]!]))
                     {
                         _empresas = subitem.Value
                                                 .Where(s => s.Key.StartsWith(n!))
@@ -271,7 +271,7 @@ public class GeojsonController : ControllerBase
                     }
 
                     f.Properties!.Empresas = _empresas;
-                    f.Properties!.Setor = IDN.Core.Helpers.Dictionaries.SetorProdutivo[n![..2]!];
+                    f.Properties!.Setor = Dictionaries.SetorProdutivo[n![..2]!];
                     _features.Add(f);
                 }
             }

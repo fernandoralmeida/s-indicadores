@@ -1,4 +1,4 @@
-﻿@page "/setores"
+﻿@page "/setores/{n?}"
 @model Setores.IndexModel
 @{
     Layout = "_LayoutMap";
@@ -6,89 +6,67 @@
     ViewData["ActivePage"] = Shared.NavPages.MapSetores;
 }
 
-<div id="cnae-container">
-    <a href="#" data-target="slide-out" class="sidenav-trigger btn-small"><i class="material-icons">menu</i></a>
-    @* <ul class="collapsible margin-0 hide-on-med-and-down">
-        <form method="post" asp-page-handler="DCnae">
-            <div class="div-search-cnae valign-wrapper">
-                <i class="material-icons margin-l-10 grey-text">search</i>
-                <input class="input-search-cnae browser-default" type="search" asp-for="Search" placeholder="CNAE ex: 15 ou 1531901">
-            </div>
-        </form>
-        @foreach (var setor in Model.Setore_Segmentos_Cnaes!)
-        {
-            <li>
-                <div class="collapsible-header"><i class="material-icons">place</i>@setor.Key</div>
-                <div class="collapsible-body padding-10">
-                    <ul class="collapsible margin-0">
-                        @foreach (var segmento in setor.Value)
-                        {
-                            <li>
-                                <div class="collapsible-header" title="CNAE Grupo: @segmento.Key[..2]" data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)">
-                                    @segmento.Key.Remove(0, 2)
-                                </div>
-                                <div class="collapsible-body padding-10">
-                                    <div class="row center padding-b-10">
-                                        <a class="segmento_click btn-link"
-                                            data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)" title="CNAE Grupo: @segmento.Key[..2]">VER
-                                            SEGMENTO @segmento.Key.Remove(0, 2)</a>
-                                    </div>
-                                    @foreach (var cnae in segmento.Value)
-                                    {
-                                        <p><a class="cnae_click" data-cnae="@cnae[..7]" data-descricao="@cnae.Remove(0, 7)" title="CNAE @cnae[..7]">@cnae.Remove(0, 7)</a></p>
-                                        <div class="divider"></div>
-                                    }
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </li>
-        }
-    </ul> *@
+<div id="float-container-l">
+    <a href="#" data-target="slide-out" class="sidenav-trigger btn"><i class="material-icons">construction</i></a>
 </div>
-
-<ul class="sidenav collapsible" id="slide-out">
-        <form method="post" asp-page-handler="MCnae">
-            <div class="div-search-cnae valign-wrapper">
-                <i class="material-icons margin-l-10 grey-text">search</i>
-                <input class="input-search-cnae browser-default" type="search" asp-for="Search" placeholder="CNAE ex: 15 ou 1531901">
-            </div>
-        </form>
+<div class="sidenav" id="slide-out">
+    <div class="div-search-cnae valign-wrapper margin-b-0">
+        <i class="material-icons margin-l-10 grey-text">search</i>
+        <input class="input-search-cnae browser-default" onkeypress="handle(event)" type="search"
+            placeholder="CNAE ex: 15 ou 1531901">
+    </div>
+    <ul class="collapsible" id="setores">
         @foreach (var setor in Model.Setore_Segmentos_Cnaes!)
         {
             <li>
                 <div class="collapsible-header">@setor.Key</div>
                 <div class="collapsible-body">
-                    <ul class="collapsible margin-0">
-                        @foreach (var segmento in setor.Value)
+                    @foreach (var segmento in setor.Value)
+                    {
+                        <div class="row line-normal padding-t-10 margin-b-10">
+                            <a class="btn-small sidenav-close submit" asp-page="/Setores/Index" asp-route-n="@segmento.Key[..2]"
+                                data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)"
+                                title="CNAE Grupo: @segmento.Key[..2]">> @segmento.Key.Remove(0, 2)</a>
+                        </div>
+                        @foreach (var cnae in segmento.Value)
                         {
-                            <li>
-                                <div class="collapsible-header line-normal padding-b-10 padding-t-10" title="CNAE Grupo: @segmento.Key[..2]">
-                                    > @segmento.Key.Remove(0, 2)
-                                </div>
-                                <div class="collapsible-body">
-                                    <div class="row line-normal center padding-t-10 margin-b-10">
-                                        <a class="segmento_click btn-link sidenav-close"
-                                            data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)" title="CNAE Grupo: @segmento.Key[..2]">VER
-                                            SEGMENTO @segmento.Key.Remove(0, 2)</a>
-                                    </div>
-                                    @foreach (var cnae in segmento.Value)
-                                    {
-                                        <p class="line-normal"><a class="cnae_click sidenav-close truncate" data-cnae="@cnae[..7]" data-descricao="@cnae.Remove(0, 7)" title="CNAE @cnae[..7]">>>@cnae.Remove(0, 7)</a></p>
-                                        @* <div class="divider"></div> *@
-                                    }
-                                </div>
-                            </li>
+                            <p class="line-normal"><a class="sidenav-close truncate submit" asp-page="/Setores/Index"
+                                    asp-route-n="@cnae[..7]" data-cnae="@cnae[..7]" data-descricao="@cnae.Remove(0, 7)"
+                                    title="CNAE @cnae[..7]">>>@cnae.Remove(0, 7)</a></p>
+
                         }
-                    </ul>
+                        <div class="divider"></div>
+                    }
                 </div>
             </li>
         }
-</ul>
+    </ul>
+</div>
 
-<div id="map" class="map"></div>
+<div class="container-map-charts">
+    <div class="w-55p">
+        @{
+            await Html.RenderPartialAsync("_Navbar");
+        }
+        <div id="map" class="map"></div>
+    </div>
+    <div class="w-45p">
+        @{
+            await Html.RenderPartialAsync("_Charts0", Model.ModelCharts);
+        }
+    </div>
+</div>
 
+<script>
+    var _page_link = '@Model.PageParam';
+    var _mapMode = '@Model.MapMode';
+    var spanResult_l = document.getElementById("span_result");
+    spanResult_l.textContent = '@Model.Cnae';
+    function submitClick() {
+        $(".blackboxload").show();
+        $("#loader").show();
+    }
+</script>
 <script src="~/osm/geo-api.js" asp-append-version="true"></script>
 <script src="~/osm/geo-base.js" asp-append-version="true"></script>
 <script src="~/osm/geo-legend-s.js" asp-append-version="true"></script>
@@ -99,17 +77,25 @@
 <script src="~/osm/geo-zoomfeature-s-SC.js" asp-append-version="true"></script>
 <script src="~/osm/geo-oneachfeature.js" asp-append-version="true"></script>
 <script src="~/osm/geo-oneachfeature-SC.js" asp-append-version="true"></script>
+<script src="~/js/cnae-list.js" asp-append-version="true"></script>
 <script>
-    var _page_link = '';
-    loadData('/api/v1/geojson/');
+    if (_mapMode === '0') {
+        loadData('@Model.UrlAPI');
+    }
+    else {
+        doMapByCNAE('@Model.UrlAPI');
+    }
     function handle(e) {
         if (e.keyCode === 13) {
+            $(".blackboxload").show();
+            $("#loader").show();
             var v = $(".input-search-cnae").val();
-            if (v === "")
-                return false;
-
-            _page_link = v;
-            doMapByCNAE(`/api/v1/geojson/cnae/` + v);
+            //if (v === "")
+            //return false;
+            const _url = '/api/v1/setores/' + v;
+            carregarSetores(_url);
+            $("#loader").hide();
+            $(".blackboxload").fadeOut("slow");
         }
     }
 </script>

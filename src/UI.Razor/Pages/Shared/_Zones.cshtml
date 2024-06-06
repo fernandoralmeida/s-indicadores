@@ -1,0 +1,26 @@
+@using IDN.Services.Empresa.Records;
+@using IDN.Services.Helpers;
+@model REmpresas
+
+@if (Model!.EmpresasPorLocal != null)
+{
+    @foreach (var item in Model!.EmpresasPorLocal!)
+    {
+        var _key = @item.Key!.EncryptURL();
+
+        <p>
+            <a class="rag_click submit btn-link" asp-route-zn="@_key">@item.Key</a>
+            <i class="material-icons left">place</i>
+        </p>
+        <div class="divider"></div>
+    }
+}
+
+<script>
+    $(document).ready(function () {
+        $(".submit").click(function () {
+            $(".blackboxload").show();
+            $("#loader").show();
+        });
+    });
+</script>

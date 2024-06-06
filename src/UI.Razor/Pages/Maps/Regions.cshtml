@@ -5,14 +5,21 @@
     ViewData["Title"] = "Densidade Empresarial do Estado de SP";
     ViewData["ActivePage"] = Shared.NavPages.MapCompanies;
 }
-
+<div id="float-container-l" class="w-fc">
+    <a class="btn" asp-page="./Index"><i class="material-icons">arrow_back</i></a>    
+</div>
 
 <div class="container-map-charts">
     <div class="w-45p">
-        <div id="map" class="card map"></div>
+        @{
+            await Html.RenderPartialAsync("_Navbar");
+        }
+        <div id="map" class="map"></div>
     </div>
     <div class="w-55p">
-        <partial name="_Charts" model="Model.ControlCharts" />
+        @{
+            await Html.RenderPartialAsync("_Charts", Model.ControlCharts);
+        }
     </div>
 </div>
 

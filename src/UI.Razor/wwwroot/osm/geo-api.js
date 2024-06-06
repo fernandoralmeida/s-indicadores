@@ -1,8 +1,8 @@
 //ignora o IndexDB e força busca direto na API
 //usado para funcoes SC
 function doMapByCNAE(_url) {
-    $("#loader").show();
-    $(".blackboxload").show();
+    //$("#loader").show();
+    //$(".blackboxload").show();
     // Limpar o mapa (opcional)
     map.eachLayer(function (layer) {
         if (layer instanceof L.GeoJSON) {
@@ -33,8 +33,8 @@ function doMapByCNAE(_url) {
     
             // Ajustar o mapa para abranger a área GeoJSON com zoom
             map.fitBounds(geojsonLayer.getBounds());
-            $("#loader").hide();
-            $(".blackboxload").fadeOut("slow");
+            // $("#loader").hide();
+            // $(".blackboxload").fadeOut("slow");
         })
         .catch(error => console.error('Erro ao carregar dados GeoJSON da API:', error));
 }
@@ -46,8 +46,8 @@ function doMapByDetail(_url) {
         .then(response => response.json())
         .then(data => {
 
-            $("#loader").hide();
-            $(".blackboxload").fadeOut("slow");
+            // $("#loader").hide();
+            // $(".blackboxload").fadeOut("slow");
 
             // Adicionar camada GeoJSON ao mapa
             var geojsonLayer = L.geoJSON(data, {

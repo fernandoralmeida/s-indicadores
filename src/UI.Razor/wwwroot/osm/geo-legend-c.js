@@ -1,5 +1,5 @@
 // legendas
-var legendSC = L.control({ position: 'bottomleft' });
+var legendSC = L.control({ position: 'bottomright' });
 
 legendSC.onAdd = function (map) {
 

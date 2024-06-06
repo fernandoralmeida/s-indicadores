@@ -1,28 +1,19 @@
-<!-- Dropdown Structure -->
-@* <ul id="dropdown1" class="dropdown-content">
-    <li><a asp-page="/About"><i class="material-icons">info</i></a></li>
-    <li><a asp-page="/Info"><i class="material-icons">help</i></a></li>   
-</ul> *@
 
 <div class="navbar">
-    <nav class="nav-extended bg-color-light z-depth-0">
+    <nav class="nav-extended z-depth-0 bg-color-light">
         <div class="nav-wrapper">
-            @* <div class="brand-logo"><img src="~/svg/idnet-new-text.svg" alt="Indicadores.NET">
-            </div> *@
-            @* <div class="col s4 left truncate margin-l-10"><span id="span_result">*</span></div> *@
             <ul class="col s4 center">
-                <li><img class="margin-t-10" src="~/svg/idnet-new.svg" alt="Indicadores.NET"></li>
+                <li><img class="margin-t-10" src="~/svg/idnet-new-i.svg" alt="Indicadores.NET"></li>
                 <li class="@NavPages.MapCompaniesNavClass(ViewContext)">
                     <a asp-page="/Index" class="@NavPages.MapCompaniesNavClass(ViewContext) submit">Empresas</a>
                 </li>
                 <li class="@NavPages.MapSetoresNavClass(ViewContext)">
-                    <a asp-page="/Setores/Index" class="@NavPages.MapSetoresNavClass(ViewContext) submit">Setores</a>
+                    <a asp-page="/Setores/Index" asp-route-n="" class="@NavPages.MapSetoresNavClass(ViewContext) submit">Setores</a>
                 </li>
-                @* <li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><i class="material-icons">more_vert</i></a></li> *@
             </ul>
             <ul class="col s4 right hide-on-med-and-down">
-                <li class="@NavPages.InfoNavClass(ViewContext)"><a asp-page="/About"><i class="material-icons">info</i></a></li>
-                <li class="@NavPages.PrivacyNavClass(ViewContext)"><a asp-page="/Privacy"><i class="material-icons">policy</i></a></li>                
+                <li class="@NavPages.InfoNavClass(ViewContext)"><a asp-page="/About" class="@NavPages.InfoNavClass(ViewContext) submit"><i class="material-icons">info</i></a></li>
+                <li class="@NavPages.PrivacyNavClass(ViewContext)"><a asp-page="/Privacy" class="@NavPages.PrivacyNavClass(ViewContext) submit"><i class="material-icons">policy</i></a></li>                
             </ul>
         </div>
         <div class="nav-content bg-color-grey">

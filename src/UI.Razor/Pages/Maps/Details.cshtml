@@ -1,5 +1,4 @@
-
-@page "/maps/sp/{o}/{m?}"
+@page "/maps/sp/{o}/{m?}/{zn?}"
 @model Pages.Maps.DetailsModel
 @{
     Layout = "_LayoutMap";
@@ -7,16 +6,49 @@
     ViewData["ActivePage"] = Shared.NavPages.MapCompanies;
 }
 
-<div id="div-flutuante-l" class="w-fc">
-    <a class="btn" asp-page="/Maps/Regions" asp-route-m="@Model.Origin">Voltar</a>
+<div id="float-container-l" class="w-fc">
+    <a class="btn" asp-page="/Maps/Regions" asp-route-m="@Model.Origin" title="Voltar"><i
+            class="material-icons">arrow_back</i></a>
+    <a href="#" data-target="slide-out" class="btn sidenav-trigger margin-l-10"><i class="material-icons">place</i></a>
 </div>
+
+<div class="sidenav bg-color-white" id="slide-out">
+    <p><a class="rag_click submit btn-link" asp-page="./Details" asp-route-zn="">TODOS</a><i class="material-icons left">place</i></p>
+    <div class="divider"></div>
+    <div id="zones-container"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/maps/sp/@Model.Origin/@Model.GeoCode?handler=Zones&c=@Model.GeoCode',
+            method: 'GET',
+            success: function (data) {
+                $('#zones-container').append(data);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading zones:', status, error);
+            }
+        });
+        $(".submit").click(function () {
+            $(".blackboxload").show();
+            $("#loader").show();
+        });
+    });
+</script>
 
 <div class="container-map-charts">
     <div class="w-45p">
+        @{
+            await Html.RenderPartialAsync("_Navbar");
+        }
         <div id="map" class="map"></div>
     </div>
     <div class="w-55p">
-        <partial name="_Charts" model="Model.ControlCharts" />
+        @{
+            await Html.RenderPartialAsync("_Charts", Model.ControlCharts);
+        }
     </div>
 </div>
 
@@ -25,7 +57,7 @@
 <script src="~/osm/geo-style-e.js" asp-append-version="true"></script>
 <script src="~/osm/geo-zoomfeature-d.js" asp-append-version="true"></script>
 <script src="~/osm/geo-oneachfeature.js" asp-append-version="true"></script>
-<script>    
+<script>
     const i_spanResult = document.getElementById("span_result");
     i_spanResult.textContent = '@Model.Cidade?.ToUpper()';
 
@@ -33,8 +65,8 @@
     fetch('/api/v1/geojson/@Model.GeoCode')
         .then(response => response.json())
         .then(data => {
-            $("#loader").hide();
-            $(".blackboxload").fadeOut("slow");
+            @* $("#loader").hide();
+            $(".blackboxload").fadeOut("slow"); *@
 
             _max = data.max;
             // Adicionar camada GeoJSON ao mapa

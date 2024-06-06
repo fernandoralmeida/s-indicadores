@@ -134,8 +134,8 @@ public class RegionsModel : PageModel
 
                         TAtividades = SumAndGroup_SubList(_listREmpresas, e => e.TAtividades!),
                         TAtividadesDescritivas = SumAndGroup_SubList(_listREmpresas, e => e.TAtividadesDescritivas!),
-                        Top3Atividades = SumAndGroup_SubList(_listREmpresas, e => e.Top3Atividades!),
-                        Top3Atividades_Ano = SumAndGroup_SubList(_listREmpresas, e => e.Top3Atividades_Ano!),
+                        Top3Atividades = SumAndGroup_SubList_Top3(_listREmpresas, e => e.Top3Atividades!),
+                        Top3Atividades_Ano = SumAndGroup_SubList_Top3(_listREmpresas, e => e.Top3Atividades_Ano!),
                         Porte = SumAndGroup_SubList(_listREmpresas, e => e.Porte!),
                         Porte_Ano = SumAndGroup_SubList(_listREmpresas, e => e.Porte_Ano!),
                         TaxaCrescimentoSetorial = SumAndGroup_SubList(_listREmpresas, e => e.TaxaCrescimentoSetorial!)
@@ -182,6 +182,22 @@ public class RegionsModel : PageModel
                select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(l.Key,
                        from sl in l.SelectMany(e => e.Value)
                                    .GroupBy(g => g.Key)
+                       select (new KeyValuePair<string, int>(sl.Key, sl.Sum(sm => sm.Value)))));
+    }
+
+    private static IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>> SumAndGroup_SubList_Top3(
+IEnumerable<REmpresas> list,
+Func<REmpresas, IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>>> selector)
+    {
+        return from l in list
+                            .SelectMany(selector)
+                            .GroupBy(g => g.Key)
+
+               select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(l.Key,
+                       from sl in l.SelectMany(e => e.Value)
+                                   .GroupBy(g => g.Key)
+                                    .OrderByDescending(k => k.Sum(e => e.Value))
+                                    .Take(3)
                        select (new KeyValuePair<string, int>(sl.Key, sl.Sum(sm => sm.Value)))));
     }
 

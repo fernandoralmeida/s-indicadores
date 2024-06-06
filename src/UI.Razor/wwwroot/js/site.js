@@ -84,7 +84,7 @@ $(window).on('load', function () {
 
 $(function () {
     $(".submit").click(function () {
-        $("#startbtn").hide();
+        // $("#startbtn").hide();
         $(".blackboxload").show();
         $("#loader").show();
         $(this).addClass('pre-active');

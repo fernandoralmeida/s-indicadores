@@ -6,12 +6,21 @@
     ViewData["ActivePage"] = Shared.NavPages.MapSetores;
 }
 
+<div id="float-container-l" class="w-fc">
+    <a class="btn" asp-page="/Setores/Index" title="Voltar"><i class="material-icons">arrow_back</i></a>
+</div>
+
 <div class="container-map-charts">
     <div class="w-45p">
+        @{
+            await Html.RenderPartialAsync("_Navbar");
+        }
         <div id="map" class="map"></div>
     </div>
     <div class="w-55p">
-        <partial name="_Charts" model="Model.ControlCharts" />
+        @{
+            await Html.RenderPartialAsync("_Charts", Model.ControlCharts);
+        }
     </div>
 </div>
 
@@ -23,7 +32,7 @@
 <script src="~/osm/geo-oneachfeature-SC.js" asp-append-version="true"></script>
 <script>
     const i_spanResult = document.getElementById("span_result");
-    i_spanResult.textContent = '@Model.Cidade?.ToUpper() - @Model.Cnae';    
+    i_spanResult.textContent = '@Model.Cidade?.ToUpper() - @Model.Cnae';
     _max = @Model.MaxCnae;
 
     // Carregar dados GeoJSON de uma API
@@ -41,7 +50,3 @@
     }
 
 </script>
-
-
-
-

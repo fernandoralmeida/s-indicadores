@@ -10,115 +10,75 @@
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div id="cnae-container">
-    <a href="#" data-target="slide-out" class="btn-small sidenav-trigger"><i class="material-icons text-color-light">menu</i></a>
-    @* <ul class="collapsible margin-0 hide-on-med-and-down">
-        <form class="div-search-cnae valign-wrapper" method="post">
-            <i class="material-icons margin-l-10 grey-text">search</i>
-            <input class="input-search-cnae browser-default" type="search" placeholder="Procurar cidade"
-                onkeypress="handle(event)" asp-for="@Model.Cidade">
-        </form>
-        <li>
-            <div class="collapsible-header">Regiões Administrativas</div>
-            <div class="collapsible-body padding-10">                
-                @foreach (var macro in Model.RegioesAdministrativas!)
-                {
-                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="ra-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    <div class="divider"></div>
-                }                
-            </div>
-        </li>    
-        <li>
-            <div class="collapsible-header">Regiões de Governo</div>
-            <div class="collapsible-body padding-10">
-                @foreach (var macro in Model.RegioesGovernoSP!)
-                {
-                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rg-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    <div class="divider"></div>
-                }  
-            </div>
-        </li>
-        <li>
-            <div class="collapsible-header">Regiões Metropolitanas</div>
-            <div class="collapsible-body padding-10">
-                @foreach (var macro in Model.RegioesMetropolitanasSP!)
-                {
-                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rm-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    <div class="divider"></div>
-                }  
-            </div>
-        </li>
-        <li>
-            <div class="collapsible-header">Aglomerados Urbanos</div>
-            <div class="collapsible-body padding-10">
-                @foreach (var macro in Model.AglomeradosUrbanosSP!)
-                {
-                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="au-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    <div class="divider"></div>
-                }  
-            </div>
-        </li>        
-    </ul> *@
+<div id="float-container-l">
+    <a href="#" data-target="slide-out" class="btn sidenav-trigger"><i class="material-icons">map</i></a>
 </div>
 
 <ul class="sidenav collapsible" id="slide-out">
-        <form class="div-search-cnae valign-wrapper" method="post">
-            <i class="material-icons margin-l-10 grey-text">search</i>
-            <input class="input-search-cnae browser-default" type="search" placeholder="Procurar cidade"
-                onkeypress="handle(event)" asp-for="@Model.Cidade">
-        </form>
-        <li>
-            <div class="collapsible-header">Regiões Administrativas</div>
-            <div class="collapsible-body">                
-                @foreach (var macro in Model.RegioesAdministrativas!)
-                {
-                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="ra-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    @* <div class="divider"></div> *@
-                }                
-            </div>
-        </li>    
-        <li>
-            <div class="collapsible-header">Regiões de Governo</div>
-            <div class="collapsible-body">
-                @foreach (var macro in Model.RegioesGovernoSP!)
-                {
-                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rg-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    @* <div class="divider"></div> *@
-                }  
-            </div>
-        </li>
-        <li>
-            <div class="collapsible-header">Regiões Metropolitanas</div>
-            <div class="collapsible-body">
-                @foreach (var macro in Model.RegioesMetropolitanasSP!)
-                {
-                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rm-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    @* <div class="divider"></div> *@
-                }  
-            </div>
-        </li>
-        <li>
-            <div class="collapsible-header">Aglomerados Urbanos</div>
-            <div class="collapsible-body">
-                @foreach (var macro in Model.AglomeradosUrbanosSP!)
-                {
-                    <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="au-@macro.Value">@macro.Key</a><i class="material-icons left">place</i></p>
-                    @* <div class="divider"></div> *@
-                }  
-            </div>
-        </li>        
+    <form class="div-search-cnae valign-wrapper" method="post">
+        <i class="material-icons margin-l-10 grey-text">search</i>
+        <input class="input-search-cnae browser-default" type="search" placeholder="Procurar cidade"
+            onkeypress="handle(event)" asp-for="@Model.Cidade">
+    </form>
+    <li>
+        <div class="collapsible-header">Regiões Administrativas</div>
+        <div class="collapsible-body">
+            @foreach (var macro in Model.RegioesAdministrativas!)
+            {
+                <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="ra-@macro.Value">@macro.Key</a><i
+                        class="material-icons left">place</i></p>
+                @* <div class="divider"></div> *@
+            }
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Regiões de Governo</div>
+        <div class="collapsible-body">
+            @foreach (var macro in Model.RegioesGovernoSP!)
+            {
+                <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rg-@macro.Value">@macro.Key</a><i
+                        class="material-icons left">place</i></p>
+                @* <div class="divider"></div> *@
+            }
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Regiões Metropolitanas</div>
+        <div class="collapsible-body">
+            @foreach (var macro in Model.RegioesMetropolitanasSP!)
+            {
+                <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="rm-@macro.Value">@macro.Key</a><i
+                        class="material-icons left">place</i></p>
+                @* <div class="divider"></div> *@
+            }
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Aglomerados Urbanos</div>
+        <div class="collapsible-body">
+            @foreach (var macro in Model.AglomeradosUrbanosSP!)
+            {
+                <p><a class="rag_click submit btn-link" data-estado="sp" data-macro="au-@macro.Value">@macro.Key</a><i
+                        class="material-icons left">place</i></p>
+                @* <div class="divider"></div> *@
+            }
+        </div>
+    </li>
 </ul>
 
-@* <div id="map" class="map"></div> *@
 <div class="container-map-charts">
     <div class="w-55p">
+        @{
+            await Html.RenderPartialAsync("_Navbar");
+        }
         <div id="map" class="map"></div>
     </div>
     <div class="w-45p">
-        <partial name="_Charts" model="Model.ControlCharts" />
+        @{
+            await Html.RenderPartialAsync("_Charts0", Model.ModelCharts);
+        }
     </div>
 </div>
-
 
 <script src="~/osm/geo-base.js" asp-append-version="true"></script>
 <script src="~/osm/geo-legend-e.js" asp-append-version="true"></script>
@@ -139,4 +99,5 @@
             $("#loader").show();
         }
     }
+
 </script>

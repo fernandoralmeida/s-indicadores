@@ -62,11 +62,11 @@
     }
 
     function zoomToFeature(e) {
-        //map.fitBounds(e.target.getBounds());        
-        var layer = e.target;
-        const url = '/uf/' + layer.feature.properties.UF_05;
+        map.fitBounds(e.target.getBounds());        
+        //var layer = e.target;
+        //const url = '/';// + layer.feature.properties.UF_05;
         // Redireciona para a página interna
-        location.href = url;
+        //location.href = url;
     }
 
     function highlightFeature(e) {
