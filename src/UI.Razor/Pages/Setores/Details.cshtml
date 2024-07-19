@@ -10,14 +10,16 @@
     <a class="btn" asp-page="/Setores/Index" title="Voltar"><i class="material-icons">arrow_back</i></a>
 </div>
 
-<div class="container-map-charts">
-    <div class="w-45p">
+<partial name="_LoadingMap" />
+
+<div class="container-map-charts bg-grey gap-2">
+    <div class="w-50p">
         @{
             await Html.RenderPartialAsync("_Navbar");
         }
         <div id="map" class="map"></div>
     </div>
-    <div class="w-55p">
+    <div class="w-50p">
         @{
             await Html.RenderPartialAsync("_Charts", Model.ControlCharts);
         }

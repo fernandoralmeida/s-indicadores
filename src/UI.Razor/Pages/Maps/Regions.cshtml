@@ -9,14 +9,16 @@
     <a class="btn" asp-page="./Index"><i class="material-icons">arrow_back</i></a>    
 </div>
 
-<div class="container-map-charts">
-    <div class="w-45p">
+<partial name="_LoadingMap" />
+
+<div class="container-map-charts bg-grey gap-2">
+    <div class="w-50p">
         @{
             await Html.RenderPartialAsync("_Navbar");
         }
         <div id="map" class="map"></div>
     </div>
-    <div class="w-55p">
+    <div class="w-50p">
         @{
             await Html.RenderPartialAsync("_Charts", Model.ControlCharts);
         }
@@ -40,6 +42,9 @@
         location.href = url;
     }
 
+    var loadingMapDiv = document.getElementById('loadingMap');
+    loadingMapDiv.classList.add("visible-on");
+    
     // Carregar dados GeoJSON de uma API
     fetch('/api/v1/geojson/ram-sp/@Model.Cidade')
         .then(response => response.json())
@@ -47,9 +52,10 @@
             // Adicionar camada GeoJSON ao mapa
             _max = data.max;
             processData(data);
-            $("#loader").hide();
-            $(".blackboxload").fadeOut("slow");
-
+            @* $("#loader").hide();
+            $(".blackboxload").fadeOut("slow"); *@
+            loadingMapDiv.classList.remove("visible-on");
+            loadingMapDiv.classList.add("visible-off");
         })
         .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
 

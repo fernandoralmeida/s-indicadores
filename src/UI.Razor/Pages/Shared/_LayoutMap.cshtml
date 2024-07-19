@@ -14,24 +14,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
-<body id="_smooth">
-    <div class="blackboxload">
-        <div id="loader" class="row div-center glass-80 z-depth-2">
-            <div class="preloader-wrapper big active">
-                <div class="spinner-layer spinner-blue-only">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="gap-patch">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<body id="_smooth" class="bg-grey">
+    <partial name="_Loader" />
     <main>
         @RenderBody()
     </main>
@@ -41,6 +25,7 @@
     <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/materialize/js/materialize.min.js"></script>
     <script type="text/javascript" src="~/lib/apexcharts/apexcharts.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script type="text/javascript" src="~/js/s-func.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 

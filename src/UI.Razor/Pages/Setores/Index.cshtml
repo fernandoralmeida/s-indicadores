@@ -9,6 +9,9 @@
 <div id="float-container-l">
     <a href="#" data-target="slide-out" class="sidenav-trigger btn"><i class="material-icons">construction</i></a>
 </div>
+
+<partial name="_LoadingMap" />
+
 <div class="sidenav" id="slide-out">
     <div class="div-search-cnae valign-wrapper margin-b-0">
         <i class="material-icons margin-l-10 grey-text">search</i>
@@ -43,16 +46,16 @@
     </ul>
 </div>
 
-<div class="container-map-charts">
-    <div class="w-55p">
+<div class="container-map-charts bg-grey gap-2">
+    <div class="w-50p">
         @{
             await Html.RenderPartialAsync("_Navbar");
         }
         <div id="map" class="map"></div>
     </div>
-    <div class="w-45p">
+    <div class="w-50p">
         @{
-            await Html.RenderPartialAsync("_Charts0", Model.ModelCharts);
+            await Html.RenderPartialAsync("_Charts", Model.ModelCharts);
         }
     </div>
 </div>
@@ -87,15 +90,15 @@
     }
     function handle(e) {
         if (e.keyCode === 13) {
-            $(".blackboxload").show();
-            $("#loader").show();
+            @* $(".blackboxload").show();
+            $("#loader").show(); *@
             var v = $(".input-search-cnae").val();
             //if (v === "")
             //return false;
             const _url = '/api/v1/setores/' + v;
             carregarSetores(_url);
-            $("#loader").hide();
-            $(".blackboxload").fadeOut("slow");
+            @* $("#loader").hide();
+            $(".blackboxload").fadeOut("slow"); *@
         }
     }
 </script>

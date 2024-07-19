@@ -4,6 +4,10 @@ var _url_zoomtofeatures = '';
 // Criar o mapa Leaflet
 var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
 
+var loadingMapDiv = document.getElementById('loadingMap');
+// Tornar a div visível alterando a propriedade display
+loadingMapDiv.classList.add("visible-on");
+
 var info = L.control();
 
 info.onAdd = function (map) {
@@ -91,6 +95,7 @@ function loadGeoJSONFromIndexedDB() {
 // Carregar dados GeoJSON
 function loadData(_url) {
     // Verificar se os dados estão no localStorage e se a última atualização foi em um dia diferente
+
     var lastUpdateDate = localStorage.getItem('lastUpdateDate');
     var currentDate = new Date().toLocaleDateString();
 
@@ -104,11 +109,15 @@ function loadData(_url) {
                 // Dados encontrados no IndexedDB, processar os dados
                 _max = data.max;
                 processData(data);
-
             })
             .catch(error => {
                 // Dados não encontrados no IndexedDB ou erro, carregar dados da API
                 fetchDataFromAPI(_url);
+            })
+            .finally(() => {
+                // Código a ser executado sempre, independentemente do sucesso ou falha da requisição
+                loadingMapDiv.classList.remove("visible-on");
+                loadingMapDiv.classList.add("visible-off");;
             });
     }
 }
@@ -128,7 +137,12 @@ function fetchDataFromAPI(_api_url) {
             _max = data.max;
             processData(data);
         })
-        .catch(error => console.error('Erro ao carregar dados GeoJSON da API:', error));
+        .catch(error => console.error('Erro ao carregar dados GeoJSON da API:', error))
+        .finally(() => {
+            // Código a ser executado sempre, independentemente do sucesso ou falha da requisição
+            loadingMapDiv.classList.remove("visible-on");
+            loadingMapDiv.classList.add("visible-off");;
+        });
 }
 
 // Função para armazenar dados no IndexedDB

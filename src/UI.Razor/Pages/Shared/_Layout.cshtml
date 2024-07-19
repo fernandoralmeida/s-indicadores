@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Indicadores.net - @ViewData["Title"]</title>   
+    <title>Indicadores.net - @ViewData["Title"]</title>
     <link rel="shortcut icon" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/lib/google/material-symbols-sharp.css" />
     <link rel="stylesheet" href="~/lib/materialize/css/materialize.min.css" />
@@ -15,27 +15,11 @@
 </head>
 
 <body id="_smooth" class="bg-color-light">
-    <div class="blackboxload">
-        <div id="loader" class="row div-center glass-80 z-depth-2">
-            <div class="preloader-wrapper big active">
-                <div class="spinner-layer spinner-blue-only">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="gap-patch">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <partial name="_Loader" />
 
     <!--<div class="bg-image-glass"></div>-->
     <main style="margin-bottom:20px;">
-        @RenderBody()        
+        @RenderBody()
     </main>
     @* <partial name="_StripColors" /> *@
     <footer class="page-footer bg-color-light-2">
@@ -50,9 +34,9 @@
                     <h5 class="text-color-grey"><a class="text-color-grey right" href="#_smooth"
                             title="Ir para o Topo da pagina"><i class="material-icons">stat_3</i></a></h5>
                     <ul>
-                        <li><a class="text-color-grey"
-                                href="https://www.linkedin.com/in/fernando-roberto-almeida/" target="_blank"><img
-                                    src="~/svg/linkedin.svg" alt="linkedin" style="width: 28px;"></a></li>
+                        <li><a class="text-color-grey" href="https://www.linkedin.com/in/fernando-roberto-almeida/"
+                                target="_blank"><img src="~/svg/linkedin.svg" alt="linkedin" style="width: 28px;"></a>
+                        </li>
 
                         <li><a class="text-color-grey" href="#!" target="_blank"><img src="~/svg/instagram.svg"
                                     style="width: 28px;" alt="instagram"></a></li>

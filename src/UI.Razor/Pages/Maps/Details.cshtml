@@ -12,8 +12,11 @@
     <a href="#" data-target="slide-out" class="btn sidenav-trigger margin-l-10"><i class="material-icons">place</i></a>
 </div>
 
+<partial name="_LoadingMap" />
+
 <div class="sidenav bg-color-white" id="slide-out">
-    <p><a class="rag_click submit btn-link" asp-page="./Details" asp-route-zn="">TODOS</a><i class="material-icons left">place</i></p>
+    <p><a class="rag_click submit btn-link" asp-page="./Details" asp-route-zn="">TODOS</a><i
+            class="material-icons left">place</i></p>
     <div class="divider"></div>
     <div id="zones-container"></div>
 </div>
@@ -38,14 +41,14 @@
     });
 </script>
 
-<div class="container-map-charts">
-    <div class="w-45p">
+<div class="container-map-charts bg-grey gap-2">
+    <div class="w-50p">
         @{
             await Html.RenderPartialAsync("_Navbar");
         }
         <div id="map" class="map"></div>
     </div>
-    <div class="w-55p">
+    <div class="w-50p">
         @{
             await Html.RenderPartialAsync("_Charts", Model.ControlCharts);
         }
@@ -61,18 +64,24 @@
     const i_spanResult = document.getElementById("span_result");
     i_spanResult.textContent = '@Model.Cidade?.ToUpper()';
 
+    var loadingMapDiv = document.getElementById('loadingMap');
+    loadingMapDiv.classList.add("visible-on");
+
     // Carregar dados GeoJSON de uma API
     fetch('/api/v1/geojson/@Model.GeoCode')
         .then(response => response.json())
         .then(data => {
-            @* $("#loader").hide();
-            $(".blackboxload").fadeOut("slow"); *@
-
             _max = data.max;
             // Adicionar camada GeoJSON ao mapa
             processData(data);
+
         })
-        .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
+        .catch(error => console.error('Erro ao carregar dados GeoJSON:', error))
+        .finally(() => {
+            // Código a ser executado sempre, independentemente do sucesso ou falha da requisição
+            loadingMapDiv.classList.remove("visible-on");
+            loadingMapDiv.classList.add("visible-off");;
+        });
 
     function handle(e) {
         if (e.keyCode === 13) {
@@ -80,11 +89,8 @@
             if (v === "")
                 return false;
 
-            //const url = '/maps/' + v;
-            //location.href = url;
             $(".blackboxload").show();
             $("#loader").show();
         }
     }
-
 </script>

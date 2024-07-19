@@ -15,6 +15,8 @@
     }
 </div>
 
+<partial name="_LoadingMap" />
+
 <div class="sidenav bg-color-white" id="slide-out">
     <p><a class="rag_click submit btn-link padding-r-10" asp-page="./Index" asp-route-zn="">TODOS</a><i
             class="material-icons left">place</i></p>
@@ -45,14 +47,14 @@
 </script>
 }
 
-<div class="container-map-charts">
-    <div class="w-45p">
+<div class="container-map-charts bg-grey gap-2">
+    <div class="w-50p">
         @{
             await Html.RenderPartialAsync("_Navbar");
         }
         <div id="map" class="map"></div>
     </div>
-    <div class="w-55p">
+    <div class="w-50p">
         @{
             await Html.RenderPartialAsync("_Charts", Model.ControlCharts);
         }
@@ -69,16 +71,18 @@
     const i_spanResult = document.getElementById("span_result");
     i_spanResult.textContent = '@Model.Cidade?.ToUpper()';
 
+    var loadingMapDiv = document.getElementById('loadingMap');
+    loadingMapDiv.classList.add("visible-on");
+
     // Carregar dados GeoJSON de uma API
     fetch('/api/v1/geojson/@Model.GeoCode')
         .then(response => response.json())
         .then(data => {
-    @* $("#loader").hide();
-                $(".blackboxload").fadeOut("slow"); *@
-
-                _max = data.max;
+            _max = data.max;
             // Adicionar camada GeoJSON ao mapa
             processData(data);
+            loadingMapDiv.classList.remove("visible-on");
+            loadingMapDiv.classList.add("visible-off");
         })
         .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
 

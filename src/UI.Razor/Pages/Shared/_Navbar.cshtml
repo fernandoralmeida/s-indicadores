@@ -1,4 +1,3 @@
-
 <div class="navbar">
     <nav class="nav-extended z-depth-0 bg-color-light">
         <div class="nav-wrapper">
@@ -8,12 +7,19 @@
                     <a asp-page="/Index" class="@NavPages.MapCompaniesNavClass(ViewContext) submit">Empresas</a>
                 </li>
                 <li class="@NavPages.MapSetoresNavClass(ViewContext)">
-                    <a asp-page="/Setores/Index" asp-route-n="" class="@NavPages.MapSetoresNavClass(ViewContext) submit">Setores</a>
+                    <a asp-page="/Setores/Index" asp-route-n=""
+                        class="@NavPages.MapSetoresNavClass(ViewContext) submit">Setores</a>
+                </li>
+                <li hidden>
+                    <a class="waves-effect waves-light modal-trigger" href="#_modal_ia"><i
+                            class="material-icons">analytics</i></a>
                 </li>
             </ul>
             <ul class="col s4 right hide-on-med-and-down">
-                <li class="@NavPages.InfoNavClass(ViewContext)"><a asp-page="/About" class="@NavPages.InfoNavClass(ViewContext) submit"><i class="material-icons">info</i></a></li>
-                <li class="@NavPages.PrivacyNavClass(ViewContext)"><a asp-page="/Privacy" class="@NavPages.PrivacyNavClass(ViewContext) submit"><i class="material-icons">policy</i></a></li>                
+                <li class="@NavPages.InfoNavClass(ViewContext)"><a asp-page="/About"
+                        class="@NavPages.InfoNavClass(ViewContext)"><i class="material-icons">info</i></a></li>
+                <li class="@NavPages.PrivacyNavClass(ViewContext)"><a asp-page="/Privacy"
+                        class="@NavPages.PrivacyNavClass(ViewContext)"><i class="material-icons">policy</i></a></li>
             </ul>
         </div>
         <div class="nav-content bg-color-grey">
@@ -23,3 +29,13 @@
 </div>
 
 
+<!-- Modal Structure -->
+<div id="_modal_ia" class="modal">
+    <div class="modal-content">
+        <h6>IA Report</h6>
+        <p>Conteúdo para assinantes...</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn">OK</a>
+    </div>
+</div>

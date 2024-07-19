@@ -4,13 +4,14 @@
 @if (Model.r != null)
 {
     <div class="charts bg-grey">
-    <div class="column-container flex-wrap gap-10">
+    <div class="column-container flex-wrap gap-2">
         @* Acumulado *@
         <div class="card column-p6">
             <div class="card-header activator">
                 Empresas<i class="material-icons right deep-orange-text">help</i>
             </div>
             <div class="column-container flex-wrap margin-0 width-100 no-gap">
+                <i class="material-icons mid text-color-grey swipe-down">swipe_up</i>
                 <div class="w-50p">
                     <div id="chart1"></div>
                 </div>
@@ -76,7 +77,7 @@
                         {
                             <div class="text-color-grey column-container gap-5 margin-t-b-5 width-100 flex-row">
                                 <div class="w-80p font-size-10 truncate">- @subitem.Key</div>
-                                <div class="w-20p btn-small" data-badge-caption="">@subitem.Value</div>
+                                <a href="#_modal_charts" class="w-20p btn-small" data-badge-caption="">@subitem.Value</a>
                             </div>
                             <div class="divider"></div>
                         }
@@ -274,7 +275,7 @@
                                 {
                                     <div class="text-color-grey column-container gap-5 margin-t-b-5 width-100 flex-row">
                                         <div class="w-80p font-size-10 truncate">- @subitem.Key</div>
-                                        <div class="w-20p btn-small" data-badge-caption="">@subitem.Value</div>
+                                        <a href="#_modal_charts" class="w-20p btn-small" data-badge-caption="">@subitem.Value</a>
                                     </div>
                                     <div class="divider"></div>
                                 }
@@ -311,7 +312,7 @@
                                 var _key = @item.Key?.Remove(0, 5);
                                 <div class="text-color-grey column-container gap-5 margin-t-b-5 width-100 flex-row">
                                     <div class="w-80p font-size-10 truncate">- @_key?.ToUpper()</div>
-                                    <a href="#" class="w-20p btn-small" data-badge-caption="">@item.Value</a>
+                                    <a href="#_modal_charts" class="w-20p btn-small" data-badge-caption="">@item.Value</a>
                                 </div>
                                 <div class="divider"></div>
                             }
@@ -337,6 +338,17 @@
 
         </div>
     </div>
+
+    <!-- Modal Structure -->
+    <div id="_modal_charts" class="modal">
+    <div class="modal-content">
+        <h6>IA Report</h6>
+        <p>Conteúdo para assinantes...</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn">OK</a>
+    </div>
+</div>
 
     <script>
     var _width = '100%';

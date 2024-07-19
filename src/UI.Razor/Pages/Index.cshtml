@@ -6,13 +6,11 @@
     ViewData["ActivePage"] = Shared.NavPages.MapCompanies;
 }
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <div id="float-container-l">
     <a href="#" data-target="slide-out" class="btn sidenav-trigger"><i class="material-icons">map</i></a>
 </div>
+
+<partial name="_LoadingMap" />
 
 <ul class="sidenav collapsible" id="slide-out">
     <form class="div-search-cnae valign-wrapper" method="post">
@@ -66,16 +64,16 @@
     </li>
 </ul>
 
-<div class="container-map-charts">
-    <div class="w-55p">
+<div class="container-map-charts bg-grey gap-2">
+    <div class="w-50p">
         @{
             await Html.RenderPartialAsync("_Navbar");
         }
         <div id="map" class="map"></div>
     </div>
-    <div class="w-45p">
+    <div class="w-50p">
         @{
-            await Html.RenderPartialAsync("_Charts0", Model.ModelCharts);
+            await Html.RenderPartialAsync("_Charts", Model.ModelCharts);
         }
     </div>
 </div>
@@ -99,5 +97,4 @@
             $("#loader").show();
         }
     }
-
 </script>
