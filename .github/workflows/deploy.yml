@@ -28,6 +28,7 @@ jobs:
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
+        mkdir -p ~/.ssh  # Cria o diretório .ssh se não existir
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@62.72.11.44 "
