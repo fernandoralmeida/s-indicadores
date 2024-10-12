@@ -729,6 +729,10 @@ nav .arrow-back {
   display: none;
 }
 
+span#span_result {
+  text-decoration-line: underline;
+}
+
 .charts {
   /* background-color: #475966; */
   /* height: calc(100vh - 50px - 26px - 10px); */
