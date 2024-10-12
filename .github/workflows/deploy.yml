@@ -1,0 +1,51 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main  # Executa o deploy ao fazer commit na branch 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.x'
+
+    - name: Restore dependencies
+      run: dotnet restore s-indicadores/src/UI.Razor/UI.Razor.csproj
+
+    - name: Build the application
+      run: dotnet publish s-indicadores/src/UI.Razor/UI.Razor.csproj -c Release -o out
+
+    - name: Backup current app on VPS
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@62.72.11.44 "
+        if [ -d '/root/wwwindicadores/' ]; then
+          mkdir -p /root/wwwindicadores_backup
+          cp -r /root/wwwindicadores/* /root/wwwindicadores_backup/
+          echo 'Backup realizado com sucesso.'
+        else
+          echo 'Diretório de aplicação não encontrado, backup não realizado.'
+        fi
+        "
+
+    - name: Deploy to VPS
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r out/* root@62.72.11.44:/root/wwwindicadores/
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@62.72.11.44 "
+        systemctl restart app-indicadores-net
+        echo 'Deploy feito e serviço reiniciado.'
+        "
