@@ -3,7 +3,7 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - main  # Executa o deploy ao fazer commit na branch 'main'
+      - main
 
 jobs:
   deploy:
@@ -24,12 +24,12 @@ jobs:
     - name: Build the application
       run: dotnet publish src/UI.Razor/UI.Razor.csproj -c Release -o out
 
-    - name: Backup current app on VPS
+    - name: Setup SSH and backup current app on VPS
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        mkdir -p ~/.ssh  # Cria o diretório .ssh se não existir
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa  # Remove possíveis caracteres extras
         chmod 600 ~/.ssh/id_rsa
         ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@62.72.11.44 "
         if [ -d '/root/wwwindicadores/' ]; then
