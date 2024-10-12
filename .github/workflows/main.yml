@@ -1,0 +1,49 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - 1.6
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.x'
+
+    - name: Install dependencies
+      run: dotnet restore s-indicadores/src/UI.Razor/UI.Razor.csproj
+
+    - name: Build the application
+      run: dotnet publish s-indicadores/src/UI.Razor/UI.Razor.csproj -c Release -o out
+
+    - name: Backup current app on VPS
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@62.72.11.44 "
+        if [ -d '/root/wwwindicadores/' ]; then
+          mkdir -p /root/wwwindicadores_backup
+          cp -r /root/wwwindicadores/* /root/wwwindicadores_backup/
+          echo 'Backup feito com sucesso.'
+        else
+          echo 'Diretório de aplicação não encontrado, backup não realizado.'
+        fi
+        "
+
+    - name: Deploy to VPS
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r out/* root@62.72.11.44:/root/wwwindicadores/
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@62.72.11.44 "
+        systemctl restart app-indicadores-net
+        echo 'Aplicação implantada e serviço reiniciado com sucesso.'
+        "
