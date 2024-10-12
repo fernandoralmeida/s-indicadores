@@ -2,9 +2,10 @@
 @model (RCharts g, REmpresas r)
 
 @if (Model.r != null)
-{
-    <div class="charts bg-grey">
-    <div class="column-container flex-wrap gap-2">
+{   
+    <div class="center truncate padding-5"><span id="span_result">Indicadores.Net</span></div>
+    <div class="charts">
+    <div class="column-container flex-wrap no-gap">
         @* Acumulado *@
         <div class="card column-p6">
             <div class="card-header activator">
@@ -51,7 +52,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="card-action padding-r-l-15 padding-t-b-5 margin-0 bg-color-green">
+                <div class="card-action padding-r-l-15 padding-t-b-5 margin-0 no-border">
                     @foreach (var item in Model.r.Quantitativo_Ano!.Where(s => s.Key == "Ativa")!)
                     {
                         var _key = @item.Key;
@@ -351,9 +352,16 @@
 </div>
 
     <script>
+    var _mode = 'light';
+    var _palette = 'palette3';
     var _width = '100%';
     var _height = 250;
     var _height_2 = 250;
+    //window Metor
+    var _colors = ['#0078D7', '#7AAB13', '#F7630C', '#8E008E', '#B50E0E', '#00BCF2', '#F2F2F2', '#6E6E6E', '#FFB900', '#13A10E'];
+    
+    //Material Design
+    //var _colors = ['#2196F3', '#F44336', '#4CAF50', '#FF9800', '#9C27B0', '#00BCD4', '#3F51B5', '#E91E63', '#607D8B', '#FFEB3B'];
 
     var _novas_empresas_mensal = {
         series: [
@@ -436,15 +444,16 @@
         stroke: {
             curve: 'straight',
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        legend: {
-            position: 'top',
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            legend: {
+        position: 'top',
             horizontalAlign: 'right',
-            offsetX: -10
-        }
+                offsetX: -10
+    }
     };
 
     var _ativas = {
@@ -481,21 +490,22 @@
                 bottom: -10
             }
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: _width
-                },
-                legend: {
-                    position: 'bottom'
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: _width
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
-            }
-        }]
+            }]
     };
 
     var _fiscal = {
@@ -532,21 +542,22 @@
                 bottom: -10
             }
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: _width
-                },
-                legend: {
-                    position: 'bottom'
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: _width
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
-            }
-        }]
+            }]
     };
 
     var _porte = {
@@ -620,13 +631,14 @@
             position: 'bottom',
             offsetY: 0
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        fill: {
-            opacity: 1
-        }
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            fill: {
+        opacity: 1
+    }
     };
 
     var _setores = {
@@ -662,21 +674,22 @@
                 bottom: -10
             }
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: _width
-                },
-                legend: {
-                    position: 'bottom'
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: _width
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
-            }
-        }]
+            }]
     };
 
     var _maturidade = {
@@ -713,42 +726,43 @@
             shared: true,
             intersect: false
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        xaxis: {
-            labels: {
-                show: false
-            },
-            axisBorder: {
-                show: false
-            },
-            axisTicks: {
-                show: false
-            },
-            crosshairs: {
-                show: false
-            }
-        },
-        grid: {
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
             xaxis: {
-                lines: {
-                    show: false
-                },
-            },
-            yaxis: {
-                lines: {
-                    show: false
-                }
-            }
+        labels: {
+            show: false
         },
-        legend: {
-            floating: true,
-            position: 'bottom',
-            horizontalAlign: 'right',
-            offsetY: -36
+        axisBorder: {
+            show: false
+        },
+        axisTicks: {
+            show: false
+        },
+        crosshairs: {
+            show: false
         }
+    },
+    grid: {
+        xaxis: {
+            lines: {
+                show: false
+            },
+        },
+        yaxis: {
+            lines: {
+                show: false
+            }
+        }
+    },
+    legend: {
+        floating: true,
+            position: 'bottom',
+                horizontalAlign: 'right',
+                    offsetY: -36
+    }
     };
 
     var _rotatividade = {
@@ -791,55 +805,56 @@
                 return value + "%";
             }
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            xaxis: {
+        labels: {
+            show: true
         },
+        axisBorder: {
+            show: false
+        },
+        axisTicks: {
+            show: false
+        },
+        crosshairs: {
+            show: false
+        }
+    },
+    grid: {
         xaxis: {
-            labels: {
+            lines: {
                 show: true
             },
-            axisBorder: {
-                show: false
-            },
-            axisTicks: {
-                show: false
-            },
-            crosshairs: {
+        },
+        yaxis: {
+            lines: {
                 show: false
             }
-        },
-        grid: {
-            xaxis: {
-                lines: {
-                    show: true
-                },
-            },
-            yaxis: {
-                lines: {
-                    show: false
-                }
-            }
-        },
-        fill: {
-            type: 'gradient',
-            gradient: {
-                shadeIntensity: 1,
-                inverseColors: false,
-                opacityFrom: 0.45,
-                opacityTo: 0.05,
-                stops: [20, 100, 100, 100]
-            },
-        },
-        stroke: {
-            curve: 'straight',
-        },
-        legend: {
-            floating: true,
-            position: 'bottom',
-            horizontalAlign: 'right',
-            offsetY: -36
         }
+    },
+    fill: {
+        type: 'gradient',
+            gradient: {
+            shadeIntensity: 1,
+                inverseColors: false,
+                    opacityFrom: 0.45,
+                        opacityTo: 0.05,
+                            stops: [20, 100, 100, 100]
+        },
+    },
+    stroke: {
+        curve: 'straight',
+        },
+    legend: {
+        floating: true,
+            position: 'bottom',
+                horizontalAlign: 'right',
+                    offsetY: -36
+    }
     };
 
     var _naturezajuridica = {
@@ -874,21 +889,22 @@
                 bottom: -10
             }
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: _width
-                },
-                legend: {
-                    position: 'bottom'
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: _width
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
-            }
-        }]
+            }]
     };
 
     var _naturezajuridica_ano = {
@@ -923,21 +939,22 @@
                 bottom: -10
             }
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: _width
-                },
-                legend: {
-                    position: 'bottom'
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: _width
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
-            }
-        }]
+            }]
     }
 
     var _novas_empresas_mensal_ativas = {
@@ -971,21 +988,22 @@
                 }
             }
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: _width
-                },
-                legend: {
-                    position: 'bottom'
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: _width
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
-            }
-        }]
+            }]
     };
 
     var _novas_empresas_mensal_fiscal = {
@@ -1024,21 +1042,22 @@
                 bottom: -10
             }
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: _width
-                },
-                legend: {
-                    position: 'bottom'
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: _width
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
-            }
-        }]
+            }]
     };
 
     var _novas_empresas_mensal_porte = {
@@ -1112,13 +1131,14 @@
             position: 'bottom',
             offsetY: 0
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        fill: {
-            opacity: 1
-        }
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            fill: {
+        opacity: 1
+    }
     };
 
     var _novas_empresas_mensal_setor = {
@@ -1157,21 +1177,22 @@
                 bottom: -10
             }
         },
-        theme: {
-            mode: 'light',
-            palette: 'palette1'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: _width
-                },
-                legend: {
-                    position: 'bottom'
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: _width
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
-            }
-        }]
+            }]
     };
 
     var _evolucao_setorial = {
@@ -1226,7 +1247,12 @@
             position: 'top',
             horizontalAlign: 'right',
             offsetX: -10
-        }
+        },
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
     };
 
     var _tx_evolucao_setorial = {
@@ -1281,7 +1307,12 @@
             position: 'top',
             horizontalAlign: 'right',
             offsetX: -10
-        }
+        },
+        @* theme: {
+        mode: _mode,
+        palette: _palette
+        }, *@
+        colors: _colors,
     };
 
     window.onload = function () {

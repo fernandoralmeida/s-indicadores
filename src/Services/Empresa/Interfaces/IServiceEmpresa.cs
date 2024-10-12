@@ -13,5 +13,7 @@ public interface IServiceEmpresa : IServiceBase<MEmpresa>
     Task<RCharts> DoReportToChartAsync(REmpresas report);
     IAsyncEnumerable<MEmpresa> DoListAsync(Expression<Func<MEmpresa, bool>>? param = null, string? token = null);
     Task<IEnumerable<string>> DoListMunicipiosEstadoSP();
-    
+
+    Task<IEnumerable<KeyValuePair<int, IEnumerable<(int, int, int)>>>> DoMatrizEmpresarial(IEnumerable<MEmpresa> list);
+
 }

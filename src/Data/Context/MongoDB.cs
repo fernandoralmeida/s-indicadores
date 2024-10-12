@@ -26,7 +26,7 @@ public class MongoDB<T> : IMongoDB<T> where T : class
         var _filter = filter ?? new BsonDocument();
 
         var empresas = await collection.FindAsync(_filter);
-        return empresas.ToList();
+        return await empresas.ToListAsync();
     }
 
     public async Task<int> InsertManyAsync(IEnumerable<T> list)

@@ -109,24 +109,25 @@
   color: hsla(214, 15, 17, 1);
 }
 
-
-@font-face {
+/* @font-face {
   font-family: Consolas;
   src: url("../fonts/consola.ttf");
   font-weight: normal;
   font-style: normal;
-}
+} */
 
 html {
   position: relative;
-  font-family: Consolas !important;
+  /* font-family: Consolas !important; */
+  font-family: 'Roboto';
   min-height: 100%;
 }
 
 body {
   margin: 0px;
   margin-bottom: 0px;
-  font-family: Consolas !important;
+  /* font-family: Consolas !important; */
+  font-family: 'Roboto';
   font-size: 14px;
   font-weight: normal;
   line-height: normal;
@@ -424,6 +425,33 @@ ul>div>div>p>a:hover {
   text-decoration: underline;
 }
 
+.btn-floating-container {
+  border: 0px solid var(--color-grey);
+  background-color: var(--color-light);
+  position: absolute;
+  /* height: 50px; */
+  z-index: 999;
+  margin-left: 10px;
+  max-height: calc(100vh - 160px);
+  margin-top: 10px;
+  width: fit-content;
+  padding: 0px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.btn-floating-container:hover {
+  background-color: var(--color-light);
+}
+
+span.badge.new {
+  font-weight: 300;
+  font-size: 0.8rem;
+  color: var(--color-white);
+  background-color: var(--color-dark);
+  border-radius: 6px;
+}
+
 nav {
   color: inherit;
   width: 100%;
@@ -522,10 +550,10 @@ nav .arrow-back {
 #float-container-l {
   border: 0px solid var(--color-white);
   position: absolute;
-  z-index: 9999;
+  z-index: 599;
   margin-left: 10px;
   max-height: calc(100vh - 160px);
-  margin-top: 90px;
+  margin-top: 70px;
   width: fit-content;
   padding: 0px;
   font-size: 13px;
@@ -655,7 +683,7 @@ nav .arrow-back {
 
 .map {
   width: 100%;
-  height: calc(100vh - 50px - 26px - 11px);
+  height: calc(100vh - 11px);
 }
 
 .map-d {
@@ -704,7 +732,7 @@ nav .arrow-back {
 .charts {
   /* background-color: #475966; */
   /* height: calc(100vh - 50px - 26px - 10px); */
-  height: calc(100vh - 11px);
+  height: calc(100vh - 26px - 11px);
   overflow: hidden;
   overflow-y: auto;
 }
@@ -829,7 +857,7 @@ input.browser-default {
 }
 
 .input-search-cnae {
-  font-family: Consolas !important;
+  /* font-family: Consolas !important; */
   border: 0px solid white;
   padding: 10px;
   color: var(--color-grey);
@@ -851,7 +879,7 @@ input.browser-default {
 }
 
 #input-search {
-  font-family: Consolas !important;
+  /* font-family: Consolas !important; */
   border: 0px solid white;
   padding: 10px;
   color: var(--color-grey);
@@ -1112,7 +1140,7 @@ nav,
 .card-header {
   padding: 10px;
   vertical-align: middle;
-  font-weight: lighter;
+  font-weight: normal;
 }
 
 .card-title-panel {
@@ -1423,6 +1451,10 @@ nav,
   background-color: rgba(0, 0, 0, 0.1);
 }
 
+.no-border {
+  border: 0px solid var(--color-divider) !important;
+}
+
 .borderl-a {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -1630,6 +1662,16 @@ nav,
   margin-right: 5px;
 }
 
+.margin-y-2 {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.margin-x-4 {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
 .margin-10 {
   margin: 10px;
 }
@@ -1638,9 +1680,18 @@ nav,
   margin: 5px;
 }
 
+.margin-4 {
+  margin: 4px;
+}
+
 .margin-2 {
   margin: 2px;
 }
+
+.margin-1 {
+  margin: 1px !important;
+}
+
 
 /**** Texto *****/
 i.mid {
@@ -1719,12 +1770,6 @@ i.mid {
   line-height: 1.5;
 }
 
-.leaflet-touch .leaflet-control-zoom-in,
-.leaflet-touch .leaflet-control-zoom-out {
-  font-size: 22px;
-  display: none;
-}
-
 .leaflet-top,
 .leaflet-bottom {
   position: absolute;
@@ -1734,8 +1779,8 @@ i.mid {
 
 .info {
   padding: 6px 8px;
-  font-family: Consolas !important;
-  font-size: 14px;
+  /* font-family: Consolas !important; */
+  font-size: 12px;
   background-color: rgba(240, 245, 255, 0.8);
   box-shadow: 0 0 15px var(--color-shadow);
   border-radius: 5px;
@@ -1899,7 +1944,7 @@ i.mid {
 
   .map {
     width: 100%;
-    height: calc(50vh - 50px - 18.4px - 10px);
+    height: calc(50vh - 10px);
   }
 
   .map-d {
@@ -1919,7 +1964,7 @@ i.mid {
 
   .charts {
     /* background-color: #475966; */
-    height: calc(50vh - 11px);
+    height: calc(50vh - 26px - 0px);
     overflow: hidden;
     overflow-y: auto;
   }
@@ -1933,8 +1978,8 @@ i.mid {
   .info {
     /* display: none; */
     padding: 6px 8px;
-    font-family: Consolas !important;
-    font-size: 14px;
+    /* font-family: Consolas !important; */
+    font-size: 12px;
     background-color: rgba(240, 245, 255, 0.8);
     box-shadow: 0 0 15px var(--color-shadow);
     border-radius: 5px;
@@ -1942,7 +1987,7 @@ i.mid {
   }
 
   .legend {
-    /* display: none; */
+    display: none;
     line-height: 18px;
     color: var(--color-dark);
   }
@@ -1979,9 +2024,6 @@ i.mid {
     backdrop-filter: blur(5px);
   }
 
-  .leaflet-top {
-    display: none;
-  }
 
   nav .brand-logo {
     position: absolute;

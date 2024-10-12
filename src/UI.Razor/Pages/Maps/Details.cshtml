@@ -41,10 +41,10 @@
     });
 </script>
 
-<div class="container-map-charts bg-grey gap-2">
+<div class="container-map-charts no-gap	">
     <div class="w-50p">
         @{
-            await Html.RenderPartialAsync("_Navbar");
+        await Html.RenderPartialAsync("_Navbar");
         }
         <div id="map" class="map"></div>
     </div>

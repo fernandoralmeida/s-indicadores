@@ -2,7 +2,12 @@ var _max = 0;
 var _min = 0;
 var _url_zoomtofeatures = '';
 // Criar o mapa Leaflet
-var map = L.map('map').setView([-22.902778, -48.28125], 7); // Centro inicial do mapa do estado de sp
+// Centro inicial do mapa do estado de sp
+let map = L.map('map', {
+    maxZoom: 15,
+    minZoom: 6,
+    zoomControl: false
+}).setView([-22.5665, -48.6353], 7);
 
 var loadingMapDiv = document.getElementById('loadingMap');
 // Tornar a div visível alterando a propriedade display
@@ -23,6 +28,10 @@ info.update = function (props) {
 };
 
 info.addTo(map);
+
+L.control.zoom({
+    position: 'bottomleft'
+}).addTo(map);
 
 // Adicionar uma camada base do OpenStreetMap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

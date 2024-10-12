@@ -1,4 +1,29 @@
-<div class="navbar">
+<div class="btn-floating-container">
+    <a class="btn dropdown-trigger" href='#' data-target='dropdown1'>
+        <i class="material-icons">menu</i>
+        @* <img class="mt-8 blur-light" src="~/svg/idnet-new-i-48.svg" alt="Indicadores.NET"> *@
+    </a>
+</div>
+
+<ul id='dropdown1' class='dropdown-content'>
+    <div><img class="margin-t-10 margin-b-10" src="~/svg/idnet-new-i.svg" alt="Indicadores.NET"></div>
+    <li class="@NavPages.MapCompaniesNavClass(ViewContext)">
+        <a asp-page="/Index" class="@NavPages.MapCompaniesNavClass(ViewContext) submit">Quantitativo</a>
+    </li>
+    <li class="@NavPages.MapSetoresNavClass(ViewContext)">
+        <a asp-page="/Setores/Index" asp-route-n="" class="@NavPages.MapSetoresNavClass(ViewContext) submit">Setorial</a>
+    </li>
+    <li hidden>
+        <a class="waves-effect waves-light modal-trigger" href="#_modal_ia"><i class="material-icons">analytics</i></a>
+    </li>
+    <div class="divider"></div>
+    <li class="@NavPages.InfoNavClass(ViewContext)"><a asp-page="/About" class="@NavPages.InfoNavClass(ViewContext)"><i
+                class="material-icons">info</i></a></li>
+    <li class="@NavPages.PrivacyNavClass(ViewContext)"><a asp-page="/Privacy"
+            class="@NavPages.PrivacyNavClass(ViewContext)"><i class="material-icons">policy</i></a></li>
+</ul>
+
+@* <div class="navbar">
     <nav class="nav-extended z-depth-0 bg-color-light">
         <div class="nav-wrapper">
             <ul class="col s4 center">
@@ -26,7 +51,7 @@
             <div class="center truncate padding-5"><span id="span_result">Indicadores.Net</span></div>
         </div>
     </nav>
-</div>
+</div> *@
 
 
 <!-- Modal Structure -->

@@ -203,10 +203,10 @@ public class ServiceEmpresa : IServiceEmpresa
                     select (new KeyValuePair<string, int>(age.Key, age.Count())),
 
             Rotatividade = from rt in emps
-                                .Where(s => DateTime.ParseExact(s.DataInicioAtividade!.Trim()[..4], "yyyy", CultureInfo.InvariantCulture).Date < new DateTime(DateTime.Now.Year, 1, 1))
+                                .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date < new DateTime(DateTime.Now.Year, 1, 1))
                                 .GroupBy(d => DateTime.ParseExact(d.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString())
                                 .OrderByDescending(s => s.Key)
-                                .Take(11)
+                                .Take(10)
                            select (new KeyValuePair<string, float>(rt.Key,
                                    Convert.ToSingle(rt.Where(s => s.SituacaoCadastral == "Baixada" && DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) /
                                    Convert.ToSingle(rt.Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString() == rt.Key).Count()) * 100)),
@@ -430,7 +430,7 @@ public class ServiceEmpresa : IServiceEmpresa
                     select (new KeyValuePair<string, int>(age.Key, age.Count())),
 
             Rotatividade = from rt in emps
-                                .Where(s => DateTime.ParseExact(s.DataInicioAtividade!.Trim()[..4], "yyyy", CultureInfo.InvariantCulture).Date < new DateTime(DateTime.Now.Year, 1, 1))
+                                .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date < new DateTime(DateTime.Now.Year, 1, 1))
                                 .GroupBy(d => DateTime.ParseExact(d.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year.ToString())
                                 .OrderByDescending(s => s.Key)
                                 .Take(10)
@@ -510,18 +510,23 @@ public class ServiceEmpresa : IServiceEmpresa
                     .OrderByDescending(o => o.Count())
            select (new KeyValuePair<string, int>(st.Key, st.Count()));
 
-    private static IEnumerable<KeyValuePair<int, IEnumerable<KeyValuePair<int, int>>>> MatrizEmpresarial(IEnumerable<MEmpresa> list)
+    private static IEnumerable<KeyValuePair<int, IEnumerable<(int, int, int)>>> MatrizEmpresarial(IEnumerable<MEmpresa> list)
     {
         var _emp_anos = list.OrderBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date);
         var _list = new List<KeyValuePair<int, IEnumerable<KeyValuePair<int, int>>>>();
 
         return from a in _emp_anos.GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year)
-               select (new KeyValuePair<int, IEnumerable<KeyValuePair<int, int>>>(a.Key,
+               select (new KeyValuePair<int, IEnumerable<(int, int, int)>>(a.Key,
                    from e in _emp_anos
-                                   .Where(s => s.SituacaoCadastral == "Baixada")
-                                   .GroupBy(s => DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year)
-                                   .OrderBy(s => s.Count())
-                   select (new KeyValuePair<int, int>(e.Key, e.Count()))));
+                                   //.Where(s => s.SituacaoCadastral == "Ativa")
+                                   .Where(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year <= a.Key)
+                                   .GroupBy(s => DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year)
+                                   .OrderBy(s => s.Key)
+                   select ((e.Key, e.Count(), e
+                                        .Where(s => s.DataSituacaoCadastral != null && s.SituacaoCadastral != "Ativa")
+                                        .Where(s => DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year <= a.Key)
+                                        //.GroupBy(s => DateTime.ParseExact(s.DataSituacaoCadastral!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Year)
+                                        .Count()))));
     }
 
     private static IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>> TaxaCrescimentoSetorial(IEnumerable<MEmpresa> list)
@@ -535,11 +540,12 @@ public class ServiceEmpresa : IServiceEmpresa
                select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, int>>>(t.Key.ToString()!,
                             from a in list
                                         .Where(s => s.SetorProdutivo() == t.Key
-                                                    && DateTime.ParseExact(s.DataInicioAtividade!.Trim()[..4], "yyyy", CultureInfo.InvariantCulture).Date < new DateTime(DateTime.Now.Year, 1, 1))
+                                                    && DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date > new DateTime(DateTime.Now.Year - 11, 12, 31)
+                                                    && DateTime.ParseExact(s.DataInicioAtividade!, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date < new DateTime(DateTime.Now.Year, 1, 1))
                                         .GroupBy(s => s.DataInicioAtividade!.Trim()[..4])
                                         .Where(c => c?.Count() > 0)
                                         .OrderByDescending(s => s.Key)
-                                        .Take(10)
+                                //.Take(10)
                             select (new KeyValuePair<string, int>(a.Key, a.Count()))));
     }
 
@@ -576,7 +582,7 @@ public class ServiceEmpresa : IServiceEmpresa
             Rotatividade: await Task.Run(() =>
             {
                 string _rotatividade_emp = string.Empty;
-                foreach (var x in report.Rotatividade?.OrderBy(s => s.Key)!)
+                foreach (var x in report.Rotatividade?.OrderByDescending(s => s.Key).Take(10).OrderBy(s => s.Key)!)
                     _rotatividade_emp += string.Format(@"{{x:`{0}`,y:{1}}},", x.Key.NormalizeText(), x.Value.ToString("N1"));
 
                 return _rotatividade_emp.Any() ? _rotatividade_emp[..^1] : _rotatividade_emp;
@@ -762,7 +768,7 @@ public class ServiceEmpresa : IServiceEmpresa
                         portefiscalano[i, j] = "0";
 
                 var a = 0;
-                foreach (var item in report.Porte_Ano!.OrderBy(s => s.Key.Length))
+                foreach (var item in report.Porte_Ano!.Where(s => s.Key != "N/I").OrderBy(s => s.Key.Length))
                 {
 
                     int b = 0;
@@ -947,4 +953,8 @@ public class ServiceEmpresa : IServiceEmpresa
 
     }
 
+    public async Task<IEnumerable<KeyValuePair<int, IEnumerable<(int, int, int)>>>> DoMatrizEmpresarial(IEnumerable<MEmpresa> list)
+    {
+        return await Task.Run(() => MatrizEmpresarial(list));
+    }
 }

@@ -1,0 +1,36 @@
+@page "/e-matriz/{m?}/{z?}/{c?}"
+@model Pages.Matrix.IndexModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Matriz Empresarial";
+}
+
+<div>
+    @foreach (var item in Model.MatrizEmpresarial!)
+    {
+        <div class="row margin-b-10 text-color-dark">
+            <span class="margin-4">@item.Key</span>
+            @{
+                var _sum1 = 0;
+                var _sum2 = 0;
+                var _t = 0;
+            }
+            <div class="row margin-b-0">
+                @foreach (var subitem in item.Value)
+                {
+                    <div class="col s2  bg-color-grey">
+                        <span>@subitem.Item1, @subitem.Item2, @subitem.Item3</span>
+                    </div>
+                    _sum1 += subitem.Item2;
+                    _sum2 += subitem.Item3;
+                }
+                <div class="col s2 bg-color-dark">
+                    @{
+                        _t = _sum1 - _sum2;
+                    }
+                    <strong>@_sum1, @_sum2, @_t</strong>
+                </div>
+            </div>
+        </div>
+    }
+</div>
