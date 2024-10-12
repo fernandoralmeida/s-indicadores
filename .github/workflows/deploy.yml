@@ -19,10 +19,10 @@ jobs:
         dotnet-version: '7.x'
 
     - name: Restore dependencies
-      run: dotnet restore s-indicadores/src/UI.Razor/UI.Razor.csproj
+      run: dotnet restore /home/runner/work/s-indicadores/src/UI.Razor/UI.Razor.csproj
 
     - name: Build the application
-      run: dotnet publish s-indicadores/src/UI.Razor/UI.Razor.csproj -c Release -o out
+      run: dotnet publish /home/runner/work/s-indicadores/src/UI.Razor/UI.Razor.csproj -c Release -o out
 
     - name: Backup current app on VPS
       env:
