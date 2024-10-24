@@ -24,7 +24,7 @@ info.onAdd = function (map) {
 // method that we will use to update the control based on feature properties passed
 info.update = function (props) {
     this._div.innerHTML = (props ?
-        'Município: <span class="text-uppercase">' + props.name + '</span><br />Empresas: ' + props.empresas + ' (' + _max + ') ' + '<br />Setor: ' + props.setor : 'Mova o mouse sobre o mapa');
+        'Município: <span class="text-uppercase">' + props.name + '</span><br /><div class="divider"></div>Empresas: ' + props.empresas + ' (' + _max + ') ' + '<br />Setor: ' + props.setor : 'Mova o mouse sobre o mapa');
 };
 
 info.addTo(map);
@@ -38,14 +38,16 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
+// Adiciona o tile layer escuro usando CartoDB Dark Matter
+// L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+//     attribution: '&copy; <a href="https://carto.com/">CartoDB</a> contributors'
+// }).addTo(map);
+
 function highlightFeature(e) {
     var layer = e.target;
 
     layer.setStyle({
-        weight: 3,
-        color: 'black',
-        dashArray: '',
-        fillOpacity: 0.7
+        weight: 3
     });
 
     layer.bringToFront();
@@ -57,11 +59,9 @@ function resetHighlight(e) {
     var layer = e.target;
 
     layer.setStyle({
-        weight: 1,
-        color: 'black',
-        dashArray: '',
-        fillOpacity: 0.7
+        weight: 1
     });
+
     info.update();
 }
 

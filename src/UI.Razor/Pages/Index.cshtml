@@ -14,7 +14,7 @@
 
 <ul class="sidenav collapsible" id="slide-out">
     <form class="div-search-cnae valign-wrapper" method="post">
-        <i class="material-icons margin-l-10 grey-text">search</i>
+        <i class="material-icons">search</i>
         <input class="input-search-cnae browser-default" type="search" placeholder="Procurar cidade"
             onkeypress="handle(event)" asp-for="@Model.Cidade">
     </form>
@@ -65,13 +65,13 @@
 </ul>
 
 <div class="container-map-charts no-gap">
-    <div class="w-50p">
+    <div class="w-40p">
         @{
             await Html.RenderPartialAsync("_Navbar");
         }
         <div id="map" class="map"></div>
     </div>
-    <div class="w-50p">
+    <div class="w-60p">
         @{
             await Html.RenderPartialAsync("_Charts", Model.ModelCharts);
         }
@@ -84,6 +84,8 @@
 <script src="~/osm/geo-zoomfeature-e.js" asp-append-version="true"></script>
 <script src="~/osm/geo-oneachfeature.js" asp-append-version="true"></script>
 <script>
+    
+
     loadData('/api/v1/geojson/');
     function handle(e) {
         if (e.keyCode === 13) {

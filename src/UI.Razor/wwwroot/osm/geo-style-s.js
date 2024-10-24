@@ -1,6 +1,7 @@
 function style(feature) {
+    var _color = getColor(`${feature.properties.setor}`);
     return {
-        fillColor: getColor(`${feature.properties.setor}`),
+        fillColor: _color,
         weight: 1,
         opacity: 1,
         color: 'black',

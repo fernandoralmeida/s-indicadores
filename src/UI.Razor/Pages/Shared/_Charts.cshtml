@@ -2,27 +2,27 @@
 @model (RCharts g, REmpresas r)
 
 @if (Model.r != null)
-{   
+{
     <div class="center truncate padding-5"><span id="span_result">Indicadores.Net</span></div>
     <div class="charts">
     <div class="column-container flex-wrap no-gap">
         @* Acumulado *@
-        <div class="card column-p6">
+        <div class="card borderl-t column-p6">
             <div class="card-header activator">
                 Empresas<i class="material-icons right deep-orange-text">help</i>
             </div>
             <div class="column-container flex-wrap margin-0 width-100 no-gap">
-                <i class="material-icons mid text-color-grey swipe-down">swipe_up</i>
+                <i class="material-icons mid swipe-down">swipe_up</i>
                 <div class="w-50p">
                     <div id="chart1"></div>
                 </div>
-                <div class="w-50p borderl-l padding-5">
+                <div class="w-50p padding-5">
                     <div class="overflow-auto max-height-280 padding-t-10 padding-r-10">
                         @foreach (var item in Model.r.Quantitativo?.Where(s => s.Key != "Baixada")!)
                             {
                                 var _key = @item.Key;
-                                <p class="text-color-grey "><span class="font-size-10">- @_key?.ToUpper()</span>
-                                    <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
+                                <p class=""><span class="font-size-10">- @_key?.ToUpper()</span>
+                                    <span class="new badge" data-badge-caption="@item.Value"></span>
                                 </p>
                                 <div class="divider"></div>
                             }
@@ -33,7 +33,7 @@
                 @foreach (var item in Model.r.Quantitativo_Ano!.Where(s => s.Key == "Ativa")!)
                 {
                 var _key = @item.Key;
-                <p class="text-color-grey "><span class="font-size-14">* Formalizadas @DateTime.Now.Year</span>
+                <p class="text-color-light "><span class="font-size-14">* Formalizadas @DateTime.Now.Year</span>
                 <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
                 </p>
                 <div class="divider"></div>
@@ -56,9 +56,9 @@
                     @foreach (var item in Model.r.Quantitativo_Ano!.Where(s => s.Key == "Ativa")!)
                     {
                         var _key = @item.Key;
-                        <p class="text-color-dark">
+                        <p class="right">
                             <span class="font-size-14">Formalizadas @DateTime.Now.Year</span>
-                            <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
+                            <span class="new badge" data-badge-caption="@item.Value"></span>
                         </p>
                         @* <div class="divider"></div> *@
                     }
@@ -66,17 +66,17 @@
             </div>
 
             @* Top 3 Atividades *@
-            <div class="card column-w4">
+            <div class="card borderl-t column-w4">
                 <div class="card-header activator">
                     Top 3 Setores @DateTime.Now.Year<i class="material-icons right deep-orange-text">help</i>
                 </div>
                 <div class="overflow-auto max-height-280 padding-5">
                     @foreach (var item in Model.r!.Top3Atividades_Ano!)
                     {
-                        <p class="bg-color-grey text-color-light padding-5">@item.Key</p>
+                        <p class="bg-surface padding-5">@item.Key</p>
                         @foreach (var subitem in item.Value)
                         {
-                            <div class="text-color-grey column-container gap-5 margin-t-b-5 width-100 flex-row">
+                            <div class="text-color-light column-container gap-5 margin-t-b-5 width-100 flex-row">
                                 <div class="w-80p font-size-10 truncate">- @subitem.Key</div>
                                 <a href="#_modal_charts" class="w-20p btn-small" data-badge-caption="">@subitem.Value</a>
                             </div>
@@ -97,7 +97,7 @@
             </div>
 
             @* Historico 12 meses *@
-            <div class="card column-p0 width-100">
+            <div class="card borderl-t column-p0 width-100">
                 <div class="card-header activator">
                     Empresas Formalizadas/Baixadas<i class="material-icons left">
                         date_range
@@ -117,7 +117,7 @@
             </div>
 
             @* Fiscal *@
-            <div class="card column-p0 width-100">
+            <div class="card borderl-t column-p0 width-100">
                 <div class="card-header activator">
                     Porte/Fiscal<i class="material-icons right deep-orange-text">help</i>
                 </div>
@@ -125,28 +125,28 @@
                     <div class="w-50p">
                         <div id="chart3"></div>
                     </div>
-                    <div class="w-25p borderl-l padding-5">
+                    <div class="w-25p padding-5">
                         <div class="overflow-auto max-height-280 padding-t-10 padding-r-10">
                             @DateTime.Now.Year
                             @foreach (var item in Model.r.Fiscal_Ano!)
                             {
                                 var _key = @item.Key;
-                                <p class="text-color-grey "><span class="font-size-10">- @_key?.ToUpper()</span>
-                                    <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
+                                <p class=""><span class="font-size-10">- @_key?.ToUpper()</span>
+                                    <span class="new badge" data-badge-caption="@item.Value"></span>
                                 </p>
                                 <div class="divider"></div>
                             }
 
                         </div>
                     </div>
-                    <div class="w-25p borderl-l padding-5">
+                    <div class="w-25p padding-5">
                         <div class="overflow-auto max-height-280 padding-t-10 padding-r-10">
                             Acumulado
                             @foreach (var item in Model.r.Fiscal!)
                             {
                                 var _key = @item.Key;
-                                <p class="text-color-grey "><span class="font-size-10">- @_key?.ToUpper()</span>
-                                    <span class="new bg-color-grey badge" data-badge-caption="@item.Value"></span>
+                                <p class=""><span class="font-size-10">- @_key?.ToUpper()</span>
+                                    <span class="new badge" data-badge-caption="@item.Value"></span>
                                 </p>
                                 <div class="divider"></div>
                             }
@@ -178,7 +178,7 @@
             </div>
 
             @* perfil Etário *@
-            <div class="card column-p5">
+            <div class="card borderl-t column-p5">
                 <div class="card-header activator">
                     Perfil Etário<i class="material-icons right deep-orange-text">help</i>
                 </div>
@@ -196,7 +196,7 @@
             </div>
 
             @* Rotatividade *@
-            <div class="card column-p5">
+            <div class="card borderl-t column-p5">
                 <div class="card-header activator">
                     Rotatividade Empresarial<i class="material-icons right deep-orange-text">help</i>
                 </div>
@@ -215,7 +215,7 @@
             </div>
 
             @* Evolução setorial *@
-            <div class="card column-p5">
+            <div class="card  borderl-t column-p5">
 
                 <div class="card-header activator">
                     Crescimento Setorial<i class="material-icons left">
@@ -235,7 +235,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card column-p5">
+            <div class="card borderl-t column-p5">
 
                 <div class="card-header activator">
                     Taxa de Crescimento Setorial<i class="material-icons left">
@@ -258,7 +258,7 @@
             </div>
 
             @* Atividades *@
-            <div class="card column-p0 width-100">
+            <div class="card borderl-t column-p0 width-100">
 
                 <div class="card-header activator">
                     Setores<i class="material-icons right deep-orange-text">help</i>
@@ -267,14 +267,14 @@
                     <div class="column-p5">
                         <div id="chart4"></div>
                     </div>
-                    <div class="column-p5 borderl-l padding-l-10">
+                    <div class="column-p5 padding-l-10">
                         <div class="overflow-auto max-height-250 padding-t-10 padding-r-10">
                             @foreach (var item in Model.r!.TAtividades!)
                             {
-                                <p class="bg-color-grey text-color-light padding-5">@item.Key</p>
+                                <p class="bg-surface padding-5">@item.Key</p>
                                 @foreach (var subitem in item.Value)
                                 {
-                                    <div class="text-color-grey column-container gap-5 margin-t-b-5 width-100 flex-row">
+                                    <div class="column-container gap-5 margin-t-b-5 width-100 flex-row">
                                         <div class="w-80p font-size-10 truncate">- @subitem.Key</div>
                                         <a href="#_modal_charts" class="w-20p btn-small" data-badge-caption="">@subitem.Value</a>
                                     </div>
@@ -297,7 +297,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card column-p0 width-100">
+            <div class="card  borderl-t  column-p0 width-100">
 
                 <div class="card-header activator">
                     Natureza Jurídica<i class="material-icons right deep-orange-text">help</i>
@@ -306,12 +306,12 @@
                     <div class="column-p5">
                         <div id="chart_nj"></div>
                     </div>
-                    <div class="column-p5 borderl-l padding-l-10">
+                    <div class="column-p5 padding-l-10">
                         <div class="overflow-auto max-height-250 padding-t-10 padding-r-10">
                             @foreach (var item in Model.r.NaturezaJuridica!)
                             {
                                 var _key = @item.Key?.Remove(0, 5);
-                                <div class="text-color-grey column-container gap-5 margin-t-b-5 width-100 flex-row">
+                                <div class="column-container gap-5 margin-t-b-5 width-100 flex-row">
                                     <div class="w-80p font-size-10 truncate">- @_key?.ToUpper()</div>
                                     <a href="#_modal_charts" class="w-20p btn-small" data-badge-caption="">@item.Value</a>
                                 </div>
@@ -352,14 +352,20 @@
 </div>
 
     <script>
-    var _mode = 'light';
+
+    function getColorScheme() {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    var _mode = getColorScheme();
     var _palette = 'palette3';
     var _width = '100%';
     var _height = 250;
     var _height_2 = 250;
+    var _forecolor = '#fff'
     //window Metor
     var _colors = ['#0078D7', '#7AAB13', '#F7630C', '#8E008E', '#B50E0E', '#00BCF2', '#F2F2F2', '#6E6E6E', '#FFB900', '#13A10E'];
-    
+
     //Material Design
     //var _colors = ['#2196F3', '#F44336', '#4CAF50', '#FF9800', '#9C27B0', '#00BCD4', '#3F51B5', '#E91E63', '#607D8B', '#FFEB3B'];
 
@@ -419,7 +425,7 @@
         grid: {
             xaxis: {
                 lines: {
-                    show: true
+                    show: false
                 },
             },
             yaxis: {
@@ -444,12 +450,12 @@
         stroke: {
             curve: 'straight',
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            legend: {
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        legend: {
         position: 'top',
             horizontalAlign: 'right',
                 offsetX: -10
@@ -490,22 +496,22 @@
                 bottom: -10
             }
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        width: _width
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
                 }
-            }]
+            }
+        }]
     };
 
     var _fiscal = {
@@ -542,22 +548,22 @@
                 bottom: -10
             }
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        width: _width
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
                 }
-            }]
+            }
+        }]
     };
 
     var _porte = {
@@ -602,8 +608,8 @@
                         enabled: true,
                         style: {
                             fontSize: '13px',
-                            color: '#000',
-                            fontWeight: 900
+                            color: _forecolor,
+                            fontWeight: 400
                         }
                     }
                 }
@@ -618,7 +624,7 @@
         grid: {
             xaxis: {
                 lines: {
-                    show: true
+                    show: false
                 },
             },
             yaxis: {
@@ -631,12 +637,12 @@
             position: 'bottom',
             offsetY: 0
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            fill: {
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        fill: {
         opacity: 1
     }
     };
@@ -674,22 +680,22 @@
                 bottom: -10
             }
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        width: _width
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
                 }
-            }]
+            }
+        }]
     };
 
     var _maturidade = {
@@ -726,12 +732,12 @@
             shared: true,
             intersect: false
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            xaxis: {
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        xaxis: {
         labels: {
             show: false
         },
@@ -805,12 +811,12 @@
                 return value + "%";
             }
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            xaxis: {
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        xaxis: {
         labels: {
             show: true
         },
@@ -827,7 +833,7 @@
     grid: {
         xaxis: {
             lines: {
-                show: true
+                show: false
             },
         },
         yaxis: {
@@ -889,22 +895,22 @@
                 bottom: -10
             }
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        width: _width
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
                 }
-            }]
+            }
+        }]
     };
 
     var _naturezajuridica_ano = {
@@ -939,22 +945,22 @@
                 bottom: -10
             }
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        width: _width
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
                 }
-            }]
+            }
+        }]
     }
 
     var _novas_empresas_mensal_ativas = {
@@ -988,22 +994,22 @@
                 }
             }
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        width: _width
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
                 }
-            }]
+            }
+        }]
     };
 
     var _novas_empresas_mensal_fiscal = {
@@ -1042,22 +1048,22 @@
                 bottom: -10
             }
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        width: _width
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
                 }
-            }]
+            }
+        }]
     };
 
     var _novas_empresas_mensal_porte = {
@@ -1089,7 +1095,7 @@
         grid: {
             xaxis: {
                 lines: {
-                    show: true
+                    show: false
                 },
             },
             yaxis: {
@@ -1117,8 +1123,8 @@
                         enabled: true,
                         style: {
                             fontSize: '13px',
-                            color: '#000',
-                            fontWeight: 900
+                            color: _forecolor,
+                            fontWeight: 400
                         }
                     }
                 }
@@ -1131,12 +1137,12 @@
             position: 'bottom',
             offsetY: 0
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            fill: {
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        fill: {
         opacity: 1
     }
     };
@@ -1177,22 +1183,22 @@
                 bottom: -10
             }
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        width: _width
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: _width
+                },
+                legend: {
+                    position: 'bottom'
                 }
-            }]
+            }
+        }]
     };
 
     var _evolucao_setorial = {
@@ -1218,7 +1224,7 @@
         grid: {
             xaxis: {
                 lines: {
-                    show: true
+                    show: false
                 },
             },
             yaxis: {
@@ -1248,11 +1254,11 @@
             horizontalAlign: 'right',
             offsetX: -10
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
     };
 
     var _tx_evolucao_setorial = {
@@ -1278,7 +1284,7 @@
         grid: {
             xaxis: {
                 lines: {
-                    show: true
+                    show: false
                 },
             },
             yaxis: {
@@ -1308,11 +1314,11 @@
             horizontalAlign: 'right',
             offsetX: -10
         },
-        @* theme: {
-        mode: _mode,
-        palette: _palette
-        }, *@
-        colors: _colors,
+        theme: {
+            mode: _mode,
+            @* palette: _palette *@
+        },
+    colors: _colors,
     };
 
     window.onload = function () {

@@ -1,6 +1,7 @@
 function styleSC(feature) {
+    var _color = getColorSC(`${_max}`);
     return {
-        fillColor: getColorSC(`${_max}`),
+        fillColor: _color,
         weight: 1,
         opacity: 1,
         color: 'black',

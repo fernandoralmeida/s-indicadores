@@ -1,6 +1,7 @@
 function styleSC(feature) {
+    var _color = getColorSC(`${feature.properties.empresas}`);
     return {
-        fillColor: getColorSC(`${feature.properties.empresas}`),
+        fillColor: _color,
         weight: 1,
         opacity: 1,
         color: 'black',

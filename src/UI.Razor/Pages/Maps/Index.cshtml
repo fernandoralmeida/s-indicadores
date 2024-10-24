@@ -48,13 +48,13 @@
 }
 
 <div class="container-map-charts no-gap">
-    <div class="w-50p">
+    <div class="w-40p">
         @{
             await Html.RenderPartialAsync("_Navbar");
         }
         <div id="map" class="map"></div>
     </div>
-    <div class="w-50p">
+    <div class="w-60p">
         @{
             await Html.RenderPartialAsync("_Charts", Model.ControlCharts);
         }
@@ -63,7 +63,7 @@
 
 <script src="~/osm/geo-base.js" asp-append-version="true"></script>
 <script src="~/osm/geo-legend-e.js" asp-append-version="true"></script>
-<script src="~/osm/geo-style-e.js" asp-append-version="true"></script>
+<script src="~/osm/geo-style-e-d.js" asp-append-version="true"></script>
 <script src="~/osm/geo-zoomfeature-d.js" asp-append-version="true"></script>
 <script src="~/osm/geo-oneachfeature.js" asp-append-version="true"></script>
 <script>
