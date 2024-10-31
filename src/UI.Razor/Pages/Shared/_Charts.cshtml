@@ -353,11 +353,21 @@
 
     <script>
 
+    @* if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        } else {
+        // Caso não haja preferência salva, usa o tema claro por padrão
+        document.documentElement.setAttribute('data-theme', 'light');
+        }
+
     function getColorScheme() {
         return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
+        } *@
 
-    var _mode = getColorScheme();
+    @* const savedTheme = localStorage.getItem('theme') ?? 'light'; *@
+
+
+    var _mode = localStorage.getItem('theme') || 'light';
     var _palette = 'palette3';
     var _width = '100%';
     var _height = 250;

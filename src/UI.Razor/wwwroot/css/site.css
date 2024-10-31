@@ -30,7 +30,7 @@
   :root {
     --color-glass: rgba(240, 245, 255, 0.5);
     --on-color-glass: rgba(37, 43, 51, 0.2);
-    --color-divider: rgba(37, 43, 51, 0.4);
+    --color-divider: rgba(37, 43, 51, 0.2);
     --background-color: #f0f5ff;
     --surface-color: #cdd2dd;
     --surface-color-variant: #f0f5ff;
@@ -44,7 +44,7 @@
 [data-theme="light"] {
   --color-glass: rgba(240, 245, 255, 0.5);
   --on-color-glass: rgba(37, 43, 51, 0.2);
-  --color-divider: rgba(37, 43, 51, 0.4);
+  --color-divider: rgba(37, 43, 51, 0.2);
   --background-color: #f0f5ff;
   --surface-color: #cdd2dd;
   --surface-color-variant: #f0f5ff;
@@ -572,6 +572,18 @@ nav .arrow-back {
   margin-bottom: 0;
 }
 
+
+/*
+*
+*
+***** Dropdown Icon ******/
+.dropdown-content li>a>i.n {
+  height: inherit;
+  line-height: 24px;
+  float: none;
+  margin: 12px auto;
+  width: 24px;
+}
 
 .blackboxload {
   display: flex;

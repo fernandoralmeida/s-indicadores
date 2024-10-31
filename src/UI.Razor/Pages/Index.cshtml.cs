@@ -1,6 +1,7 @@
 ﻿using IDN.Core.Helpers;
 using IDN.Data.Helpers;
 using IDN.Data.Interface;
+using IDN.Services.Cnae.Interfaces;
 using IDN.Services.Empresa.Interfaces;
 using IDN.Services.Empresa.Records;
 using IDN.Services.Geojson.View;
@@ -12,6 +13,7 @@ namespace UI.Razor.Pages;
 
 public class IndexModel : PageModel
 {
+    private readonly IServiceCnae _cnaes;
     private readonly IMongoDB<REmpresas>? _mongoDB;
     private readonly IMongoDB<VFeatures> _geojson;
     private readonly IServiceEmpresa? _empresa;
@@ -19,6 +21,10 @@ public class IndexModel : PageModel
     [BindProperty(SupportsGet = true)]
     public string? Cidade { get; set; }
     public string? GeoCode { get; set; }
+    public string? Cnae { get; set; } = "Indicadores.net";
+    public string? UrlAPI { get; set; } = "/api/v1/geojson/";
+    public string? MapMode { get; set; } = "0";
+    public string? PageParam { get; set; } = string.Empty;
     public IEnumerable<KeyValuePair<string, string>>? RegioesAdministrativas { get; set; }
     public IEnumerable<KeyValuePair<string, string>>? RegioesGovernoSP { get; set; }
     public IEnumerable<KeyValuePair<string, string>>? RegioesMetropolitanasSP { get; set; }
@@ -30,16 +36,20 @@ public class IndexModel : PageModel
     public IEnumerable<KeyValuePair<string, int>> Setores { get; set; } = new List<KeyValuePair<string, int>>();
     public (RCharts g, REmpresas r) ModelCharts { get; set; }
     public IEnumerable<string>? Municipios { get; set; }
+    public IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, IEnumerable<string>>>>>? Setore_Segmentos_Cnaes { get; set; }
 
-    public IndexModel(IServiceEmpresa empresa)
+    public IndexModel(IServiceCnae cnae, IServiceEmpresa empresa)
     {
+        _cnaes = cnae;
         _mongoDB = Factory<REmpresas>.NewDataMongoDB();
         _geojson = Factory<VFeatures>.NewDataMongoDB();
         _empresa = empresa;
     }
 
-    public async Task OnGet()
+    public async Task OnGet(string? n)
     {
+        PageParam = n;
+        await DoListCnae(n!);
         var _list = new List<KeyValuePair<string, string>>();
         foreach (var item in Regions.MacroRegioesSP())
             _list.Add(new(item, item.NormalizeText().ToLower().Replace(" ", "-")));
@@ -61,7 +71,15 @@ public class IndexModel : PageModel
         RegioesMetropolitanasSP = _list_rm;
         AglomeradosUrbanosSP = _list_au;
 
-        await LoadData();
+        if (string.IsNullOrEmpty(n))
+            await LoadData();
+        else
+        {
+            await LoadDataCnae(n!);
+            var _tipo = n.Length == 2 ? "segmento" : "cnae";
+            UrlAPI = $"/api/v1/geojson/{_tipo}/{n}";
+            MapMode = "1";
+        }
     }
 
     public async Task<IActionResult> OnPostAsync()
@@ -230,5 +248,52 @@ Func<REmpresas, IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string
                                     .OrderByDescending(k => k.Sum(e => e.Value))
                                     .Take(3)
                        select (new KeyValuePair<string, int>(sl.Key, sl.Sum(sm => sm.Value)))));
+    }
+
+    private async Task DoListCnae(string param)
+    {
+        var _list = new List<(string cnae, string desc, string setor)>();
+
+        var _test_search = param?.ToLower().NormalizeText();
+
+        var _list_cnae = await _cnaes.DoListAsync();
+
+        foreach (var item in _list_cnae)
+            _list.Add(new(item.Codigo!, item.Descricao!, Dictionaries.SetorProdutivo[item.Codigo![..2]]));
+
+        Setore_Segmentos_Cnaes = from st in _list
+                                                .GroupBy(g => g.setor)
+
+                                 select (new KeyValuePair<string, IEnumerable<KeyValuePair<string, IEnumerable<string>>>>(st.Key,
+                                    from sg in st
+                                                .Where(s => s.cnae.StartsWith(s.cnae[..2]))
+                                                .GroupBy(g => g.cnae[..2])
+                                    select (new KeyValuePair<string, IEnumerable<string>>($"{sg.Key[..2]} {Dictionaries.CnaesSubClasses[sg.Key[..2]]}",
+                                        from ce in _list
+                                                        .Where(s => s.cnae!.StartsWith(sg.Key[..2]))
+                                        select new string($"{ce.cnae} {ce.desc}")
+                                        ))
+                                 ));
+    }
+
+    private async Task LoadDataCnae(string param)
+    {
+        var _cnae = await _cnaes.DoListAsync(s => s.Codigo!.StartsWith(param));
+
+        Cnae = param.Length == 2 ? Dictionaries.CnaesSubClasses[param].NormalizeText() : _cnae.FirstOrDefault()?.Descricao!.NormalizeText();
+
+        LReports = await _empresa?.
+                            DoReportEmpresasAsync(
+                                _empresa.DoListAsync(
+                                    s =>
+                                    s.CnaeFiscalPrincipal!.StartsWith(param) &&
+                                    s.SituacaoCadastral == "02",
+                                    $"setor_{param}"))!;
+
+        Setores = from s in LReports.Setores
+                  select (new KeyValuePair<string, int>(s.Key, s.Value));
+
+        Charts = await _empresa!.DoReportToChartAsync(LReports);
+        ModelCharts = new(Charts!, LReports!);
     }
 }

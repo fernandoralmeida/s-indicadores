@@ -6,51 +6,56 @@
 </div>
 
 <ul id='dropdown1' class='dropdown-content'>
-    <div class="center"><img class="margin-t-10 margin-b-10" src="~/svg/idnet-new-i.svg" alt="Indicadores.NET"></div>
+    <div class="center padding-10"><img src="~/svg/indn-new-icon-new-color.svg" alt="Indicadores.NET"></div>
     <li class="@NavPages.MapCompaniesNavClass(ViewContext)">
-        <a asp-page="/Index" class="submit">Quantitativo</a>
+        <a asp-page="/Index" class="submit no-padding center"><i class="n material-icons">analytics</i></a>
     </li>
-    <li class="@NavPages.MapSetoresNavClass(ViewContext)">
-        <a asp-page="/Setores/Index" asp-route-n="" class="submit">Setorial</a>
-    </li>
-    <li hidden>
-        <a class="waves-effect waves-light modal-trigger" href="#_modal_ia"><i class="material-icons">analytics</i></a>
+    <li class="@NavPages.MapSetoresNavClass(ViewContext)" hidden>
+        <a asp-page="/Setores/Index" asp-route-n="" class="submit no-padding center">Setorial</a>
     </li>
     <div class="divider"></div>
-    <li class="@NavPages.InfoNavClass(ViewContext)"><a asp-page="/About" class="submit"><i
-                class="material-icons">info</i></a></li>
-    <li class="@NavPages.PrivacyNavClass(ViewContext)"><a asp-page="/Privacy"
-            class="submit"><i class="material-icons">policy</i></a></li>
+    <li>
+        <a id="theme-button" class="theme-button submit no-padding center" onclick="reloadPage()">
+            <i class="n material-icons">contrast</i>
+        </a>
+    </li>
+    <div class="divider"></div>
+    <li class="@NavPages.InfoNavClass(ViewContext)">
+        <a asp-page="/About" class="submit no-padding center"><i class="n material-icons">info</i></a>
+    </li>
+    <li class="@NavPages.PrivacyNavClass(ViewContext)">
+        <a asp-page="/Privacy" class="submit no-padding center"><i class="n material-icons">policy</i></a>
+    </li>
 </ul>
 
 @* <div class="navbar">
-    <nav class="nav-extended z-depth-0 bg-color-light">
-        <div class="nav-wrapper">
-            <ul class="col s4 center">
-                <li><img class="margin-t-10" src="~/svg/idnet-new-i.svg" alt="Indicadores.NET"></li>
-                <li class="@NavPages.MapCompaniesNavClass(ViewContext)">
-                    <a asp-page="/Index" class="@NavPages.MapCompaniesNavClass(ViewContext) submit">Empresas</a>
-                </li>
-                <li class="@NavPages.MapSetoresNavClass(ViewContext)">
-                    <a asp-page="/Setores/Index" asp-route-n=""
-                        class="@NavPages.MapSetoresNavClass(ViewContext) submit">Setores</a>
-                </li>
-                <li hidden>
-                    <a class="waves-effect waves-light modal-trigger" href="#_modal_ia"><i
-                            class="material-icons">analytics</i></a>
-                </li>
-            </ul>
-            <ul class="col s4 right hide-on-med-and-down">
-                <li class="@NavPages.InfoNavClass(ViewContext)"><a asp-page="/About"
-                        class="@NavPages.InfoNavClass(ViewContext)"><i class="material-icons">info</i></a></li>
-                <li class="@NavPages.PrivacyNavClass(ViewContext)"><a asp-page="/Privacy"
-                        class="@NavPages.PrivacyNavClass(ViewContext)"><i class="material-icons">policy</i></a></li>
-            </ul>
-        </div>
-        <div class="nav-content bg-color-grey">
-            <div class="center truncate padding-5"><span id="span_result">Indicadores.Net</span></div>
-        </div>
-    </nav>
+<nav class="nav-extended z-depth-0 bg-color-light">
+<div class="nav-wrapper">
+<ul class="col s4 center">
+<li><img class="margin-t-10" src="~/svg/idnet-new-i.svg" alt="Indicadores.NET"></li>
+<li class="@NavPages.MapCompaniesNavClass(ViewContext)">
+<a asp-page="/Index" class="@NavPages.MapCompaniesNavClass(ViewContext) submit">Empresas</a>
+</li>
+<li class="@NavPages.MapSetoresNavClass(ViewContext)">
+<a asp-page="/Setores/Index" asp-route-n=""
+class="@NavPages.MapSetoresNavClass(ViewContext) submit">Setores</a>
+</li>
+<li hidden>
+<a class="waves-effect waves-light modal-trigger" href="#_modal_ia"><i
+class="material-icons">analytics</i></a>
+</li>
+</ul>
+<ul class="col s4 right hide-on-med-and-down">
+<li class="@NavPages.InfoNavClass(ViewContext)"><a asp-page="/About"
+class="@NavPages.InfoNavClass(ViewContext)"><i class="material-icons">info</i></a></li>
+<li class="@NavPages.PrivacyNavClass(ViewContext)"><a asp-page="/Privacy"
+class="@NavPages.PrivacyNavClass(ViewContext)"><i class="material-icons">policy</i></a></li>
+</ul>
+</div>
+<div class="nav-content bg-color-grey">
+<div class="center truncate padding-5"><span id="span_result">Indicadores.Net</span></div>
+</div>
+</nav>
 </div> *@
 
 
@@ -64,3 +69,35 @@
         <a href="#!" class="modal-close waves-effect waves-green btn">OK</a>
     </div>
 </div>
+
+
+<script>
+    // Função para alternar o tema entre 'light' e 'dark'
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light'); // Salva a escolha do usuário
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');  // Salva a escolha do usuário
+        }
+    }
+
+    // Botão de alternância de tema
+    const themeButton = document.getElementById('theme-button');
+    themeButton.addEventListener('click', toggleTheme);
+
+    // Verifica se há uma preferência de tema salva
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    } else {
+        // Caso não haja preferência salva, usa o tema claro por padrão
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+
+    function reloadPage() {
+        location.reload();
+    }
+</script>

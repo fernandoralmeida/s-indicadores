@@ -7,6 +7,7 @@
 }
 
 <div id="float-container-l">
+    <a class="btn" asp-page="/Index"><i class="material-icons">arrow_back</i></a>
     <a href="#" data-target="slide-out" class="sidenav-trigger btn"><i class="material-icons">construction</i></a>
 </div>
 
@@ -90,14 +91,14 @@
     }
     function handle(e) {
         if (e.keyCode === 13) {
-            @* $(".blackboxload").show();
+    @* $(".blackboxload").show();
             $("#loader").show(); *@
             var v = $(".input-search-cnae").val();
             //if (v === "")
             //return false;
             const _url = '/api/v1/setores/' + v;
             carregarSetores(_url);
-            @* $("#loader").hide();
+    @* $("#loader").hide();
             $(".blackboxload").fadeOut("slow"); *@
         }
     }

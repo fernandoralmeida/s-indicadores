@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/{n?}"
 @model IndexModel
 @{
     Layout = "_LayoutMap";
@@ -7,6 +7,8 @@
 }
 
 <div id="float-container-l">
+    <a href="#" data-target="slide-out-service" class="sidenav-trigger btn"><i
+            class="material-icons">construction</i></a>
     <a href="#" data-target="slide-out" class="btn sidenav-trigger"><i class="material-icons">map</i></a>
 </div>
 
@@ -64,6 +66,40 @@
     </li>
 </ul>
 
+<div class="sidenav" id="slide-out-service">
+    <div class="div-search-cnae valign-wrapper margin-b-0">
+        <i class="material-icons margin-l-10 grey-text">search</i>
+        <input class="input-search-cnae browser-default" onkeypress="handle2(event)" type="search"
+            placeholder="CNAE ex: 15 ou 1531901">
+    </div>
+    <ul class="collapsible" id="setores">
+        @foreach (var setor in Model.Setore_Segmentos_Cnaes!)
+        {
+            <li>
+                <div class="collapsible-header">@setor.Key</div>
+                <div class="collapsible-body">
+                    @foreach (var segmento in setor.Value)
+                    {
+                        <div class="row line-normal padding-t-10 margin-b-10">
+                            <a class="btn-small sidenav-close submit" asp-page="/Setores/Index" asp-route-n="@segmento.Key[..2]"
+                                data-segmento="@segmento.Key[..2]" data-descricao="@segmento.Key.Remove(0, 2)"
+                                title="CNAE Grupo: @segmento.Key[..2]">> @segmento.Key.Remove(0, 2)</a>
+                        </div>
+                        @foreach (var cnae in segmento.Value)
+                        {
+                            <p class="line-normal"><a class="sidenav-close truncate submit" asp-page="/Setores/Index"
+                                    asp-route-n="@cnae[..7]" data-cnae="@cnae[..7]" data-descricao="@cnae.Remove(0, 7)"
+                                    title="CNAE @cnae[..7]">>>@cnae.Remove(0, 7)</a></p>
+
+                        }
+                        <div class="divider"></div>
+                    }
+                </div>
+            </li>
+        }
+    </ul>
+</div>
+
 <div class="container-map-charts no-gap">
     <div class="w-40p">
         @{
@@ -83,8 +119,32 @@
 <script src="~/osm/geo-style-e.js" asp-append-version="true"></script>
 <script src="~/osm/geo-zoomfeature-e.js" asp-append-version="true"></script>
 <script src="~/osm/geo-oneachfeature.js" asp-append-version="true"></script>
+<script src="~/js/cnae-list.js" asp-append-version="true"></script>
 <script>
-    
+    var _page_link = '@Model.PageParam';
+    var _mapMode = '@Model.MapMode';
+    var spanResult_l = document.getElementById("span_result");
+    spanResult_l.textContent = '@Model.Cnae';
+
+    if (_mapMode === '0') {
+        loadData('@Model.UrlAPI');
+    }
+    else {
+        doMapByCNAE('@Model.UrlAPI');
+    }
+    function handle2(e) {
+        if (e.keyCode === 13) {
+    @* $(".blackboxload").show();
+            $("#loader").show(); *@
+            var v = $(".input-search-cnae").val();
+            //if (v === "")
+            //return false;
+            const _url = '/api/v1/setores/' + v;
+            carregarSetores(_url);
+    @* $("#loader").hide();
+            $(".blackboxload").fadeOut("slow"); *@
+        }
+    }
 
     loadData('/api/v1/geojson/');
     function handle(e) {
