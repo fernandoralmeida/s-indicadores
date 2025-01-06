@@ -113,12 +113,12 @@ CREATE TABLE Socios (
     FaixaEtaria VARCHAR(2) NULL
 );
 
--- create views
-CREATE OR REPLACE VIEW public.view_empresas_by_municipio
- AS
- SELECT (emp.cnpjbase::text || est.cnpjdv::text) || est.cnpjordem::text AS cnpj,
+-- Create or replace the view
+CREATE OR REPLACE VIEW public.view_empresas_by_municipio AS
+SELECT 
+    (emp.cnpjbase || est.cnpjordem || est.cnpjdv) AS cnpj,
     emp.razaosocial,
-    (njd.codigo::text || ' '::text) || njd.descricao::text AS naturezajuridica,
+    (njd.codigo || ' ' || njd.descricao) AS naturezajuridica,
     emp.capitalsocial,
     emp.porteempresa,
     est.identificadormatrizfilial,
@@ -128,10 +128,10 @@ CREATE OR REPLACE VIEW public.view_empresas_by_municipio
     est.datainicioatividade,
     est.cnaefiscalprincipal,
     atv.descricao AS cnaedescricao,
-    est.cep,
-    (est.tipologradouro::text || ' '::text) || est.logradouro::text AS logradouro,
-    est.numero,
-    est.bairro,
+    COALESCE(est.cep, '') AS cep,
+    (est.tipologradouro || ' ' || est.logradouro) AS logradouro,
+    COALESCE(est.numero, '') AS numero,
+    COALESCE(est.bairro, '') AS bairro,
     est.uf,
     mps.descricao AS municipio,
     snl.opcaosimples,
@@ -140,12 +140,14 @@ CREATE OR REPLACE VIEW public.view_empresas_by_municipio
     snl.opcaomei,
     snl.dataopcaomei,
     snl.dataexclusaomei
-   FROM estabelecimentos est
-     JOIN empresas emp ON est.cnpjbase::text = emp.cnpjbase::text
-     JOIN cnaes atv ON est.cnaefiscalprincipal::text = atv.codigo::text
-     JOIN naturezajuridica njd ON emp.naturezajuridica::text = njd.codigo::text
-     JOIN municipios mps ON est.municipio::text = mps.codigo::text
-     LEFT JOIN simples snl ON est.cnpjbase::text = snl.cnpjbase::text;
+FROM 
+    estabelecimentos est
+    JOIN empresas emp ON est.cnpjbase = emp.cnpjbase
+    JOIN cnaes atv ON est.cnaefiscalprincipal = atv.codigo
+    JOIN naturezajuridica njd ON emp.naturezajuridica = njd.codigo
+    JOIN municipios mps ON est.municipio = mps.codigo
+    LEFT JOIN simples snl ON est.cnpjbase = snl.cnpjbase;
+
 
 ALTER TABLE public.view_empresas_by_municipio
     OWNER TO postgres;

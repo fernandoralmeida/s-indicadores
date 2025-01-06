@@ -71,6 +71,10 @@ public class ServiceGeojson : IServiceGeojson
         var _features = new List<VFeatures>();
 
         var _path = @"/home/dbn/sources/s-indicadores/files/geojson-estado-sp.json";
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            _path = @"C:\\Users\\User\\OneDrive\\Dev\\BC250_2017_Municipio_A.json";
+        }
 
         string jsonString = await File.ReadAllTextAsync(_path);
 
@@ -309,6 +313,10 @@ public class ServiceGeojson : IServiceGeojson
 
         //var _file = @"BC250_2017_Municipio_A.json";
         var _file = @"/home/dbn/sources/s-indicadores/files/BC250_2017_Municipio_A.json";
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            _file = @"C:\\Users\\User\\OneDrive\\Dev\\BC250_2017_Municipio_A.json";
+        }
 
         string jsonString = await File.ReadAllTextAsync(_file);
 
@@ -382,6 +390,10 @@ public class ServiceGeojson : IServiceGeojson
     public async Task<string> ReadFileGeojsonAsync()
     {
         var _file = @"/home/dbn/sources/s-indicadores/files/geojson-estado-sp.json";
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            _file = @"C:\\Users\\User\\OneDrive\\Dev\\BC250_2017_Municipio_A.json";
+        }
 
         return await File.ReadAllTextAsync(_file);
     }
@@ -389,6 +401,10 @@ public class ServiceGeojson : IServiceGeojson
     public async Task<string> GeoJsonUF()
     {
         var _path = @"/home/dbn/sources/s-indicadores/files/geojson-uf.json";
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            _path = @"C:\\Users\\User\\OneDrive\\Dev\\BC250_2017_Municipio_A.json";
+        }
 
         string jsonString = await File.ReadAllTextAsync(_path);
 

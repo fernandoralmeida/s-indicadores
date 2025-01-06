@@ -5,7 +5,7 @@ namespace IDN.Tools;
 
 public static class FilesCsv
 {
-    public static readonly string _DIRECTORY = @"/home/dbn/sources/s-indicadores/files/";
+    public static readonly string _DIRECTORY = @"C:\\Data";
     public static async Task NormalizeAsync()
     => await Task.Run(async () =>
     {
