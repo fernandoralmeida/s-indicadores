@@ -4,7 +4,7 @@ namespace IDN.Tools;
 
 public static class Indicadores
 {
-    public static async Task DoIndicadores(string ds_migradata, string migradata_db, string ds_indicadores, string indicadores_db)
+    public static async Task DoIndicadores(string ds_migradata, string migradata_db, string ds_indicadores, string indicadores_db, bool local)
     {
 
         var tableName = "Empresas";
@@ -31,8 +31,8 @@ public static class Indicadores
                 Console.WriteLine($"Reading Municipios, inicial: {_char}...");
                 var _municipios = await Data.ReadAsync($"SELECT municipio FROM public.view_municipios WHERE municipio LIKE '{_char}%' GROUP BY municipio;", migradata_db, ds_migradata);
                 _m_count += _municipios.Rows.Count;
-                //var _dtable = await Data.ReadAsync($"SELECT * FROM view_empresas_by_municipio WHERE municipio LIKE '{_char}%' ORDER BY municipio;", migradata_db, ds_migradata);
-                var _dtable = await Data.ReadAsync($"SELECT * FROM view_empresas_by_municipio WHERE municipio LIKE '{_char}%' AND situacaocadastral = '02' ORDER BY municipio;", migradata_db, ds_migradata); //VPS
+                var _dtable = local ? await Data.ReadAsync($"SELECT * FROM view_empresas_by_municipio WHERE municipio LIKE '{_char}%' ORDER BY municipio;", migradata_db, ds_migradata) :
+                await Data.ReadAsync($"SELECT * FROM empresas WHERE municipio LIKE '{_char}%' AND situacaocadastral = '02' ORDER BY municipio;", indicadores_db, ds_migradata); //VPS
 
                 _trows += _dtable.Rows.Count;
 
